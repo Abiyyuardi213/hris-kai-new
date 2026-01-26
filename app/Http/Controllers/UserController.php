@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
+use App\Models\Peran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -13,13 +13,13 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('role')->latest()->get();
-        $roles = Role::where('role_status', true)->get();
+        $roles = Peran::where('role_status', true)->get();
         return view('users.index', compact('users', 'roles'));
     }
 
     public function create()
     {
-        $roles = Role::where('role_status', true)->get();
+        $roles = Peran::where('role_status', true)->get();
         return view('users.create', compact('roles'));
     }
 
@@ -49,7 +49,7 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        $roles = Role::where('role_status', true)->get();
+        $roles = Peran::where('role_status', true)->get();
         return view('users.edit', compact('user', 'roles'));
     }
 

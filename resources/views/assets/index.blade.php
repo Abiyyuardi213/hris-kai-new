@@ -1,33 +1,27 @@
 @extends('layouts.app')
-@section('title', 'Jabatan')
+@section('title', 'Aset')
 
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-                <h2 class="text-3xl font-bold tracking-tight">Manajemen Jabatan</h2>
-                <p class="text-zinc-500 mt-1">Kelola data jabatan dalam divisi.</p>
-            </div>
-            <div>
-                <a href="{{ route('positions.create') }}"
-                    class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
-                    <i data-lucide="plus" class="h-4 w-4"></i>
-                    Tambah Jabatan
-                </a>
-            </div>
+        <div class="flex items-center justify-between">
+            <h2 class="text-3xl font-bold tracking-tight">Manajemen Aset</h2>
+            <a href="{{ route('assets.create') }}"
+                class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
+                <i data-lucide="plus" class="h-4 w-4"></i>
+                Tambah Aset
+            </a>
         </div>
 
         <!-- Content -->
         <div class="space-y-4">
             <!-- Search -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('positions.index') }}" method="GET"
-                    class="flex w-full md:max-w-md items-center gap-2">
+                <form action="{{ route('assets.index') }}" method="GET" class="flex w-full md:max-w-md items-center gap-2">
                     <div class="relative flex-1">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode, nama, atau divisi..."
+                            placeholder="Cari kode, nama, atau serial number..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
                     </div>
                     <button type="submit"
@@ -35,7 +29,7 @@
                         Cari
                     </button>
                     @if (request('search'))
-                        <a href="{{ route('positions.index') }}"
+                        <a href="{{ route('assets.index') }}"
                             class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
                             Reset
                         </a>
@@ -50,43 +44,57 @@
                         <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                             <tr>
                                 <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
-                                <th class="px-6 py-4 font-medium">Nama Jabatan</th>
-                                <th class="px-6 py-4 font-medium">Divisi</th>
-                                <th class="px-6 py-4 font-medium">Deskripsi</th>
+                                <th class="px-6 py-4 font-medium">Nama Aset</th>
+                                <th class="px-6 py-4 font-medium">Kategori</th>
+                                <th class="px-6 py-4 font-medium">Kondisi</th>
                                 <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
-                            @forelse ($positions as $position)
+                            @forelse ($assets as $asset)
                                 <tr class="group hover:bg-zinc-50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <span
                                             class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
-                                            {{ $position->code }}
+                                            {{ $asset->code }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-zinc-900">{{ $position->name }}</div>
+                                        <div class="font-medium text-zinc-900">{{ $asset->name }}</div>
+                                        <div class="text-xs text-zinc-500 mt-0.5">{{ $asset->serial_number ?? '-' }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-zinc-600">
+                                        {{ $asset->category ?? '-' }}
                                     </td>
                                     <td class="px-6 py-4">
+                                        @php
+                                            $colors = [
+                                                'good' => 'bg-emerald-50 text-emerald-700 ring-emerald-600/20',
+                                                'repair' => 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
+                                                'broken' => 'bg-red-50 text-red-700 ring-red-600/20',
+                                                'lost' => 'bg-zinc-50 text-zinc-700 ring-zinc-600/20',
+                                            ];
+                                            $labels = [
+                                                'good' => 'Baik',
+                                                'repair' => 'Perbaikan',
+                                                'broken' => 'Rusak',
+                                                'lost' => 'Hilang',
+                                            ];
+                                        @endphp
                                         <span
-                                            class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
-                                            <i data-lucide="layers" class="h-3 w-3"></i>
-                                            {{ $position->division->name ?? '-' }}
+                                            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $colors[$asset->condition] ?? 'bg-gray-50 text-gray-600' }}">
+                                            {{ $labels[$asset->condition] ?? $asset->condition }}
                                         </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-zinc-500">
-                                        {{ Str::limit($position->description ?? '-', 50) }}
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <a href="{{ route('positions.edit', $position->id) }}"
+                                            <a href="{{ route('assets.edit', $asset->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
                                             </a>
-                                            <button onclick="confirmDelete('{{ $position->id }}', '{{ $position->name }}')"
+                                            <button onclick="confirmDelete('{{ $asset->id }}', '{{ $asset->name }}')"
                                                 class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Hapus">
                                                 <i data-lucide="trash-2" class="h-4 w-4"></i>
@@ -99,11 +107,11 @@
                                     <td colspan="5" class="px-6 py-16 text-center text-zinc-500">
                                         <div class="flex flex-col items-center justify-center space-y-3">
                                             <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
-                                                <i data-lucide="briefcase" class="h-8 w-8 text-zinc-300"></i>
+                                                <i data-lucide="box" class="h-8 w-8 text-zinc-300"></i>
                                             </div>
                                             <div class="text-center">
-                                                <p class="font-medium text-zinc-900">Belum ada data jabatan</p>
-                                                <p class="text-sm mt-1">Mulai dengan menambahkan jabatan baru.</p>
+                                                <p class="font-medium text-zinc-900">Belum ada data aset</p>
+                                                <p class="text-sm mt-1">Mulai dengan menambahkan aset baru.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -112,9 +120,9 @@
                         </tbody>
                     </table>
                 </div>
-                @if ($positions->hasPages())
+                @if ($assets->hasPages())
                     <div class="p-4 border-t border-zinc-200 bg-zinc-50/50">
-                        {{ $positions->links() }}
+                        {{ $assets->links() }}
                     </div>
                 @endif
             </div>
@@ -136,10 +144,10 @@
                                 <i data-lucide="alert-triangle" class="h-5 w-5 text-red-600"></i>
                             </div>
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                <h3 class="text-base font-semibold leading-6 text-zinc-900">Hapus Data Jabatan</h3>
+                                <h3 class="text-base font-semibold leading-6 text-zinc-900">Hapus Data Aset</h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-zinc-500">
-                                        Apakah Anda yakin ingin menghapus jabatan <span id="deleteName"
+                                        Apakah Anda yakin ingin menghapus aset <span id="deleteName"
                                             class="font-medium text-zinc-900"></span>?
                                     </p>
                                 </div>
@@ -172,7 +180,7 @@
 
         function confirmDelete(id, name) {
             document.getElementById('deleteName').textContent = name;
-            document.getElementById('deleteForm').action = "{{ url('admin/positions') }}/" + id;
+            document.getElementById('deleteForm').action = "{{ url('admin/assets') }}/" + id;
             openModal('deleteModal');
         }
     </script>

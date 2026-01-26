@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Dashboard')
 
 @section('content')
     <div class="flex items-center justify-between space-y-2 mb-6">
@@ -14,7 +15,7 @@
             </div>
             <div class="p-6 pt-0">
                 <div class="text-2xl font-bold">{{ \App\Models\User::count() }}</div>
-                <p class="text-xs text-zinc-500">Pengguna terdaftar</p>
+                <p class="text-xs text-zinc-500">User terdaftar</p>
                 <a href="{{ route('users.index') }}" class="text-xs text-blue-600 hover:text-blue-800 mt-2 block">Lihat
                     Detail →</a>
             </div>
@@ -27,7 +28,7 @@
                 <i data-lucide="shield" class="h-4 w-4 text-zinc-500"></i>
             </div>
             <div class="p-6 pt-0">
-                <div class="text-2xl font-bold">{{ \App\Models\Role::count() }}</div>
+                <div class="text-2xl font-bold">{{ \App\Models\Peran::count() }}</div>
                 <p class="text-xs text-zinc-500">Peran tersedia</p>
                 <a href="{{ route('role.index') }}" class="text-xs text-blue-600 hover:text-blue-800 mt-2 block">Lihat
                     Detail →</a>

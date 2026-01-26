@@ -1,19 +1,19 @@
 @extends('layouts.app')
-@section('title', 'Jabatan')
+@section('title', 'Pegawai')
 
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-3xl font-bold tracking-tight">Manajemen Jabatan</h2>
-                <p class="text-zinc-500 mt-1">Kelola data jabatan dalam divisi.</p>
+                <h2 class="text-3xl font-bold tracking-tight">Manajemen Pegawai</h2>
+                <p class="text-zinc-500 mt-1">Kelola data kepegawaian dan informasi personal.</p>
             </div>
             <div>
-                <a href="{{ route('positions.create') }}"
+                <a href="{{ route('employees.create') }}"
                     class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
-                    <i data-lucide="plus" class="h-4 w-4"></i>
-                    Tambah Jabatan
+                    <i data-lucide="user-plus" class="h-4 w-4"></i>
+                    Tambah Pegawai
                 </a>
             </div>
         </div>
@@ -22,12 +22,12 @@
         <div class="space-y-4">
             <!-- Search -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('positions.index') }}" method="GET"
+                <form action="{{ route('employees.index') }}" method="GET"
                     class="flex w-full md:max-w-md items-center gap-2">
                     <div class="relative flex-1">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode, nama, atau divisi..."
+                            placeholder="Cari nama, NIP, atau NIK..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
                     </div>
                     <button type="submit"
@@ -35,7 +35,7 @@
                         Cari
                     </button>
                     @if (request('search'))
-                        <a href="{{ route('positions.index') }}"
+                        <a href="{{ route('employees.index') }}"
                             class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
                             Reset
                         </a>
@@ -49,44 +49,71 @@
                     <table class="w-full text-sm text-left">
                         <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                             <tr>
-                                <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
-                                <th class="px-6 py-4 font-medium">Nama Jabatan</th>
-                                <th class="px-6 py-4 font-medium">Divisi</th>
-                                <th class="px-6 py-4 font-medium">Deskripsi</th>
+                                <th class="px-6 py-4 font-medium">Pegawai</th>
+                                <th class="px-6 py-4 font-medium">Jabatan & Divisi</th>
+                                <th class="px-6 py-4 font-medium">Status & Shift</th>
+                                <th class="px-6 py-4 font-medium">Kontak</th>
                                 <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
-                            @forelse ($positions as $position)
+                            @forelse ($employees as $employee)
                                 <tr class="group hover:bg-zinc-50/50 transition-colors">
                                     <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
-                                            {{ $position->code }}
-                                        </span>
+                                        <div class="flex items-center gap-3">
+                                            @if ($employee->foto)
+                                                <img src="{{ asset('storage/' . $employee->foto) }}" alt=""
+                                                    class="h-10 w-10 rounded-full object-cover ring-1 ring-zinc-100">
+                                            @else
+                                                <div
+                                                    class="h-10 w-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 ring-1 ring-zinc-100">
+                                                    <span
+                                                        class="text-xs font-semibold">{{ substr($employee->nama_lengkap, 0, 2) }}</span>
+                                                </div>
+                                            @endif
+                                            <div>
+                                                <div class="font-medium text-zinc-900">{{ $employee->nama_lengkap }}</div>
+                                                <div class="text-xs text-zinc-500">{{ $employee->nip }}</div>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-zinc-900">{{ $position->name }}</div>
+                                        <div class="font-medium text-zinc-900">{{ $employee->jabatan->name ?? '-' }}</div>
+                                        <div class="text-xs text-zinc-500">{{ $employee->divisi->name ?? '-' }}</div>
+                                        <div class="text-xs text-zinc-400 mt-0.5">
+                                            {{ $employee->kantor->office_name ?? '-' }}</div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
-                                            <i data-lucide="layers" class="h-3 w-3"></i>
-                                            {{ $position->division->name ?? '-' }}
+                                            class="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                                            {{ $employee->statusPegawai->name ?? '-' }}
                                         </span>
+                                        <div class="text-xs text-zinc-500 mt-1">
+                                            Shift: {{ $employee->shift->name ?? 'Default' }}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-zinc-500">
-                                        {{ Str::limit($position->description ?? '-', 50) }}
+                                        <div class="flex items-center gap-1.5 text-xs">
+                                            <i data-lucide="phone" class="h-3 w-3"></i>
+                                            {{ $employee->no_hp ?? '-' }}
+                                        </div>
+                                        @if ($employee->user && $employee->user->email)
+                                            <div class="flex items-center gap-1.5 text-xs mt-1">
+                                                <i data-lucide="mail" class="h-3 w-3"></i>
+                                                {{ $employee->user->email }}
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <a href="{{ route('positions.edit', $position->id) }}"
+                                            <a href="{{ route('employees.edit', $employee->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
                                             </a>
-                                            <button onclick="confirmDelete('{{ $position->id }}', '{{ $position->name }}')"
+                                            <button
+                                                onclick="confirmDelete('{{ $employee->id }}', '{{ $employee->nama_lengkap }}')"
                                                 class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Hapus">
                                                 <i data-lucide="trash-2" class="h-4 w-4"></i>
@@ -99,11 +126,11 @@
                                     <td colspan="5" class="px-6 py-16 text-center text-zinc-500">
                                         <div class="flex flex-col items-center justify-center space-y-3">
                                             <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
-                                                <i data-lucide="briefcase" class="h-8 w-8 text-zinc-300"></i>
+                                                <i data-lucide="users-2" class="h-8 w-8 text-zinc-300"></i>
                                             </div>
                                             <div class="text-center">
-                                                <p class="font-medium text-zinc-900">Belum ada data jabatan</p>
-                                                <p class="text-sm mt-1">Mulai dengan menambahkan jabatan baru.</p>
+                                                <p class="font-medium text-zinc-900">Belum ada data pegawai</p>
+                                                <p class="text-sm mt-1">Mulai dengan menambahkan pegawai baru.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -112,9 +139,9 @@
                         </tbody>
                     </table>
                 </div>
-                @if ($positions->hasPages())
+                @if ($employees->hasPages())
                     <div class="p-4 border-t border-zinc-200 bg-zinc-50/50">
-                        {{ $positions->links() }}
+                        {{ $employees->links() }}
                     </div>
                 @endif
             </div>
@@ -136,10 +163,10 @@
                                 <i data-lucide="alert-triangle" class="h-5 w-5 text-red-600"></i>
                             </div>
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                <h3 class="text-base font-semibold leading-6 text-zinc-900">Hapus Data Jabatan</h3>
+                                <h3 class="text-base font-semibold leading-6 text-zinc-900">Hapus Data Pegawai</h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-zinc-500">
-                                        Apakah Anda yakin ingin menghapus jabatan <span id="deleteName"
+                                        Apakah Anda yakin ingin menghapus data pegawai <span id="deleteName"
                                             class="font-medium text-zinc-900"></span>?
                                     </p>
                                 </div>
@@ -172,7 +199,7 @@
 
         function confirmDelete(id, name) {
             document.getElementById('deleteName').textContent = name;
-            document.getElementById('deleteForm').action = "{{ url('admin/positions') }}/" + id;
+            document.getElementById('deleteForm').action = "{{ url('admin/employees') }}/" + id;
             openModal('deleteModal');
         }
     </script>

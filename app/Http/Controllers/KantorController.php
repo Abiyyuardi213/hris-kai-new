@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Office;
-use App\Models\City;
+use App\Models\Kantor;
+use App\Models\Kota;
 use Illuminate\Http\Request;
 
-class OfficeController extends Controller
+class KantorController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Office::with('city');
+        $query = Kantor::with('city');
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -28,7 +28,7 @@ class OfficeController extends Controller
     public function create()
     {
         // Limit to prevent huge list, or integrate a search select in frontend later
-        $cities = City::select('id', 'name', 'province_name')->orderBy('name')->get();
+        $cities = Kota::select('id', 'name', 'province_name')->orderBy('name')->get();
         return view('offices.create', compact('cities'));
     }
 
@@ -43,14 +43,14 @@ class OfficeController extends Controller
             'email' => 'nullable|email|max:255',
         ]);
 
-        Office::create($validated);
+        Kantor::create($validated);
 
         return redirect()->route('offices.index')->with('success', 'Kantor berhasil ditambahkan');
     }
 
     public function edit(Office $office)
     {
-        $cities = City::select('id', 'name', 'province_name')->orderBy('name')->get();
+        $cities = Kota::select('id', 'name', 'province_name')->orderBy('name')->get();
         return view('offices.edit', compact('office', 'cities'));
     }
 

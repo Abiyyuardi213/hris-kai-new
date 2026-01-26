@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Position;
-use App\Models\Division;
+use App\Models\Jabatan;
+use App\Models\Divisi;
 use Illuminate\Http\Request;
 
-class PositionController extends Controller
+class JabatanController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Position::with('division');
+        $query = Jabatan::with('division');
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -27,7 +27,7 @@ class PositionController extends Controller
 
     public function create()
     {
-        $divisions = Division::orderBy('name')->get();
+        $divisions = Divisi::orderBy('name')->get();
         return view('positions.create', compact('divisions'));
     }
 
@@ -40,14 +40,14 @@ class PositionController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Position::create($validated);
+        Jabatan::create($validated);
 
         return redirect()->route('positions.index')->with('success', 'Jabatan berhasil ditambahkan');
     }
 
     public function edit(Position $position)
     {
-        $divisions = Division::orderBy('name')->get();
+        $divisions = Divisi::orderBy('name')->get();
         return view('positions.edit', compact('position', 'divisions'));
     }
 

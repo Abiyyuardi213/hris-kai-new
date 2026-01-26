@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Models\Peran;
 use Illuminate\Http\Request;
 
-class RoleController extends Controller
+class PeranController extends Controller
 {
     public function index()
     {
-        $roles = Role::orderBy('created_at', 'asc')->get();
+        $roles = Peran::orderBy('created_at', 'asc')->get();
         return view('role.index', compact('roles'));
     }
 
@@ -26,14 +26,14 @@ class RoleController extends Controller
             'role_status' => 'required|boolean',
         ]);
 
-        Role::createRole($request->all());
+        Peran::createRole($request->all());
 
         return redirect()->route('role.index')->with('success', 'Role berhasil ditambahkan.');
     }
 
     public function edit($id)
     {
-        $role = Role::findOrFail($id);
+        $role = Peran::findOrFail($id);
         return view('role.edit', compact('role'));
     }
 
@@ -45,7 +45,7 @@ class RoleController extends Controller
             'role_status' => 'required|boolean',
         ]);
 
-        $role = Role::findOrFail($id);
+        $role = Peran::findOrFail($id);
         $role->updateRole($request->all());
 
         return redirect()->route('role.index')->with('success', 'Role berhasil diperbarui.');
@@ -53,7 +53,7 @@ class RoleController extends Controller
 
     public function destroy($id)
     {
-        $role = Role::findOrFail($id);
+        $role = Peran::findOrFail($id);
         $role->deleteRole();
 
         return redirect()->route('role.index')->with('success', 'Role berhasil dihapus.');
@@ -62,7 +62,7 @@ class RoleController extends Controller
     public function toggleStatus($id)
     {
         try {
-            $role = Role::findOrFail($id);
+            $role = Peran::findOrFail($id);
             $role->toggleStatus();
 
             return response()->json([

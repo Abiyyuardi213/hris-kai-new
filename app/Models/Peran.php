@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class Role extends Model
+class Peran extends Model
 {
     use HasUuids;
 

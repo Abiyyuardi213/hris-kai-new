@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Role;
+use App\Models\Peran;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -16,18 +16,18 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // ensure roles exist
-        $adminRole = Role::where('role_name', 'Admin')->first();
+        $adminRole = Peran::where('role_name', 'Admin')->first();
         if (!$adminRole) {
-            $adminRole = Role::create([
+            $adminRole = Peran::create([
                 'role_name' => 'Admin',
                 'role_description' => 'Administrator with full access',
                 'role_status' => true
             ]);
         }
 
-        $pegawaiRole = Role::where('role_name', 'Pegawai')->first();
+        $pegawaiRole = Peran::where('role_name', 'Pegawai')->first();
         if (!$pegawaiRole) {
-            $pegawaiRole = Role::create([
+            $pegawaiRole = Peran::create([
                 'role_name' => 'Pegawai',
                 'role_description' => 'Regular employee',
                 'role_status' => true

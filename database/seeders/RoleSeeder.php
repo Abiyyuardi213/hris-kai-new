@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Role;
+use App\Models\Peran;
 
 class RoleSeeder extends Seeder
 {
@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Check if roles exist before creating, or use firstOrCreate
-        Role::firstOrCreate(
+        Peran::firstOrCreate(
             ['role_name' => 'Admin'],
             [
                 'role_description' => 'Administrator with full access',
@@ -21,7 +21,7 @@ class RoleSeeder extends Seeder
             ]
         );
 
-        Role::firstOrCreate(
+        Peran::firstOrCreate(
             ['role_name' => 'Pegawai'],
             [
                 'role_description' => 'Regular employee',

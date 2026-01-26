@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\City;
+use App\Models\Kota;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 
-class CityController extends Controller
+class KotaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = City::query();
+        $query = Kota::query();
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -37,17 +37,17 @@ class CityController extends Controller
             'province_name' => 'required',
         ]);
 
-        City::create($validated);
+        Kota::create($validated);
 
         return redirect()->route('cities.index')->with('success', 'Kota berhasil ditambahkan');
     }
 
-    public function edit(City $city)
+    public function edit(Kota $city)
     {
         return view('cities.edit', compact('city'));
     }
 
-    public function update(Request $request, City $city)
+    public function update(Request $request, Kota $city)
     {
         $validated = $request->validate([
             'code' => 'required|unique:cities,code,' . $city->id,
@@ -61,7 +61,7 @@ class CityController extends Controller
         return redirect()->route('cities.index')->with('success', 'Kota berhasil diperbarui');
     }
 
-    public function destroy(City $city)
+    public function destroy(Kota $city)
     {
         $city->delete();
         return redirect()->route('cities.index')->with('success', 'Kota berhasil dihapus');
@@ -91,7 +91,7 @@ class CityController extends Controller
                     $regencies = $regenciesResponse->json();
 
                     foreach ($regencies as $regency) {
-                        City::updateOrCreate(
+                        Kota::updateOrCreate(
                             ['code' => $regency['id']],
                             [
                                 'name' => $regency['name'],

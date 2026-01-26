@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Master Data')
 
 @section('content')
     <div class="flex flex-col space-y-6">
@@ -20,7 +21,7 @@
                 class="group relative overflow-hidden rounded-xl border bg-white p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-200">
                 <div class="flex flex-row items-center justify-between space-y-0 pb-2">
                     <h3 class="tracking-tight text-sm font-medium text-zinc-500 group-hover:text-blue-600 transition-colors">
-                        Total Pengguna</h3>
+                        Total User</h3>
                     <div class="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
                         <i data-lucide="users" class="h-4 w-4 text-blue-600"></i>
                     </div>
@@ -81,8 +82,8 @@
             <div class="col-span-4 rounded-xl border bg-white shadow-sm">
                 <div class="p-6 pb-4 border-b border-zinc-100 flex items-center justify-between">
                     <div>
-                        <h3 class="font-semibold text-zinc-900">Pengguna Terbaru</h3>
-                        <p class="text-sm text-zinc-500">Daftar 5 pengguna yang baru ditambahkan.</p>
+                        <h3 class="font-semibold text-zinc-900">User Terbaru</h3>
+                        <p class="text-sm text-zinc-500">Daftar 5 user yang baru ditambahkan.</p>
                     </div>
                     <a href="{{ route('users.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">Lihat
                         Semua</a>

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Division;
+use App\Models\Divisi;
 use Illuminate\Http\Request;
 
-class DivisionController extends Controller
+class DivisiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Division::withCount('positions');
+        $query = Divisi::withCount('positions');
 
         if ($request->has('search')) {
             $search = $request->search;
@@ -34,7 +34,7 @@ class DivisionController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Division::create($validated);
+        Divisi::create($validated);
 
         return redirect()->route('divisions.index')->with('success', 'Divisi berhasil ditambahkan');
     }

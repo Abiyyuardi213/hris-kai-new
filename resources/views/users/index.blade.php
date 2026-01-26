@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'User')
 
 @section('content')
     <div class="flex items-center justify-between space-y-2 mb-6">

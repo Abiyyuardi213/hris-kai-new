@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Office extends Model
+class Kantor extends Model
 {
     use HasFactory;
+
+    protected $table = 'offices';
 
     protected $fillable = [
         'office_code',
@@ -20,6 +22,6 @@ class Office extends Model
 
     public function city()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(Kota::class);
     }
 }

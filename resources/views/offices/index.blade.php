@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Kantor')
 
 @section('content')
     <div class="flex flex-col space-y-6">
