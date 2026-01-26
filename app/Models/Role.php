@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Role extends Model
 {
+    use HasUuids;
+
     protected $table = 'role';
     protected $keyType = 'string';
     public $incrementing = false;
@@ -20,12 +22,6 @@ class Role extends Model
 
     protected static function booted()
     {
-        static::creating(function ($role) {
-            if (!$role->id) {
-                $role->id = (string) Str::uuid();
-            }
-        });
-
         // static::created(function ($role) {
         //     RiwayatAktivitasLog::add(
         //         'role', 'create', "Membuat role {$role->role_name}",
