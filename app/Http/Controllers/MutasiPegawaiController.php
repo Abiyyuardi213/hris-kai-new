@@ -16,7 +16,8 @@ class MutasiPegawaiController extends Controller
     {
         $query = MutasiPegawai::with(['employee', 'fromDivision', 'fromPosition', 'fromOffice', 'toDivision', 'toPosition', 'toOffice']);
 
-        if ($request->has('search')) {
+        // Search by Employee Name or NIP
+        if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('employee', function ($q) use ($search) {
                 $q->where('nama_lengkap', 'like', "%{$search}%")
@@ -24,8 +25,37 @@ class MutasiPegawaiController extends Controller
             });
         }
 
+        // Filter by Type
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Filter by Division (Target)
+        if ($request->filled('division')) {
+            $query->where('to_division_id', $request->division);
+        }
+
+        // Filter by Office (Target)
+        if ($request->filled('office')) {
+            $query->where('to_office_id', $request->office);
+        }
+
+        // Filter by Date Range
+        if ($request->filled('start_date')) {
+            $query->whereDate('mutation_date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('mutation_date', '<=', $request->end_date);
+        }
+
         $mutations = $query->latest()->paginate(10);
-        return view('mutations.index', compact('mutations'));
+
+        // Metadata for filters
+        $divisions = Divisi::orderBy('name')->get();
+        $offices = Kantor::orderBy('office_name')->get();
+        $types = ['promosi', 'demosi', 'rotasi', 'mutasi'];
+
+        return view('mutations.index', compact('mutations', 'divisions', 'offices', 'types'));
     }
 
     public function create()

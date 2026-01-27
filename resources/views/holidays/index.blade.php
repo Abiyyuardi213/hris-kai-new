@@ -6,11 +6,21 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold tracking-tight">Hari Libur Nasional</h2>
-            <button onclick="openModal('addHolidayModal')"
-                class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
-                <i data-lucide="plus" class="h-4 w-4"></i>
-                Tambah Hari Libur
-            </button>
+            <div class="flex items-center gap-3">
+                <form id="syncHolidayForm" action="{{ route('holidays.sync-api') }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm">
+                        <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                        Sinkronisasi API
+                    </button>
+                </form>
+                <button onclick="openModal('addHolidayModal')"
+                    class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                    Tambah Hari Libur
+                </button>
+            </div>
         </div>
 
         <!-- Content -->
@@ -169,6 +179,32 @@
         </div>
     </div>
 
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/60 transition-opacity backdrop-blur-md"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-white p-8 text-left shadow-2xl transition-all sm:w-full sm:max-w-xs border border-zinc-100">
+                    <div class="flex flex-col items-center justify-center space-y-4">
+                        <div class="relative h-16 w-16">
+                            <div class="absolute inset-0 rounded-full border-4 border-zinc-100"></div>
+                            <div
+                                class="absolute inset-0 rounded-full border-4 border-zinc-900 border-t-transparent animate-spin">
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-zinc-900">Menyinkronkan Data</h3>
+                            <p class="mt-1 text-sm text-zinc-500">Mohon tunggu sebentar, sedang mengambil data hari libur
+                                dari API...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
@@ -177,5 +213,10 @@
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
+
+        // Sync API Loading
+        document.getElementById('syncHolidayForm')?.addEventListener('submit', function() {
+            document.getElementById('loadingModal').classList.remove('hidden');
+        });
     </script>
 @endsection

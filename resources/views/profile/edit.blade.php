@@ -157,7 +157,7 @@
                         </div>
 
                         <div class="bg-zinc-50/50 px-6 md:px-8 py-5 flex justify-end gap-3 border-t">
-                            <a href="{{ route('dashboard') }}"
+                            <a href="{{ $guard === 'employee' ? route('employee.dashboard') : route('dashboard') }}"
                                 class="inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-white px-6 py-2 target-sm text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition-colors">Batal</a>
                             <button type="submit"
                                 class="inline-flex items-center justify-center rounded-lg bg-zinc-900 px-8 py-2 text-sm font-bold text-white shadow-sm hover:bg-zinc-800 transition-all active:scale-[0.98]">Simpan

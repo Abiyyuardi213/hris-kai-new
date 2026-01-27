@@ -7,20 +7,25 @@
         <span class="text-[10px]">Dashboard</span>
     </a>
     <a href="{{ route('employee.attendance.index') }}"
-        class="flex flex-col items-center justify-center gap-1 flex-1 transition-colors {{ Request::is('attendance*') ? 'text-zinc-900 font-bold' : 'text-zinc-400 font-medium' }}">
+        class="flex flex-col items-center justify-center gap-1 flex-1 transition-colors {{ Request::is('attendance') ? 'text-zinc-900 font-bold' : 'text-zinc-400 font-medium' }}">
         <i data-lucide="camera" class="h-5 w-5"></i>
         <span class="text-[10px]">Presensi</span>
+    </a>
+    <a href="{{ route('employee.izin.index') }}"
+        class="flex flex-col items-center justify-center gap-1 flex-1 transition-colors {{ Request::is('izin*') ? 'text-zinc-900 font-bold' : 'text-zinc-400 font-medium' }}">
+        <i data-lucide="file-text" class="h-5 w-5"></i>
+        <span class="text-[10px]">Izin</span>
     </a>
     <a href="{{ route('employee.profile') }}"
         class="flex flex-col items-center justify-center gap-1 flex-1 transition-colors {{ Request::is('profile*') ? 'text-zinc-900 font-bold' : 'text-zinc-400 font-medium' }}">
         <i data-lucide="user-cog" class="h-5 w-5"></i>
         <span class="text-[10px]">Profil</span>
     </a>
-    <button onclick="document.getElementById('logout-form-employee').submit();"
-        class="flex flex-col items-center justify-center gap-1 flex-1 text-red-400 transition-colors">
-        <i data-lucide="log-out" class="h-5 w-5"></i>
-        <span class="text-[10px]">Keluar</span>
-    </button>
+    <a href="{{ route('employee.attendance.history') }}"
+        class="flex flex-col items-center justify-center gap-1 flex-1 transition-colors {{ Request::is('attendance-history*') ? 'text-zinc-900 font-bold' : 'text-zinc-400 font-medium' }}">
+        <i data-lucide="history" class="h-5 w-5"></i>
+        <span class="text-[10px]">Riwayat</span>
+    </a>
 </nav>
 
 <!-- Sidebar for Desktop Employee -->
@@ -38,9 +43,19 @@
             <span class="font-bold">Dashboard</span>
         </a>
         <a href="{{ route('employee.attendance.index') }}"
-            class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all {{ Request::is('attendance*') ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900' }}">
+            class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all {{ Request::is('attendance') ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900' }}">
             <i data-lucide="camera" class="h-4 w-4"></i>
             <span class="font-bold">Presensi Harian</span>
+        </a>
+        <a href="{{ route('employee.izin.index') }}"
+            class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all {{ Request::is('izin*') ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900' }}">
+            <i data-lucide="file-text" class="h-4 w-4"></i>
+            <span class="font-bold">Pengajuan Izin</span>
+        </a>
+        <a href="{{ route('employee.attendance.history') }}"
+            class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all {{ Request::is('attendance-history*') ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900' }}">
+            <i data-lucide="history" class="h-4 w-4"></i>
+            <span class="font-bold">Riwayat Presensi</span>
         </a>
         <a href="{{ route('employee.profile') }}"
             class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all {{ Request::is('profile*') ? 'bg-zinc-900 text-white shadow-lg shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900' }}">
@@ -50,7 +65,7 @@
     </div>
 
     <div class="p-4 border-t bg-white">
-        <button type="button" onclick="document.getElementById('logout-form-employee').submit();"
+        <button type="button" onclick="showLogoutModal();"
             class="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-all">
             <i data-lucide="log-out" class="h-4 w-4"></i>
             Keluar Aplikasi

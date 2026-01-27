@@ -88,7 +88,7 @@ class DataMasterController extends Controller
             ->get();
 
         // Latest mutations
-        $latestMutations = MutasiPegawai::with(['employee', 'oldPosition', 'newPosition'])
+        $latestMutations = MutasiPegawai::with(['employee', 'fromPosition', 'toPosition'])
             ->latest()
             ->take(5)
             ->get();

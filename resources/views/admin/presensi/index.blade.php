@@ -58,6 +58,7 @@
                     <thead
                         class="bg-zinc-50/50 border-b border-zinc-100 text-zinc-400 uppercase text-[11px] font-bold tracking-widest">
                         <tr>
+                            <th class="px-6 py-4 w-12">No</th>
                             <th class="px-6 py-4">Pegawai</th>
                             <th class="px-6 py-4">Tanggal / Shift</th>
                             <th class="px-6 py-4">Masuk / Pulang</th>
@@ -69,6 +70,9 @@
                     <tbody class="divide-y divide-zinc-100">
                         @forelse($presensis as $presensi)
                             <tr class="hover:bg-zinc-50/50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-zinc-400">
+                                    {{ ($presensis->currentPage() - 1) * $presensis->perPage() + $loop->iteration }}
+                                </td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div
@@ -132,22 +136,39 @@
                                 <td class="px-6 py-4">
                                     <div class="text-xs text-zinc-500 max-w-[150px] truncate">
                                         {{ $presensi->keterangan ?? '-' }}</div>
-                                    @if ($presensi->terlambat > 0)
-                                        <div class="text-[10px] text-red-500 font-bold mt-1">Terlambat
-                                            {{ $presensi->terlambat }} menit</div>
+                                    @if ($presensi->status === 'Hadir')
+                                        @if ($presensi->terlambat > 0)
+                                            <div
+                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-50 text-red-600 text-[10px] font-bold uppercase mt-1">
+                                                <i data-lucide="clock-alert" class="h-3 w-3"></i>
+                                                Terlambat {{ $presensi->terlambat }}m
+                                            </div>
+                                        @else
+                                            <div
+                                                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[10px] font-bold uppercase mt-1">
+                                                <i data-lucide="check-circle-2" class="h-3 w-3"></i>
+                                                Tepat Waktu
+                                            </div>
+                                        @endif
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('admin.presensi.show', $presensi->id) }}"
-                                        class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 hover:text-zinc-600 transition-colors">
-                                        Detail
-                                        <i data-lucide="chevron-right" class="h-3 w-3"></i>
-                                    </a>
+                                    <div class="flex items-center justify-end gap-2">
+                                        <button type="button"
+                                            onclick="openEditModal('{{ $presensi->id }}', '{{ $presensi->status }}', '{{ $presensi->jam_masuk }}', '{{ $presensi->jam_pulang }}', '{{ $presensi->keterangan }}')"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                                            <i data-lucide="edit" class="h-4 w-4"></i>
+                                        </button>
+                                        <a href="{{ route('admin.presensi.show', $presensi->id) }}"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                                            <i data-lucide="eye" class="h-4 w-4"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center text-zinc-500">
+                                <td colspan="7" class="px-6 py-12 text-center text-zinc-500">
                                     <i data-lucide="inbox" class="h-12 w-12 mx-auto mb-4 text-zinc-200"></i>
                                     <p>Tidak ada data presensi yang ditemukan.</p>
                                 </td>
@@ -163,4 +184,123 @@
             @endif
         </div>
     </div>
+    <!-- Edit Presence Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
+        role="dialog" aria-modal="true">
+        <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Overlay -->
+            <div id="edit-modal-overlay"
+                class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"
+                onclick="closeEditModal()"></div>
+
+            <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal Content -->
+            <div id="edit-modal-content"
+                class="relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <form id="edit-form" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="bg-white px-6 pt-6 pb-4">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-zinc-900" id="modal-title">Edit Presensi</h3>
+                            <button type="button" onclick="closeEditModal()" class="text-zinc-400 hover:text-zinc-500">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-zinc-700 mb-1">Status Kehadiran</label>
+                                <select name="status" id="edit-status" required
+                                    class="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900">
+                                    <option value="Hadir">Hadir</option>
+                                    <option value="Izin">Izin</option>
+                                    <option value="Sakit">Sakit</option>
+                                    <option value="Alpa">Alpa</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-zinc-700 mb-1">Jam Masuk</label>
+                                    <input type="time" name="jam_masuk" id="edit-jam-masuk"
+                                        class="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-zinc-700 mb-1">Jam Pulang</label>
+                                    <input type="time" name="jam_pulang" id="edit-jam-pulang"
+                                        class="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-zinc-700 mb-1">Keterangan</label>
+                                <textarea name="keterangan" id="edit-keterangan" rows="3"
+                                    class="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900"
+                                    placeholder="Opsional..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-zinc-50 px-6 py-4 flex flex-col sm:flex-row-reverse gap-2">
+                        <button type="submit"
+                            class="inline-flex w-full justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-zinc-800 transition-all sm:w-auto">
+                            Simpan Perubahan
+                        </button>
+                        <button type="button" onclick="closeEditModal()"
+                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all sm:w-auto">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEditModal(id, status, jamMasuk, jamPulang, keterangan) {
+            const modal = document.getElementById('edit-modal');
+            const form = document.getElementById('edit-form');
+            const overlay = document.getElementById('edit-modal-overlay');
+            const content = document.getElementById('edit-modal-content');
+
+            // Set values
+            form.action = `/admin/presensi/${id}`;
+            document.getElementById('edit-status').value = status;
+            document.getElementById('edit-jam-masuk').value = jamMasuk ? jamMasuk.substring(0, 5) : '';
+            document.getElementById('edit-jam-pulang').value = jamPulang ? jamPulang.substring(0, 5) : '';
+            document.getElementById('edit-keterangan').value = keterangan || '';
+
+            // Show modal
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
+                content.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            lucide.createIcons();
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            const overlay = document.getElementById('edit-modal-overlay');
+            const content = document.getElementById('edit-modal-content');
+
+            overlay.classList.add('opacity-0');
+            content.classList.add('opacity-0', 'translate-y-4', 'sm:scale-95');
+            content.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeEditModal();
+            }
+        });
+    </script>
 @endsection

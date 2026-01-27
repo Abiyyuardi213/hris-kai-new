@@ -121,6 +121,12 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Daftar Presensi</span>
                     </a>
 
+                    <a href="{{ route('admin.izin.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/izin*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="file-clock" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Izin / Sakit</span>
+                    </a>
+
                     <div
                         class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
                         Lainnya</div>

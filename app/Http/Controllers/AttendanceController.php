@@ -20,6 +20,7 @@ class AttendanceController extends Controller
             ->where('tanggal', Carbon::today())
             ->first();
 
+        // Standard history for sidebar (last 7 days)
         $history = Presensi::where('pegawai_id', $employee->id)
             ->latest('tanggal')
             ->take(7)
@@ -27,7 +28,45 @@ class AttendanceController extends Controller
 
         $shift = $employee->shift;
 
-        return view('employee.attendance.index', compact('employee', 'todayAttendance', 'history', 'shift'));
+        return view('employee.attendance.index', compact(
+            'employee',
+            'todayAttendance',
+            'history',
+            'shift'
+        ));
+    }
+
+    public function history(Request $request)
+    {
+        /** @var \App\Models\Pegawai $employee */
+        $employee = Auth::guard('employee')->user();
+
+        $selectedMonth = $request->get('month', date('m'));
+        $selectedYear = $request->get('year', date('Y'));
+
+        // Get monthly history
+        $monthlyHistory = Presensi::where('pegawai_id', $employee->id)
+            ->whereMonth('tanggal', $selectedMonth)
+            ->whereYear('tanggal', $selectedYear)
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+        // Calculate Stats
+        $stats = [
+            'total_hadir' => $monthlyHistory->where('status', 'Hadir')->count(),
+            'total_late' => $monthlyHistory->where('terlambat', '>', 0)->count(),
+            'total_early' => $monthlyHistory->where('pulang_cepat', '>', 0)->count(),
+            'total_izin' => $monthlyHistory->where('status', 'Izin')->count(),
+            'total_sakit' => $monthlyHistory->where('status', 'Sakit')->count(),
+        ];
+
+        return view('employee.attendance.history', compact(
+            'employee',
+            'monthlyHistory',
+            'selectedMonth',
+            'selectedYear',
+            'stats'
+        ));
     }
 
     public function clockIn(Request $request)
@@ -54,11 +93,12 @@ class AttendanceController extends Controller
         ]);
 
         $now = Carbon::now();
-        $startTime = Carbon::createFromFormat('H:i:s', $shift->start_time);
+        $shiftStart = Carbon::parse($shift->start_time);
+        $startTime = Carbon::today()->setTime($shiftStart->hour, $shiftStart->minute, $shiftStart->second);
 
         $terlambat = 0;
         if ($now->greaterThan($startTime)) {
-            $terlambat = $now->diffInMinutes($startTime);
+            $terlambat = abs($now->diffInMinutes($startTime));
         }
 
         // Save image
@@ -77,6 +117,7 @@ class AttendanceController extends Controller
             'lokasi_masuk' => $request->location,
             'status' => 'Hadir',
             'terlambat' => $terlambat,
+            'keterangan' => $terlambat > 0 ? 'Terlambat ' . $terlambat . ' menit' : 'Tepat Waktu',
         ]);
 
         return redirect()->route('employee.attendance.index')->with('success', 'Berhasil Absen Masuk. Semangat Bekerja!');
@@ -106,11 +147,12 @@ class AttendanceController extends Controller
         ]);
 
         $now = Carbon::now();
-        $endTime = Carbon::createFromFormat('H:i:s', $shift->end_time);
+        $shiftEnd = Carbon::parse($shift->end_time);
+        $endTime = Carbon::today()->setTime($shiftEnd->hour, $shiftEnd->minute, $shiftEnd->second);
 
         $pulangCepat = 0;
         if ($now->lessThan($endTime)) {
-            $pulangCepat = $now->diffInMinutes($endTime);
+            $pulangCepat = abs($now->diffInMinutes($endTime));
         }
 
         // Save image

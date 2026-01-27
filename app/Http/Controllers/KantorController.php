@@ -52,16 +52,46 @@ class KantorController extends Controller
             return response()->json(['code' => '']);
         }
 
-        // Get prefix: Skip "KOTA " or "KABUPATEN " if present
-        $cityName = strtoupper($city->name);
-        $parts = explode(' ', $cityName);
+        // Familiar city abbreviations (KAI/IATA style)
+        $cityMappings = [
+            'SURABAYA' => 'SUB',
+            'BANDUNG' => 'BDG',
+            'SEMARANG' => 'SMG',
+            'JAKARTA' => 'JKT',
+            'YOGYAKARTA' => 'YOG',
+            'SURAKARTA' => 'SLO',
+            'SOLO' => 'SLO',
+            'MALANG' => 'MLG',
+            'MEDAN' => 'MDN',
+            'MAKASSAR' => 'MKS',
+            'PALEMBANG' => 'PLM',
+            'DENPASAR' => 'DPS',
+            'BALIKPAPAN' => 'BPN',
+            'SAMARINDA' => 'SRI',
+            'PONTIANAK' => 'PNK',
+            'BANJARMASIN' => 'BJM',
+            'MANADO' => 'MND',
+            'CIREBON' => 'CN',
+            'TEGAL' => 'TG',
+            'PURWOKERTO' => 'PWT',
+            'MADIUN' => 'MN',
+            'JEMBER' => 'JR',
+            'BANYUWANGI' => 'BW',
+            'CILACAP' => 'CP',
+        ];
 
-        if (count($parts) > 1 && (str_contains($cityName, 'KOTA') || str_contains($cityName, 'KABUPATEN'))) {
-            // Take the first 3 letters of the second word (e.g., SURABAYA -> SUR)
-            $prefix = substr($parts[1], 0, 3);
+        $cityName = strtoupper($city->name);
+
+        // Clean city name from "KOTA " or "KABUPATEN "
+        $cleanName = str_replace(['KOTA ', 'KABUPATEN '], '', $cityName);
+        $cleanName = trim($cleanName);
+
+        // Check if we have a mapping
+        if (isset($cityMappings[$cleanName])) {
+            $prefix = $cityMappings[$cleanName];
         } else {
-            // Fallback for single word or unexpected formats
-            $prefix = substr($parts[0], 0, 3);
+            // Fallback: use first 3 letters of the cleaned name
+            $prefix = substr($cleanName, 0, 3);
         }
 
         $prefix = strtoupper($prefix);

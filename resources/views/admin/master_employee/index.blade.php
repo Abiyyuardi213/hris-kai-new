@@ -79,14 +79,14 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-2">
                                             <span
-                                                class="text-xs font-medium text-zinc-400">{{ $mutation->oldPosition->name ?? '-' }}</span>
+                                                class="text-xs font-medium text-zinc-400">{{ $mutation->fromPosition->name ?? '-' }}</span>
                                             <i data-lucide="arrow-right" class="h-3 w-3 text-zinc-300"></i>
                                             <span
-                                                class="text-xs font-bold text-zinc-900">{{ $mutation->newPosition->name ?? '-' }}</span>
+                                                class="text-xs font-bold text-zinc-900">{{ $mutation->toPosition->name ?? '-' }}</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-zinc-500">
-                                        {{ \Carbon\Carbon::parse($mutation->effective_date)->format('d M Y') }}
+                                        {{ \Carbon\Carbon::parse($mutation->mutation_date)->format('d M Y') }}
                                     </td>
                                 </tr>
                             @empty

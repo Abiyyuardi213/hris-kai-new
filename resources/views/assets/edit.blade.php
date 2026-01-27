@@ -99,6 +99,43 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="office_id" class="block text-sm font-medium text-zinc-900">Unit Kerja
+                                (Kantor)</label>
+                            <select name="office_id" id="office_id"
+                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('office_id') border-red-500 @enderror">
+                                <option value="">Pilih Kantor</option>
+                                @foreach ($offices as $off)
+                                    <option value="{{ $off->id }}"
+                                        {{ old('office_id', $asset->office_id) == $off->id ? 'selected' : '' }}>
+                                        {{ $off->office_code }} | {{ $off->office_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('office_id')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="division_id" class="block text-sm font-medium text-zinc-900">Divisi</label>
+                            <select name="division_id" id="division_id"
+                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('division_id') border-red-500 @enderror">
+                                <option value="">Pilih Divisi</option>
+                                @foreach ($divisions as $div)
+                                    <option value="{{ $div->id }}"
+                                        {{ old('division_id', $asset->division_id) == $div->id ? 'selected' : '' }}>
+                                        {{ $div->code }} | {{ $div->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('division_id')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div>
                         <label for="description" class="block text-sm font-medium text-zinc-900">Deskripsi</label>
                         <textarea name="description" id="description" rows="3"

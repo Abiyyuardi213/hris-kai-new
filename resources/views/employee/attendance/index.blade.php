@@ -130,7 +130,7 @@
                                         <div
                                             class="h-10 w-10 rounded-lg bg-zinc-100 flex flex-col items-center justify-center">
                                             <span
-                                                class="text-[9px] uppercase font-bold text-zinc-400">{{ \Carbon\Carbon::parse($item->tanggal)->format('M') }}</span>
+                                                class="text-[9px] uppercase font-bold text-zinc-400">{{ \Carbon\Carbon::parse($item->tanggal)->translatedFormat('M') }}</span>
                                             <span
                                                 class="text-sm font-bold text-zinc-700 leading-none">{{ \Carbon\Carbon::parse($item->tanggal)->format('d') }}</span>
                                         </div>

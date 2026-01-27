@@ -1,6 +1,10 @@
 <header
     class="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b bg-white/80 backdrop-blur-md px-6 shadow-sm">
-    <div></div>
+    <div class="md:hidden">
+        <a href="{{ route('employee.dashboard') }}">
+            <img src="{{ asset('image/logo-kai.png') }}" alt="Logo" class="h-7 w-auto">
+        </a>
+    </div>
 
     <div class="flex items-center gap-4">
         <div class="relative group">
@@ -15,7 +19,7 @@
                     </div>
                 @endif
                 <span
-                    class="text-xs font-bold text-zinc-700 hidden sm:block">{{ explode(' ', Auth::guard('employee')->user()->nama_lengkap)[0] }}</span>
+                    class="text-xs font-bold text-zinc-700">{{ explode(' ', Auth::guard('employee')->user()->nama_lengkap)[0] }}</span>
             </button>
             <div
                 class="hidden group-hover:block absolute right-0 mt-0 w-48 origin-top-right rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50 overflow-hidden border border-zinc-100">
@@ -31,7 +35,7 @@
                         Edit Profil
                     </a>
                     <hr class="border-zinc-100">
-                    <button type="button" onclick="document.getElementById('logout-form-employee').submit();"
+                    <button type="button" onclick="showLogoutModal();"
                         class="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
                         <i data-lucide="log-out" class="h-4 w-4"></i>
                         Keluar
