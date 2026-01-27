@@ -137,6 +137,7 @@
         </div>
     </div>
 
+    <!-- Loading Modal -->
     <!-- Sync Confirmation Modal -->
     <div id="syncModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Background backdrop -->
@@ -168,7 +169,8 @@
                         </div>
                     </div>
                     <div class="bg-zinc-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-zinc-100">
-                        <form action="{{ route('cities.sync') }}" method="POST" class="inline-block w-full sm:w-auto">
+                        <form id="syncCityForm" action="{{ route('cities.sync') }}" method="POST"
+                            class="inline-block w-full sm:w-auto">
                             @csrf
                             <button type="submit"
                                 class="inline-flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:ml-3 sm:w-auto transition-colors">
@@ -234,6 +236,32 @@
         </div>
     </div>
 
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="fixed inset-0 z-[60] hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/60 transition-opacity backdrop-blur-md"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-white p-8 text-left shadow-2xl transition-all sm:w-full sm:max-w-xs border border-zinc-100">
+                    <div class="flex flex-col items-center justify-center space-y-4">
+                        <div class="relative h-16 w-16">
+                            <div class="absolute inset-0 rounded-full border-4 border-zinc-100"></div>
+                            <div
+                                class="absolute inset-0 rounded-full border-4 border-zinc-900 border-t-transparent animate-spin">
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-zinc-900">Menyinkronkan Data</h3>
+                            <p class="mt-1 text-sm text-zinc-500">Mohon tunggu sebentar, sedang mengambil data kota dari
+                                wilayah Indonesia API...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         function openModal(modalId) {
             document.getElementById(modalId).classList.remove('hidden');
@@ -248,6 +276,12 @@
             document.getElementById('deleteForm').action = "{{ url('admin/cities') }}/" + id;
             openModal('deleteModal');
         }
+
+        // Sync API Loading
+        document.getElementById('syncCityForm')?.addEventListener('submit', function() {
+            closeModal('syncModal');
+            document.getElementById('loadingModal').classList.remove('hidden');
+        });
 
         // Close modal on escape key
         document.addEventListener('keydown', function(event) {
