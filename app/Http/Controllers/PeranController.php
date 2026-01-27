@@ -76,4 +76,19 @@ class PeranController extends Controller
             ], 500);
         }
     }
+
+    public function permissions($id)
+    {
+        $role = Peran::with('permissions')->findOrFail($id);
+        $permissions = \App\Models\Permission::all()->groupBy('module');
+        return view('role.permissions', compact('role', 'permissions'));
+    }
+
+    public function updatePermissions(Request $request, $id)
+    {
+        $role = Peran::findOrFail($id);
+        $role->permissions()->sync($request->permissions);
+
+        return redirect()->route('role.index')->with('success', 'Hak akses role berhasil diperbarui.');
+    }
 }

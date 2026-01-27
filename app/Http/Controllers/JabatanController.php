@@ -61,6 +61,8 @@ class JabatanController extends Controller
             'name' => 'required|string|max:255',
             'division_id' => 'required|exists:divisions,id',
             'description' => 'nullable|string',
+            'gaji_per_hari' => 'required|numeric|min:0',
+            'tunjangan' => 'required|numeric|min:0',
         ]);
 
         Jabatan::create($validated);
@@ -81,6 +83,8 @@ class JabatanController extends Controller
             'name' => 'required|string|max:255',
             'division_id' => 'required|exists:divisions,id',
             'description' => 'nullable|string',
+            'gaji_per_hari' => 'required|numeric|min:0',
+            'tunjangan' => 'required|numeric|min:0',
         ]);
 
         $position->update($validated);

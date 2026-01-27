@@ -20,6 +20,11 @@ class Peran extends Model
         'role_status',
     ];
 
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permissions', 'role_id', 'permission_id');
+    }
+
     protected static function booted()
     {
         // static::created(function ($role) {

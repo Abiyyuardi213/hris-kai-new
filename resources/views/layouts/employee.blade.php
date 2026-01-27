@@ -30,7 +30,7 @@
 
         <!-- Main Content Area -->
         <div
-            class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden md:ml-64 transition-all duration-300">
+            class="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden md:ml-72 transition-all duration-300">
             <!-- Header/Navbar -->
             <x-employee-navbar />
 
@@ -84,6 +84,28 @@
     </form>
 
     <script>
+        function toggleEmployeeSidebar() {
+            const sidebar = document.getElementById('employeeSidebar');
+            const overlay = document.getElementById('employeeSidebarOverlay');
+            const isHidden = sidebar.classList.contains('-translate-x-full');
+
+            if (isHidden) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    overlay.classList.add('opacity-100');
+                }, 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('opacity-0');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+        }
+
         lucide.createIcons();
 
         function showLogoutModal() {

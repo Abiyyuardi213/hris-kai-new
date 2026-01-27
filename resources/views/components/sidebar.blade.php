@@ -29,17 +29,21 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Dashboard Master</span>
                     </a>
 
-                    <a href="{{ route('role.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/role*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="shield" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Peran</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-roles'))
+                        <a href="{{ route('role.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/role*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="shield" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Peran</span>
+                        </a>
+                    @endif
 
-                    <a href="{{ route('users.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/users*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="users" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Users</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-users'))
+                        <a href="{{ route('users.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/users*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="users" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Users</span>
+                        </a>
+                    @endif
 
                     <a href="{{ route('cities.index') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/cities*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
@@ -121,10 +125,26 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Daftar Presensi</span>
                     </a>
 
-                    <a href="{{ route('admin.izin.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/izin*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="file-clock" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Izin / Sakit</span>
+                    @if (Auth::user()->hasPermission('manage-izin'))
+                        <a href="{{ route('admin.izin.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/izin*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="file-clock" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Izin / Sakit</span>
+                        </a>
+                    @endif
+
+                    @if (Auth::user()->hasPermission('manage-overtime'))
+                        <a href="{{ route('admin.overtime.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/overtime*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="clock-arrow-up" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Lembur</span>
+                        </a>
+                    @endif
+
+                    <a href="{{ route('admin.payroll.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/payroll*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="banknote" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Payroll</span>
                     </a>
 
                     <div
@@ -141,11 +161,13 @@
                         class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
                         Assets</div>
 
-                    <a href="{{ route('assets.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/assets*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="box" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Aset</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-assets'))
+                        <a href="{{ route('assets.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/assets*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="box" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Aset</span>
+                        </a>
+                    @endif
                 @endif
             @endif
         </nav>

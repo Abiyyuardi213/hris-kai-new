@@ -73,6 +73,40 @@
                         @enderror
                     </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="gaji_per_hari" class="block text-sm font-medium text-zinc-900">Gaji Per Hari</label>
+                            <div class="relative mt-1">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
+                                </div>
+                                <input type="number" id="gaji_per_hari" name="gaji_per_hari"
+                                    value="{{ old('gaji_per_hari', 0) }}" required
+                                    class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('gaji_per_hari') border-red-500 @enderror"
+                                    placeholder="0">
+                            </div>
+                            @error('gaji_per_hari')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="tunjangan" class="block text-sm font-medium text-zinc-900">Tunjangan Tetap</label>
+                            <div class="relative mt-1">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
+                                </div>
+                                <input type="number" id="tunjangan" name="tunjangan" value="{{ old('tunjangan', 0) }}"
+                                    required
+                                    class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('tunjangan') border-red-500 @enderror"
+                                    placeholder="0">
+                            </div>
+                            @error('tunjangan')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div>
                         <label for="description" class="block text-sm font-medium text-zinc-900">Deskripsi</label>
                         <textarea name="description" id="description" rows="3"

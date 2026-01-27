@@ -38,8 +38,14 @@
                                 </td>
                                 <td class="p-4 align-middle text-center">
                                     <div class="flex items-center justify-center gap-2">
+                                        <a href="{{ route('role.permissions', $role->id) }}"
+                                            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-zinc-100 hover:text-zinc-900 h-8 w-8"
+                                            title="Atur Hak Akses">
+                                            <i data-lucide="shield-check" class="h-4 w-4"></i>
+                                        </a>
                                         <button onclick="openEditModal({{ json_encode($role) }})"
-                                            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8">
+                                            class="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-8 w-8"
+                                            title="Edit Peran">
                                             <i data-lucide="edit-2" class="h-4 w-4"></i>
                                         </button>
                                         <button type="button"

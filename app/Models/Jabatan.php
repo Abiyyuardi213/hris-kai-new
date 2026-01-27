@@ -11,7 +11,7 @@ class Jabatan extends Model
 
     protected $table = 'positions';
 
-    protected $fillable = ['code', 'name', 'division_id', 'description'];
+    protected $fillable = ['code', 'name', 'division_id', 'description', 'gaji_per_hari', 'tunjangan'];
 
     public function division()
     {

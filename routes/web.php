@@ -33,6 +33,15 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/izin/create', [App\Http\Controllers\IzinController::class, 'create'])->name('employee.izin.create');
     Route::post('/izin', [App\Http\Controllers\IzinController::class, 'store'])->name('employee.izin.store');
     Route::get('/izin/{izin}', [App\Http\Controllers\IzinController::class, 'show'])->name('employee.izin.show');
+
+    // Lembur
+    Route::get('/overtime', [App\Http\Controllers\OvertimeController::class, 'index'])->name('employee.overtime.index');
+    Route::get('/overtime/create', [App\Http\Controllers\OvertimeController::class, 'create'])->name('employee.overtime.create');
+    Route::post('/overtime', [App\Http\Controllers\OvertimeController::class, 'store'])->name('employee.overtime.store');
+
+    // Payroll
+    Route::get('/payroll', [App\Http\Controllers\EmployeePayrollController::class, 'index'])->name('employee.payroll.index');
+    Route::get('/payroll/{payroll}', [App\Http\Controllers\EmployeePayrollController::class, 'show'])->name('employee.payroll.show');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -47,8 +56,13 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/master-office', [App\Http\Controllers\DataMasterController::class, 'masterOffice'])->name('master.office');
     Route::get('/master-employee', [App\Http\Controllers\DataMasterController::class, 'masterEmployee'])->name('master.employee');
 
-    Route::resource('role', PeranController::class);
-    Route::post('role/{id}/toggle-status', [PeranController::class, 'toggleStatus'])->name('role.toggleStatus');
+    // Role Management
+    Route::middleware('permission:manage-roles')->group(function () {
+        Route::resource('role', PeranController::class);
+        Route::post('role/{id}/toggle-status', [PeranController::class, 'toggleStatus'])->name('role.toggleStatus');
+        Route::get('role/{id}/permissions', [PeranController::class, 'permissions'])->name('role.permissions');
+        Route::put('role/{id}/permissions', [PeranController::class, 'updatePermissions'])->name('role.update-permissions');
+    });
 
     Route::resource('users', UserController::class);
 
@@ -61,7 +75,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('divisions', App\Http\Controllers\DivisiController::class);
     Route::resource('positions', App\Http\Controllers\JabatanController::class);
 
-    Route::resource('assets', App\Http\Controllers\AsetController::class);
+    Route::resource('assets', App\Http\Controllers\AsetController::class)->middleware('permission:manage-assets');
     Route::resource('employment-statuses', App\Http\Controllers\StatusPegawaiController::class);
     Route::resource('employees', App\Http\Controllers\PegawaiController::class);
 
@@ -81,4 +95,18 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::post('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'store'])->name('admin.izin.store');
     Route::patch('/izin/{izin}/status', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'updateStatus'])->name('admin.izin.update-status');
     Route::delete('/izin/{izin}', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'destroy'])->name('admin.izin.destroy');
+
+    // Manajemen Lembur
+    Route::get('/overtime', [App\Http\Controllers\Admin\OvertimeController::class, 'index'])->name('admin.overtime.index');
+    Route::post('/overtime', [App\Http\Controllers\Admin\OvertimeController::class, 'store'])->name('admin.overtime.store');
+    Route::patch('/overtime/{overtime}/status', [App\Http\Controllers\Admin\OvertimeController::class, 'updateStatus'])->name('admin.overtime.update-status');
+    Route::delete('/overtime/{overtime}', [App\Http\Controllers\Admin\OvertimeController::class, 'destroy'])->name('admin.overtime.destroy');
+
+    // Manajemen Payroll
+    Route::get('/payroll', [App\Http\Controllers\Admin\PayrollController::class, 'index'])->name('admin.payroll.index');
+    Route::get('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'generate'])->name('admin.payroll.generate');
+    Route::post('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'processGenerate'])->name('admin.payroll.process-generate');
+    // Route::get('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'show'])->name('admin.payroll.show');
+    Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
+    Route::delete('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'destroy'])->name('admin.payroll.destroy');
 });

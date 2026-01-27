@@ -40,6 +40,12 @@ class User extends Authenticatable
         return $this->hasOne(Pegawai::class);
     }
 
+    public function hasPermission($permission)
+    {
+        if (!$this->role) return false;
+        return $this->role->permissions()->where('name', $permission)->exists();
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
