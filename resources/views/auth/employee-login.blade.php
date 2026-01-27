@@ -19,12 +19,12 @@
     <div class="w-full max-w-[420px] space-y-8">
         <!-- Logo & Header -->
         <div class="flex flex-col items-center">
-            <div
-                class="h-12 w-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white shadow-sm mb-6">
-                <i data-lucide="train-front" class="h-6 w-6"></i>
+            <div class="mb-4">
+                <img src="{{ asset('image/logo-kai.png') }}" alt="Logo KAI" class="h-10 w-auto">
             </div>
             <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Portal Pegawai</h1>
-            <p class="text-sm text-zinc-500 mt-2">Sistem Informasi Kepegawaian PT KAI</p>
+            <p class="text-sm text-zinc-500 mt-2 text-center">Sistem Informasi Kepegawaian PT Kereta Api Indonesia
+                (Persero)</p>
         </div>
 
         <!-- Login Card -->

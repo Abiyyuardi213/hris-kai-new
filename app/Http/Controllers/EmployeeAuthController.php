@@ -31,7 +31,7 @@ class EmployeeAuthController extends Controller
             Auth::guard('employee')->login($pegawai, $request->remember);
             $request->session()->regenerate();
 
-            return redirect()->intended(route('employee.dashboard'));
+            return redirect()->intended(route('employee.dashboard'))->with('success', 'Selamat datang kembali, ' . $pegawai->nama_lengkap . '!');
         }
 
         return back()->withErrors([

@@ -7,7 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('employee.login');
 });
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

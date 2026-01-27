@@ -11,7 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(fn($request) => $request->is('dashboard-pegawai*') ? route('employee.login') : route('login'));
+        $middleware->redirectGuestsTo(fn($request) => $request->is('admin*') ? route('login') : route('employee.login'));
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
