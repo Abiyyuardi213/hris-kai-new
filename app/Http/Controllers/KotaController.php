@@ -13,14 +13,22 @@ class KotaController extends Controller
     {
         $query = Kota::query();
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('province_name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
         }
 
-        $cities = $query->paginate(10);
-        return view('cities.index', compact('cities'));
+        if ($request->filled('province')) {
+            $query->where('province_name', $request->province);
+        }
+
+        $cities = $query->orderBy('province_name')->orderBy('name')->paginate(10)->withQueryString();
+        $provinces = Kota::select('province_name')->distinct()->orderBy('province_name')->get();
+
+        return view('cities.index', compact('cities', 'provinces'));
     }
 
     public function create()

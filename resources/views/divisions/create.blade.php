@@ -19,21 +19,21 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label for="code" class="block text-sm font-medium text-zinc-900">Kode Divisi</label>
-                        <input type="text" name="code" id="code" value="{{ old('code') }}" required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('code') border-red-500 @enderror"
-                            placeholder="Contoh: IT-DEV">
-                        @error('code')
+                        <label for="name" class="block text-sm font-medium text-zinc-900">Nama Divisi</label>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" required
+                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('name') border-red-500 @enderror"
+                            placeholder="Contoh: Direksi Utama" oninput="generateCode()">
+                        @error('name')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="name" class="block text-sm font-medium text-zinc-900">Nama Divisi</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('name') border-red-500 @enderror"
-                            placeholder="Contoh: Information Technology">
-                        @error('name')
+                        <label for="code" class="block text-sm font-medium text-zinc-900">Kode Divisi (Otomatis)</label>
+                        <input type="text" id="code" name="code" value="{{ old('code') }}" required readonly
+                            class="mt-1 block w-full rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 cursor-not-allowed @error('code') border-red-500 @enderror"
+                            placeholder="Akan terisi otomatis...">
+                        @error('code')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -50,10 +50,6 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t">
-                    <a href="{{ route('divisions.index') }}"
-                        class="inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2">
-                        Batal
-                    </a>
                     <button type="submit"
                         class="inline-flex items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2">
                         Simpan Divisi
@@ -62,4 +58,37 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function generateCode() {
+            const name = document.getElementById('name').value;
+            const nextNumber = {{ $nextNumber }};
+
+            if (!name) {
+                document.getElementById('code').value = '';
+                return;
+            }
+
+            // Split name into words, remove empty strings
+            const words = name.trim().toUpperCase().split(/\s+/);
+            let abbreviation = '';
+
+            words.forEach((word) => {
+                if (word.length > 0) {
+                    // Logic for "UTM" if word is "UTAMA"
+                    if (word === 'UTAMA') {
+                        abbreviation += 'UTM-';
+                    } else {
+                        // Take first 3 letters
+                        abbreviation += word.substring(0, 3) + '-';
+                    }
+                }
+            });
+
+            // Format number to 001, 002, etc.
+            const paddedNumber = nextNumber.toString().padStart(3, '0');
+
+            document.getElementById('code').value = abbreviation + paddedNumber;
+        }
+    </script>
 @endsection

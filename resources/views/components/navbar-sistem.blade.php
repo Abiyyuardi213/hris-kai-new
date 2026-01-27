@@ -22,7 +22,8 @@
             <div
                 class="hidden group-hover:block absolute right-0 mt-0 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                 <div class="py-1">
-                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                    <a href="{{ route('profile.edit') }}"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
                     <hr class="my-1 border-gray-100">
                     <button type="button" data-toggle="modal" data-target="#logoutModal"
                         onclick="document.getElementById('logoutModal').classList.remove('hidden');"

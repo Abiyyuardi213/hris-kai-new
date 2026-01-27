@@ -1,5 +1,22 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <style>
+        .ts-control {
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            border-color: #d4d4d8 !important;
+            font-size: 0.875rem !important;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            box-shadow: 0 0 0 1px #18181b !important;
+            border-color: #18181b !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
@@ -49,7 +66,7 @@
                             @foreach ($divisions as $division)
                                 <option value="{{ $division->id }}"
                                     {{ old('division_id', $position->division_id) == $division->id ? 'selected' : '' }}>
-                                    {{ $division->name }}
+                                    {{ $division->code }} | {{ $division->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -83,3 +100,20 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new TomSelect('#division_id', {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Cari dan pilih divisi...",
+                allowEmptyOption: true,
+            });
+        });
+    </script>
+@endpush

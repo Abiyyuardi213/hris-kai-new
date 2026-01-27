@@ -20,27 +20,56 @@
 
         <!-- Content -->
         <div class="space-y-4">
-            <!-- Search -->
+            <!-- Search and Filter -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('divisions.index') }}" method="GET"
-                    class="flex w-full md:max-w-md items-center gap-2">
-                    <div class="relative flex-1">
+                <form action="{{ route('divisions.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
+                    <div class="relative flex-1 min-w-[240px]">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari kode atau nama divisi..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
                     </div>
-                    <button type="submit"
-                        class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
-                        Cari
-                    </button>
-                    @if (request('search'))
-                        <a href="{{ route('divisions.index') }}"
-                            class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-                            Reset
-                        </a>
-                    @endif
+
+                    <div class="w-full sm:w-64">
+                        <select name="sort" onchange="this.form.submit()"
+                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama (A-Z)
+                            </option>
+                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nama (Z-A)
+                            </option>
+                            <option value="positions_desc" {{ request('sort') == 'positions_desc' ? 'selected' : '' }}>
+                                Jabatan Terbanyak</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit"
+                            class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
+                            Filter
+                        </button>
+                        @if (request()->anyFilled(['search', 'sort']) && request('sort') != 'latest')
+                            <a href="{{ route('divisions.index') }}"
+                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                                Reset
+                            </a>
+                        @elseif(request('search'))
+                            <a href="{{ route('divisions.index') }}"
+                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                                Reset
+                            </a>
+                        @endif
+                    </div>
                 </form>
+            </div>
+
+            <!-- Table Info -->
+            <div class="flex items-center justify-between pb-1">
+                <p class="text-sm text-zinc-500">
+                    Menampilkan <span class="font-medium text-zinc-900">{{ $divisions->firstItem() ?? 0 }}</span> -
+                    <span class="font-medium text-zinc-900">{{ $divisions->lastItem() ?? 0 }}</span> dari
+                    <span class="font-medium text-zinc-900">{{ $divisions->total() }}</span> divisi
+                </p>
             </div>
 
             <!-- Table -->
@@ -83,7 +112,8 @@
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
                                             </a>
-                                            <button onclick="confirmDelete('{{ $division->id }}', '{{ $division->name }}')"
+                                            <button
+                                                onclick="confirmDelete('{{ $division->id }}', '{{ $division->name }}')"
                                                 class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Hapus">
                                                 <i data-lucide="trash-2" class="h-4 w-4"></i>

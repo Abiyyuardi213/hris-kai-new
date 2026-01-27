@@ -44,11 +44,11 @@
                         </div>
 
                         <div>
-                            <label for="nip" class="block text-sm font-medium text-zinc-900">NIP (Nomor Induk
-                                Pegawai)</label>
+                            <label for="nip" class="block text-sm font-medium text-zinc-900">NIP (Permanen)</label>
                             <input type="text" name="nip" id="nip" value="{{ old('nip', $employee->nip) }}"
-                                required
-                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('nip') border-red-500 @enderror">
+                                required readonly
+                                class="mt-1 block w-full rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 cursor-not-allowed @error('nip') border-red-500 @enderror">
+                            <p class="mt-1 text-[10px] text-zinc-400">NIP adalah identitas unik permanen.</p>
                             @error('nip')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
@@ -201,19 +201,7 @@
                                 class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                         </div>
 
-                        <div>
-                            <label for="user_id" class="block text-sm font-medium text-zinc-900">Akun User
-                                (Login)</label>
-                            <select name="user_id" id="user_id"
-                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
-                                <option value="">Tautkan Akun (Opsional)</option>
-                                @foreach ($users as $u)
-                                    <option value="{{ $u->id }}"
-                                        {{ old('user_id', $employee->user_id) == $u->id ? 'selected' : '' }}>
-                                        {{ $u->name }} ({{ $u->email }})</option>
-                                @endforeach
-                            </select>
-                        </div>
+
                     </div>
                 </div>
 

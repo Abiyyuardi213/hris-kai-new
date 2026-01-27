@@ -15,6 +15,11 @@ class Jabatan extends Model
 
     public function division()
     {
-        return $this->belongsTo(Divisi::class);
+        return $this->belongsTo(Divisi::class, 'division_id');
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Pegawai::class, 'jabatan_id');
     }
 }

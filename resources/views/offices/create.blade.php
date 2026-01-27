@@ -1,5 +1,22 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <style>
+        .ts-control {
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            border-color: #d4d4d8 !important;
+            font-size: 0.875rem !important;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            box-shadow: 0 0 0 1px #18181b !important;
+            border-color: #18181b !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
@@ -19,12 +36,29 @@
 
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label for="city_id" class="block text-sm font-medium text-zinc-900">Kota</label>
+                            <select name="city_id" id="city_id" required
+                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('city_id') border-red-500 @enderror">
+                                <option value="">Pilih Kota Terlebih Dahulu</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}" {{ old('city_id') == $city->id ? 'selected' : '' }}>
+                                        {{ $city->name }} ({{ $city->province_name }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('city_id')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div>
-                            <label for="office_code" class="block text-sm font-medium text-zinc-900">Kode Kantor</label>
+                            <label for="office_code" class="block text-sm font-medium text-zinc-900">Kode Kantor
+                                (Otomatis)</label>
                             <input type="text" name="office_code" id="office_code" value="{{ old('office_code') }}"
-                                required
-                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('office_code') border-red-500 @enderror"
-                                placeholder="Contoh: HO-001">
+                                readonly
+                                class="mt-1 block w-full rounded-lg border border-zinc-300 bg-zinc-50 px-3 py-2 text-sm font-mono text-zinc-500 @error('office_code') border-red-500 @enderror"
+                                placeholder="Akan terisi otomatis...">
                             @error('office_code')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
@@ -40,22 +74,6 @@
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
-                    </div>
-
-                    <div>
-                        <label for="city_id" class="block text-sm font-medium text-zinc-900">Kota</label>
-                        <select name="city_id" id="city_id" required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('city_id') border-red-500 @enderror">
-                            <option value="">Pilih Kota</option>
-                            @foreach ($cities as $city)
-                                <option value="{{ $city->id }}" {{ old('city_id') == $city->id ? 'selected' : '' }}>
-                                    {{ $city->name }} ({{ $city->province_name }})
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('city_id')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div>
@@ -104,3 +122,41 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const citySelect = new TomSelect('#city_id', {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Cari dan pilih kota...",
+                allowEmptyOption: true,
+            });
+
+            const officeCodeInput = document.getElementById('office_code');
+
+            citySelect.on('change', function(value) {
+                if (!value) {
+                    officeCodeInput.value = '';
+                    return;
+                }
+
+                // Fetch next code
+                fetch(`{{ route('offices.get-next-code') }}?city_id=${value}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.code) {
+                            officeCodeInput.value = data.code;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching office code:', error);
+                    });
+            });
+        });
+    </script>
+@endpush

@@ -27,24 +27,39 @@
         <div class="space-y-4">
             <!-- Search and Filter -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('cities.index') }}" method="GET"
-                    class="flex w-full md:max-w-md items-center gap-2">
-                    <div class="relative flex-1">
+                <form action="{{ route('cities.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
+                    <div class="relative flex-1 min-w-[240px]">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode, nama kota, atau provinsi..."
+                            placeholder="Cari kode atau nama kota..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
                     </div>
-                    <button type="submit"
-                        class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
-                        Cari
-                    </button>
-                    @if (request('search'))
-                        <a href="{{ route('cities.index') }}"
-                            class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-                            Reset
-                        </a>
-                    @endif
+
+                    <div class="w-full sm:w-64">
+                        <select name="province" onchange="this.form.submit()"
+                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            <option value="">Semua Provinsi</option>
+                            @foreach ($provinces as $prov)
+                                <option value="{{ $prov->province_name }}"
+                                    {{ request('province') == $prov->province_name ? 'selected' : '' }}>
+                                    {{ $prov->province_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit"
+                            class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
+                            Cari
+                        </button>
+                        @if (request()->anyFilled(['search', 'province']))
+                            <a href="{{ route('cities.index') }}"
+                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                                Reset
+                            </a>
+                        @endif
+                    </div>
                 </form>
             </div>
 

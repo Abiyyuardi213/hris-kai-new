@@ -10,9 +10,27 @@ use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('role')->latest()->get();
+        $query = User::with('role')->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('role_id')) {
+            $query->where('role_id', $request->role_id);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status === 'active');
+        }
+
+        $users = $query->paginate(10)->withQueryString();
         $roles = Peran::where('role_status', true)->get();
         return view('users.index', compact('users', 'roles'));
     }
@@ -30,15 +48,23 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role_id' => 'required|exists:role,id',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'cropped_foto' => 'nullable|string',
         ]);
 
         $data = $request->all();
         $data['password'] = Hash::make($request->password);
         $data['status'] = true;
 
-        if ($request->hasFile('foto')) {
-            $data['foto'] = $request->file('foto')->store('profile-photos', 'public');
+        if ($request->filled('cropped_foto')) {
+            $imageData = $request->cropped_foto;
+            $fileName = 'profile-photos/' . uniqid() . '.jpg';
+
+            // Remove 'data:image/jpeg;base64,' part
+            $imageData = str_replace('data:image/jpeg;base64,', '', $imageData);
+            $imageData = str_replace(' ', '+', $imageData);
+
+            Storage::disk('public')->put($fileName, base64_decode($imageData));
+            $data['foto'] = $fileName;
         }
 
         User::create($data);
@@ -62,7 +88,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role_id' => 'required|exists:role,id',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'cropped_foto' => 'nullable|string',
             'status' => 'boolean',
         ]);
 
@@ -72,11 +98,19 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        if ($request->hasFile('foto')) {
+        if ($request->filled('cropped_foto')) {
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                 Storage::disk('public')->delete($user->foto);
             }
-            $data['foto'] = $request->file('foto')->store('profile-photos', 'public');
+
+            $imageData = $request->cropped_foto;
+            $fileName = 'profile-photos/' . uniqid() . '.jpg';
+
+            $imageData = str_replace('data:image/jpeg;base64,', '', $imageData);
+            $imageData = str_replace(' ', '+', $imageData);
+
+            Storage::disk('public')->put($fileName, base64_decode($imageData));
+            $data['foto'] = $fileName;
         }
 
         $user->update($data);

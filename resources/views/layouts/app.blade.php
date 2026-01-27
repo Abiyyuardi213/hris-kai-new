@@ -13,6 +13,9 @@
             font-family: 'Inter', sans-serif;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    @stack('styles')
 </head>
 
 <body class="bg-white">
@@ -80,6 +83,7 @@
             }
         });
     </script>
+    @stack('scripts')
 </body>
 
 </html>

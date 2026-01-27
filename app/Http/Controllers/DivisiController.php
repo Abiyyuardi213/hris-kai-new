@@ -11,19 +11,40 @@ class DivisiController extends Controller
     {
         $query = Divisi::withCount('positions');
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('code', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%");
+            });
         }
 
-        $divisions = $query->paginate(10);
+        // Sorting logic
+        $sort = $request->get('sort', 'latest');
+        switch ($sort) {
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'positions_desc':
+                $query->orderBy('positions_count', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $divisions = $query->paginate(10)->withQueryString();
         return view('divisions.index', compact('divisions'));
     }
 
     public function create()
     {
-        return view('divisions.create');
+        $nextNumber = Divisi::count() + 1;
+        return view('divisions.create', compact('nextNumber'));
     }
 
     public function store(Request $request)
@@ -39,12 +60,12 @@ class DivisiController extends Controller
         return redirect()->route('divisions.index')->with('success', 'Divisi berhasil ditambahkan');
     }
 
-    public function edit(Division $division)
+    public function edit(Divisi $division)
     {
         return view('divisions.edit', compact('division'));
     }
 
-    public function update(Request $request, Division $division)
+    public function update(Request $request, Divisi $division)
     {
         $validated = $request->validate([
             'code' => 'required|unique:divisions,code,' . $division->id,
@@ -57,7 +78,7 @@ class DivisiController extends Controller
         return redirect()->route('divisions.index')->with('success', 'Divisi berhasil diperbarui');
     }
 
-    public function destroy(Division $division)
+    public function destroy(Divisi $division)
     {
         $division->delete();
         return redirect()->route('divisions.index')->with('success', 'Divisi berhasil dihapus');

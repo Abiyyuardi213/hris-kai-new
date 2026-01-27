@@ -15,6 +15,11 @@ class Divisi extends Model
 
     public function positions()
     {
-        return $this->hasMany(Jabatan::class);
+        return $this->hasMany(Jabatan::class, 'division_id');
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Pegawai::class, 'divisi_id');
     }
 }

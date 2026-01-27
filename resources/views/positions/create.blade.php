@@ -1,5 +1,22 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <style>
+        .ts-control {
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            border-color: #d4d4d8 !important;
+            font-size: 0.875rem !important;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            box-shadow: 0 0 0 1px #18181b !important;
+            border-color: #18181b !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
@@ -19,21 +36,22 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label for="code" class="block text-sm font-medium text-zinc-900">Kode Jabatan</label>
-                        <input type="text" name="code" id="code" value="{{ old('code') }}" required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('code') border-red-500 @enderror"
-                            placeholder="Contoh: JOB-001">
-                        @error('code')
+                        <label for="name" class="block text-sm font-medium text-zinc-900">Nama Jabatan</label>
+                        <input type="text" id="name" name="name" value="{{ old('name') }}" required
+                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('name') border-red-500 @enderror"
+                            placeholder="Contoh: Staff IT" oninput="generateCode()">
+                        @error('name')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="name" class="block text-sm font-medium text-zinc-900">Nama Jabatan</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('name') border-red-500 @enderror"
-                            placeholder="Contoh: Staff IT">
-                        @error('name')
+                        <label for="code" class="block text-sm font-medium text-zinc-900">Kode Jabatan
+                            (Otomatis)</label>
+                        <input type="text" id="code" name="code" value="{{ old('code') }}" required readonly
+                            class="mt-1 block w-full rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 cursor-not-allowed @error('code') border-red-500 @enderror"
+                            placeholder="Akan terisi otomatis...">
+                        @error('code')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -46,7 +64,7 @@
                             @foreach ($divisions as $division)
                                 <option value="{{ $division->id }}"
                                     {{ old('division_id') == $division->id ? 'selected' : '' }}>
-                                    {{ $division->name }}
+                                    {{ $division->code }} | {{ $division->name }}
                                 </option>
                             @endforeach
                         </select>
@@ -80,3 +98,46 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new TomSelect('#division_id', {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Cari dan pilih divisi...",
+                allowEmptyOption: true,
+            });
+        });
+
+        function generateCode() {
+            const name = document.getElementById('name').value;
+            const nextNumber = {{ $nextNumber }};
+
+            if (!name) {
+                document.getElementById('code').value = '';
+                return;
+            }
+
+            // Split name into words, remove empty strings
+            const words = name.trim().toUpperCase().split(/\s+/);
+            let abbreviation = 'JOB-';
+
+            words.forEach((word) => {
+                if (word.length > 0) {
+                    // Take first 3 letters
+                    abbreviation += word.substring(0, 3) + '-';
+                }
+            });
+
+            // Format number to 001, 002, etc.
+            const paddedNumber = nextNumber.toString().padStart(3, '0');
+
+            document.getElementById('code').value = abbreviation + paddedNumber;
+        }
+    </script>
+@endpush

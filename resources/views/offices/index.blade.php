@@ -20,27 +20,70 @@
 
         <!-- Content -->
         <div class="space-y-4">
-            <!-- Search -->
+            <!-- Search and Filter -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('offices.index') }}" method="GET"
-                    class="flex w-full md:max-w-md items-center gap-2">
-                    <div class="relative flex-1">
+                <form action="{{ route('offices.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
+                    <div class="relative flex-1 min-w-[240px]">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode, nama, atau kota..."
+                            placeholder="Cari kode atau nama kantor..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
                     </div>
-                    <button type="submit"
-                        class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
-                        Cari
-                    </button>
-                    @if (request('search'))
-                        <a href="{{ route('offices.index') }}"
-                            class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-                            Reset
-                        </a>
-                    @endif
+
+                    <div class="w-full sm:w-48">
+                        <select name="province" onchange="this.form.submit()"
+                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            <option value="">Semua Provinsi</option>
+                            @foreach ($provinces as $prov)
+                                <option value="{{ $prov->province_name }}"
+                                    {{ request('province') == $prov->province_name ? 'selected' : '' }}>
+                                    {{ $prov->province_name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="w-full sm:w-48">
+                        <select name="city_id" onchange="this.form.submit()"
+                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            <option value="">Semua Kota</option>
+                            @php
+                                $filteredCities = request()->filled('province')
+                                    ? \App\Models\Kota::where('province_name', request('province'))
+                                        ->orderBy('name')
+                                        ->get()
+                                    : $cities;
+                            @endphp
+                            @foreach ($filteredCities as $city)
+                                <option value="{{ $city->id }}" {{ request('city_id') == $city->id ? 'selected' : '' }}>
+                                    {{ $city->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit"
+                            class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
+                            Filter
+                        </button>
+                        @if (request()->anyFilled(['search', 'province', 'city_id']))
+                            <a href="{{ route('offices.index') }}"
+                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                                Reset
+                            </a>
+                        @endif
+                    </div>
                 </form>
+            </div>
+
+            <!-- Table Info -->
+            <div class="flex items-center justify-between pb-1">
+                <p class="text-sm text-zinc-500">
+                    Menampilkan <span class="font-medium text-zinc-900">{{ $offices->firstItem() ?? 0 }}</span> -
+                    <span class="font-medium text-zinc-900">{{ $offices->lastItem() ?? 0 }}</span> dari
+                    <span class="font-medium text-zinc-900">{{ $offices->total() }}</span> kantor
+                </p>
             </div>
 
             <!-- Table -->
@@ -90,6 +133,11 @@
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="showOffice({{ json_encode($office->load('city')) }})"
+                                                class="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg transition-colors"
+                                                title="Detail">
+                                                <i data-lucide="eye" class="h-4 w-4"></i>
+                                            </button>
                                             <a href="{{ route('offices.edit', $office->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
@@ -131,8 +179,85 @@
         </div>
     </div>
 
+    <!-- Show Modal -->
+    <div id="showModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('showModal')">
+        </div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-zinc-100">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-zinc-900">Detail Kantor</h3>
+                            <button onclick="closeModal('showModal')"
+                                class="text-zinc-400 hover:text-zinc-600 transition-colors">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-lg bg-zinc-50 border border-zinc-100">
+                                <label
+                                    class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Kode
+                                    Kantor</label>
+                                <p id="showOfficeCode" class="text-sm font-bold text-zinc-900"></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="px-2">
+                                    <label
+                                        class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Nama
+                                        Kantor</label>
+                                    <p id="showOfficeName" class="text-sm font-semibold text-zinc-900"></p>
+                                </div>
+                                <div class="px-2">
+                                    <label
+                                        class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Kota</label>
+                                    <p id="showOfficeCity" class="text-sm font-semibold text-zinc-900"></p>
+                                </div>
+                            </div>
+
+                            <div class="px-2">
+                                <label
+                                    class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Alamat
+                                    Lengkap</label>
+                                <p id="showOfficeAddress" class="text-sm text-zinc-600 leading-relaxed"></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-zinc-50">
+                                <div class="px-2">
+                                    <label
+                                        class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Nomor
+                                        Telepon</label>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <i data-lucide="phone" class="h-3 w-3 text-zinc-400"></i>
+                                        <p id="showOfficePhone" class="text-sm font-medium text-zinc-900"></p>
+                                    </div>
+                                </div>
+                                <div class="px-2">
+                                    <label
+                                        class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Email</label>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <i data-lucide="mail" class="h-3 w-3 text-zinc-400"></i>
+                                        <p id="showOfficeEmail" class="text-sm font-medium text-zinc-900"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-zinc-50 px-6 py-4 border-t border-zinc-100 flex justify-end">
+                        <button type="button" onclick="closeModal('showModal')"
+                            class="rounded-lg bg-white px-4 py-2 text-sm font-bold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 transition-colors">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
         <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('deleteModal')">
         </div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -174,10 +299,21 @@
     <script>
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
+            lucide.createIcons();
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
+        }
+
+        function showOffice(office) {
+            document.getElementById('showOfficeCode').textContent = office.office_code;
+            document.getElementById('showOfficeName').textContent = office.office_name;
+            document.getElementById('showOfficeCity').textContent = office.city ? office.city.name : '-';
+            document.getElementById('showOfficeAddress').textContent = office.office_address || '-';
+            document.getElementById('showOfficePhone').textContent = office.phone_number || '-';
+            document.getElementById('showOfficeEmail').textContent = office.email || '-';
+            openModal('showModal');
         }
 
         function confirmDelete(id, name) {

@@ -45,12 +45,12 @@ class AsetController extends Controller
         return redirect()->route('assets.index')->with('success', 'Aset berhasil ditambahkan');
     }
 
-    public function edit(Asset $asset)
+    public function edit(Aset $asset)
     {
         return view('assets.edit', compact('asset'));
     }
 
-    public function update(Request $request, Asset $asset)
+    public function update(Request $request, Aset $asset)
     {
         $validated = $request->validate([
             'code' => 'required|unique:assets,code,' . $asset->id,
@@ -67,7 +67,7 @@ class AsetController extends Controller
         return redirect()->route('assets.index')->with('success', 'Aset berhasil diperbarui');
     }
 
-    public function destroy(Asset $asset)
+    public function destroy(Aset $asset)
     {
         $asset->delete();
         return redirect()->route('assets.index')->with('success', 'Aset berhasil dihapus');

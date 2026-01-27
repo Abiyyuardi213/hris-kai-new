@@ -20,27 +20,67 @@
 
         <!-- Content -->
         <div class="space-y-4">
-            <!-- Search -->
+            <!-- Search and Filter -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('positions.index') }}" method="GET"
-                    class="flex w-full md:max-w-md items-center gap-2">
-                    <div class="relative flex-1">
+                <form action="{{ route('positions.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
+                    <div class="relative flex-1 min-w-[240px]">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
                             placeholder="Cari kode, nama, atau divisi..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
                     </div>
-                    <button type="submit"
-                        class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
-                        Cari
-                    </button>
-                    @if (request('search'))
-                        <a href="{{ route('positions.index') }}"
-                            class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-                            Reset
-                        </a>
-                    @endif
+
+                    <div class="w-full sm:w-56">
+                        <select name="division_id" onchange="this.form.submit()"
+                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            <option value="">Semua Divisi</option>
+                            @foreach ($divisions as $division)
+                                <option value="{{ $division->id }}"
+                                    {{ request('division_id') == $division->id ? 'selected' : '' }}>
+                                    {{ $division->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="w-full sm:w-48">
+                        <select name="sort" onchange="this.form.submit()"
+                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama (A-Z)
+                            </option>
+                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nama (Z-A)
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="submit"
+                            class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
+                            Filter
+                        </button>
+                        @if (request()->anyFilled(['search', 'division_id', 'sort']) && request('sort') != 'latest')
+                            <a href="{{ route('positions.index') }}"
+                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                                Reset
+                            </a>
+                        @elseif(request('search') || request('division_id'))
+                            <a href="{{ route('positions.index') }}"
+                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
+                                Reset
+                            </a>
+                        @endif
+                    </div>
                 </form>
+            </div>
+
+            <!-- Table Info -->
+            <div class="flex items-center justify-between pb-1">
+                <p class="text-sm text-zinc-500">
+                    Menampilkan <span class="font-medium text-zinc-900">{{ $positions->firstItem() ?? 0 }}</span> -
+                    <span class="font-medium text-zinc-900">{{ $positions->lastItem() ?? 0 }}</span> dari
+                    <span class="font-medium text-zinc-900">{{ $positions->total() }}</span> jabatan
+                </p>
             </div>
 
             <!-- Table -->
@@ -81,12 +121,18 @@
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onclick="showDetails({{ json_encode($position) }})"
+                                                class="p-2 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg transition-colors"
+                                                title="Detail">
+                                                <i data-lucide="eye" class="h-4 w-4"></i>
+                                            </button>
                                             <a href="{{ route('positions.edit', $position->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
                                             </a>
-                                            <button onclick="confirmDelete('{{ $position->id }}', '{{ $position->name }}')"
+                                            <button
+                                                onclick="confirmDelete('{{ $position->id }}', '{{ $position->name }}')"
                                                 class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Hapus">
                                                 <i data-lucide="trash-2" class="h-4 w-4"></i>
@@ -121,8 +167,73 @@
         </div>
     </div>
 
+    <!-- Details Modal -->
+    <div id="detailsModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Background backdrop -->
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('detailsModal')">
+        </div>
+
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-zinc-200">
+                    <!-- Modal Header -->
+                    <div class="bg-white px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
+                        <h3 class="text-lg font-semibold text-zinc-900">Detail Jabatan</h3>
+                        <button onclick="closeModal('detailsModal')"
+                            class="text-zinc-400 hover:text-zinc-600 transition-colors">
+                            <i data-lucide="x" class="h-5 w-5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="bg-white px-6 py-6 space-y-6">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider text-right">Kode
+                                    Jabatan</label>
+                                <p id="detailCode"
+                                    class="mt-1 text-sm font-medium text-zinc-900 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-100">
+                                </p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Divisi</label>
+                                <p id="detailDivision"
+                                    class="mt-1 text-sm font-medium text-zinc-900 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-100">
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Nama
+                                Jabatan</label>
+                            <p id="detailName" class="mt-1 text-base font-semibold text-zinc-900"></p>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Deskripsi
+                                Pekerjaan</label>
+                            <div class="mt-2 p-4 rounded-xl bg-zinc-50 border border-zinc-100">
+                                <p id="detailDescription"
+                                    class="text-sm text-zinc-600 leading-relaxed whitespace-pre-wrap"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="bg-zinc-50/50 px-6 py-4 flex justify-end border-t border-zinc-100">
+                        <button type="button" onclick="closeModal('detailsModal')"
+                            class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 transition-colors">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Delete Modal -->
-    <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
         <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('deleteModal')">
         </div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -175,5 +286,22 @@
             document.getElementById('deleteForm').action = "{{ url('admin/positions') }}/" + id;
             openModal('deleteModal');
         }
+
+        function showDetails(position) {
+            document.getElementById('detailCode').textContent = position.code;
+            document.getElementById('detailName').textContent = position.name;
+            document.getElementById('detailDivision').textContent = position.division ? position.division.name : '-';
+            document.getElementById('detailDescription').textContent = position.description || 'Tidak ada deskripsi.';
+
+            openModal('detailsModal');
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal('deleteModal');
+                closeModal('detailsModal');
+            }
+        });
     </script>
 @endsection

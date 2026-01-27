@@ -24,4 +24,9 @@ class Kantor extends Model
     {
         return $this->belongsTo(Kota::class);
     }
+
+    public function employees()
+    {
+        return $this->hasMany(Pegawai::class, 'kantor_id');
+    }
 }

@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Pegawai extends Model
+class Pegawai extends Authenticatable
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory, \Illuminate\Database\Eloquent\SoftDeletes, \Illuminate\Database\Eloquent\Concerns\HasUuids;
+    use \Illuminate\Database\Eloquent\Factories\HasFactory, \Illuminate\Database\Eloquent\SoftDeletes, \Illuminate\Database\Eloquent\Concerns\HasUuids, Notifiable;
 
     protected $table = 'pegawais';
 
     protected $fillable = [
-        'user_id',
         'status_pegawai_id',
         'sisa_cuti',
         'shift_kerja_id',
@@ -35,10 +35,7 @@ class Pegawai extends Model
         'foto',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+
     public function statusPegawai()
     {
         return $this->belongsTo(StatusPegawai::class, 'status_pegawai_id');
