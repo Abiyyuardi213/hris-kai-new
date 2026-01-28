@@ -82,6 +82,7 @@
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4">Jam Masuk</th>
                             <th class="px-6 py-4">Jam Pulang</th>
+                            <th class="px-6 py-4">Interval</th>
                             <th class="px-6 py-4">Keterangan</th>
                         </tr>
                     </thead>
@@ -131,6 +132,26 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
+                                    @if ($item->jam_masuk && $item->jam_pulang)
+                                        @php
+                                            $masuk = \Carbon\Carbon::parse($item->jam_masuk);
+                                            $pulang = \Carbon\Carbon::parse($item->jam_pulang);
+                                            $diff = $masuk->diff($pulang);
+                                            $duration = '';
+                                            if ($diff->h > 0) {
+                                                $duration .= $diff->h . 'j ';
+                                            }
+                                            $duration .= $diff->i . 'm';
+                                        @endphp
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-2 w-2 rounded-full bg-blue-500"></div>
+                                            <span class="font-bold text-zinc-700">{{ $duration }}</span>
+                                        </div>
+                                    @else
+                                        <span class="text-zinc-300">--</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4">
                                     <div class="text-xs text-zinc-500 font-medium">{{ $item->keterangan ?? '-' }}</div>
                                     @if ($item->terlambat > 0)
                                         <div
@@ -150,7 +171,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-12 text-center text-zinc-500 italic">
+                                <td colspan="6" class="px-6 py-12 text-center text-zinc-500 italic">
                                     <i data-lucide="calendar-off" class="h-12 w-12 mx-auto mb-3 text-zinc-200"></i>
                                     <p class="font-medium">Tidak ada data absensi untuk periode ini.</p>
                                     <p class="text-xs text-zinc-400 mt-1">Silakan pilih bulan atau tahun lain.</p>

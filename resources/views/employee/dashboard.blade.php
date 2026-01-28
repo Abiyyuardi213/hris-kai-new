@@ -50,14 +50,6 @@
                         <i data-lucide="user-cog" class="h-5 w-5"></i>
                         Profil
                     </a>
-                    <form action="{{ route('employee.logout') }}" method="POST">
-                        @csrf
-                        <button type="submit"
-                            class="inline-flex items-center gap-2 px-6 py-3 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl font-semibold transition-all group">
-                            <i data-lucide="log-out" class="h-5 w-5 group-hover:-translate-x-1 transition-transform"></i>
-                            Keluar
-                        </button>
-                    </form>
                 </div>
             </div>
 

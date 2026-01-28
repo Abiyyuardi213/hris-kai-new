@@ -14,6 +14,12 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Shared Notifications
+Route::middleware(['auth:web,employee'])->group(function () {
+    Route::get('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+});
+
 // Employee Auth
 Route::get('/login-pegawai', [App\Http\Controllers\EmployeeAuthController::class, 'showLoginForm'])->name('employee.login');
 Route::post('/login-pegawai', [App\Http\Controllers\EmployeeAuthController::class, 'login']);
@@ -42,12 +48,21 @@ Route::middleware(['auth:employee'])->group(function () {
     // Payroll
     Route::get('/payroll', [App\Http\Controllers\EmployeePayrollController::class, 'index'])->name('employee.payroll.index');
     Route::get('/payroll/{payroll}', [App\Http\Controllers\EmployeePayrollController::class, 'show'])->name('employee.payroll.show');
+
+    // Perjalanan Dinas
+    Route::get('/perjalanan-dinas', [App\Http\Controllers\PerjalananDinasController::class, 'index'])->name('employee.perjalanan_dinas.index');
+    Route::get('/perjalanan-dinas/create', [App\Http\Controllers\PerjalananDinasController::class, 'create'])->name('employee.perjalanan_dinas.create');
+    Route::post('/perjalanan-dinas', [App\Http\Controllers\PerjalananDinasController::class, 'store'])->name('employee.perjalanan_dinas.store');
+    Route::get('/perjalanan-dinas/{id}', [App\Http\Controllers\PerjalananDinasController::class, 'show'])->name('employee.perjalanan_dinas.show');
+
+    // Performance (KPI)
+    Route::get('/performance', [App\Http\Controllers\PerformanceAppraisalController::class, 'index'])->name('employee.performance.index');
+    Route::get('/performance/{id}', [App\Http\Controllers\PerformanceAppraisalController::class, 'show'])->name('employee.performance.show');
+    Route::get('/performance/{id}/print', [App\Http\Controllers\PerformanceAppraisalController::class, 'print'])->name('employee.performance.print');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
@@ -109,4 +124,22 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     // Route::get('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'show'])->name('admin.payroll.show');
     Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
     Route::delete('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'destroy'])->name('admin.payroll.destroy');
+
+    // Perjalanan Dinas
+    Route::get('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'index'])->name('admin.perjalanan_dinas.index');
+    Route::get('/perjalanan-dinas/create', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'create'])->name('admin.perjalanan_dinas.create');
+    Route::post('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'store'])->name('admin.perjalanan_dinas.store');
+    Route::get('/perjalanan-dinas/{id}', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'show'])->name('admin.perjalanan_dinas.show');
+    Route::patch('/perjalanan-dinas/{id}/status', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'updateStatus'])->name('admin.perjalanan_dinas.update-status');
+    Route::delete('/perjalanan-dinas/{id}', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'destroy'])->name('admin.perjalanan_dinas.destroy');
+
+    // Performance Appraisal (KPI)
+    Route::get('/performance', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'index'])->name('admin.performance.index');
+    Route::get('/performance/create', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'create'])->name('admin.performance.create');
+    Route::post('/performance', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'store'])->name('admin.performance.store');
+    Route::get('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'show'])->name('admin.performance.show');
+    Route::get('/performance/{id}/edit', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'edit'])->name('admin.performance.edit');
+    Route::patch('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'update'])->name('admin.performance.update');
+    Route::get('/performance/{id}/print', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'print'])->name('admin.performance.print');
+    Route::delete('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'destroy'])->name('admin.performance.destroy');
 });

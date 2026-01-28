@@ -75,6 +75,15 @@ class IzinPegawaiController extends Controller
             'admin_note' => $request->admin_note,
         ]);
 
+        // Notify Employee
+        $izin->pegawai->notify(new \App\Notifications\SystemNotification([
+            'title' => 'Status Pengajuan Izin',
+            'message' => 'Pengajuan ' . $izin->type . ' Anda telah ' . ($request->status == 'approved' ? 'Disetujui' : 'Ditolak'),
+            'url' => route('employee.izin.index'),
+            'type' => $request->status == 'approved' ? 'success' : 'danger',
+            'icon' => $request->status == 'approved' ? 'check-circle' : 'x-circle'
+        ]));
+
         return back()->with('success', 'Status pengajuan izin berhasil diperbarui');
     }
 

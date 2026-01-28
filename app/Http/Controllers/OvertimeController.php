@@ -43,6 +43,18 @@ class OvertimeController extends Controller
 
         Overtime::create($validated);
 
+        // Notify Admins
+        $admins = \App\Models\User::all();
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\SystemNotification([
+                'title' => 'Pengajuan Lembur Baru',
+                'message' => $employee->nama_lengkap . ' mengajukan lembur untuk tanggal ' . $request->date,
+                'url' => route('admin.overtime.index'),
+                'type' => 'warning',
+                'icon' => 'clock'
+            ]));
+        }
+
         return redirect()->route('employee.overtime.index')->with('success', 'Pengajuan lembur berhasil dikirim.');
     }
 }

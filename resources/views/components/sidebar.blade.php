@@ -2,7 +2,7 @@
 <div id="sidebarOverlay" class="fixed inset-0 z-40 bg-black/50 hidden md:hidden transition-opacity"></div>
 
 <aside id="sidebar"
-    class="fixed inset-y-0 left-0 z-50 w-64 flex-col border-r bg-white transition-all duration-300 ease-in-out -translate-x-full md:translate-x-0 md:static md:flex h-screen overflow-hidden group">
+    class="fixed md:static inset-y-0 left-0 z-50 w-64 flex flex-col border-r bg-white transition-all duration-300 ease-in-out -translate-x-full md:translate-x-0 h-[100dvh] md:h-screen shadow-2xl md:shadow-none group">
     <div
         class="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6 transition-all duration-300 overflow-hidden whitespace-nowrap">
         <a href="/" class="flex items-center gap-2 font-semibold">
@@ -145,6 +145,18 @@
                         class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/payroll*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                         <i data-lucide="banknote" class="h-4 w-4"></i>
                         <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Payroll</span>
+                    </a>
+
+                    <a href="{{ route('admin.perjalanan_dinas.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/perjalanan-dinas*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="briefcase" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Perjalanan Dinas</span>
+                    </a>
+
+                    <a href="{{ route('admin.performance.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/performance*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="star" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Evaluasi Kinerja</span>
                     </a>
 
                     <div

@@ -47,7 +47,19 @@ class IzinController extends Controller
         $validated['pegawai_id'] = $employee->id;
         $validated['status'] = 'pending';
 
-        IzinPegawai::create($validated);
+        $izin = IzinPegawai::create($validated);
+
+        // Notify Admins
+        $admins = \App\Models\User::all(); // You might want to filter this by role later
+        foreach ($admins as $admin) {
+            $admin->notify(new \App\Notifications\SystemNotification([
+                'title' => 'Pengajuan Izin Baru',
+                'message' => $employee->nama_lengkap . ' mengajukan ' . $request->type,
+                'url' => route('admin.izin.index'),
+                'type' => 'info',
+                'icon' => 'file-text'
+            ]));
+        }
 
         return redirect()->route('employee.izin.index')->with('success', 'Pengajuan izin berhasil dikirim. Menunggu persetujuan Admin.');
     }

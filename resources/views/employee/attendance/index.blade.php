@@ -244,19 +244,40 @@
                 function initLocation() {
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(
-                            (position) => {
-                                const loc = position.coords.latitude + ',' + position.coords.longitude;
-                                locationInput.value = loc;
-                                locationStatus.textContent = "📍 Lokasi terdeteksi (" + position.coords.latitude.toFixed(
-                                    4) + ")";
-                                locationStatus.classList.replace('text-zinc-400', 'text-emerald-500');
-                                checkReady();
-                            },
-                            (error) => {
-                                locationStatus.textContent = "⚠️ Lokasi tidak dapat dideteksi.";
-                                locationStatus.classList.replace('text-zinc-400', 'text-red-500');
-                                // Fallback for demo if needed, but in real app usually required
-                            }
+                            async (position) => {
+                                    const lat = position.coords.latitude;
+                                    const lon = position.coords.longitude;
+
+                                    locationStatus.textContent = "🔍 Mencari alamat...";
+
+                                    try {
+                                        const response = await fetch(
+                                            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`
+                                            );
+                                        const data = await response.json();
+
+                                        const address = data.display_name;
+                                        // Extract a shorter name for display
+                                        const shortAddress = data.address.road || data.address.suburb || data.address
+                                            .city || data.display_name.split(',')[0];
+
+                                        locationInput.value = address;
+                                        locationStatus.textContent = "📍 " + shortAddress;
+                                        locationStatus.classList.replace('text-zinc-400', 'text-emerald-500');
+                                        locationStatus.classList.replace('text-red-500', 'text-emerald-500');
+                                    } catch (error) {
+                                        console.error("Geocoding error:", error);
+                                        const loc = lat + ',' + lon;
+                                        locationInput.value = loc;
+                                        locationStatus.textContent = "📍 Lokasi terdeteksi (" + lat.toFixed(4) + ")";
+                                        locationStatus.classList.replace('text-zinc-400', 'text-emerald-500');
+                                    }
+                                    checkReady();
+                                },
+                                (error) => {
+                                    locationStatus.textContent = "⚠️ Lokasi tidak dapat dideteksi.";
+                                    locationStatus.classList.replace('text-zinc-400', 'text-red-500');
+                                }
                         );
                     } else {
                         locationStatus.textContent = "Browser tidak mendukung lokasi.";

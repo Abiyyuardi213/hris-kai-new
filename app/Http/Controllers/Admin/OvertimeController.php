@@ -51,7 +51,16 @@ class OvertimeController extends Controller
         $validated['approved_by'] = Auth::id();
         $validated['admin_note'] = 'Penugasan langsung dari Admin';
 
-        Overtime::create($validated);
+        $overtime = Overtime::create($validated);
+
+        // Notify Employee
+        $overtime->pegawai->notify(new \App\Notifications\SystemNotification([
+            'title' => 'Penugasan Lembur Baru',
+            'message' => 'Anda mendapatkan penugasan lembur untuk tanggal ' . $overtime->date,
+            'url' => route('employee.overtime.index'),
+            'type' => 'info',
+            'icon' => 'clock'
+        ]));
 
         return redirect()->route('admin.overtime.index')->with('success', 'Penugasan lembur berhasil dibuat.');
     }
@@ -68,6 +77,15 @@ class OvertimeController extends Controller
             'approved_by' => Auth::id(),
             'admin_note' => $request->admin_note,
         ]);
+
+        // Notify Employee
+        $overtime->pegawai->notify(new \App\Notifications\SystemNotification([
+            'title' => 'Status Pengajuan Lembur',
+            'message' => 'Pengajuan lembur Anda untuk tanggal ' . $overtime->date . ' telah ' . ($request->status == 'approved' ? 'Disetujui' : 'Ditolak'),
+            'url' => route('employee.overtime.index'),
+            'type' => $request->status == 'approved' ? 'success' : 'danger',
+            'icon' => $request->status == 'approved' ? 'check-circle' : 'x-circle'
+        ]));
 
         return back()->with('success', 'Status lembur berhasil diperbarui.');
     }
