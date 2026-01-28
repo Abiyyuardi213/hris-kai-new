@@ -12,15 +12,15 @@
             <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
         </button>
 
-        <div class="relative group">
-            <button
+        <div class="relative">
+            <button onclick="toggleAccountDropdown(event)"
                 class="flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-500 hover:text-zinc-900">
                 <span>Account</span>
                 <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </button>
 
-            <div
-                class="hidden group-hover:block absolute right-0 mt-0 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+            <div id="accountDropdown"
+                class="hidden absolute right-0 mt-0 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                 <div class="py-1">
                     <a href="{{ route('profile.edit') }}"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
@@ -35,3 +35,20 @@
         </div>
     </div>
 </header>
+
+<script>
+    function toggleAccountDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('accountDropdown');
+        dropdown.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('accountDropdown');
+        const accountButton = dropdown.previousElementSibling;
+
+        if (!dropdown.contains(event.target) && !accountButton.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+</script>

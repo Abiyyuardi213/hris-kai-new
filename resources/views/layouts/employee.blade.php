@@ -47,17 +47,15 @@
     <!-- Logout Confirmation Modal -->
     <div id="logout-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
         role="dialog" aria-modal="true">
-        <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <div class="flex min-h-screen items-center justify-center p-4 text-center">
             <!-- Overlay -->
             <div id="logout-modal-overlay"
                 class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true">
             </div>
 
-            <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
-
             <!-- Modal Content -->
             <div id="logout-modal-content"
-                class="relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                class="relative inline-block w-full max-w-sm transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                 <div class="bg-white px-6 pt-8 pb-6 text-center">
                     <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 mb-4">
                         <i data-lucide="log-out" class="h-8 w-8 text-red-600"></i>
@@ -67,11 +65,11 @@
                 </div>
                 <div class="bg-zinc-50 px-6 py-4 flex flex-col gap-2">
                     <button type="button" onclick="document.getElementById('logout-form-employee').submit();"
-                        class="inline-flex w-full justify-center rounded-xl bg-red-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-red-200 hover:bg-red-700 transition-all">
+                        class="inline-flex w-full justify-center rounded-2xl bg-red-600 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-red-200 hover:bg-red-700 transition-all active:scale-[0.98]">
                         Ya, Keluar Sekarang
                     </button>
                     <button type="button" onclick="closeLogoutModal()"
-                        class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-3 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all">
+                        class="inline-flex w-full justify-center rounded-2xl bg-white border border-zinc-200 px-4 py-3.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all active:scale-[0.98]">
                         Batal
                     </button>
                 </div>

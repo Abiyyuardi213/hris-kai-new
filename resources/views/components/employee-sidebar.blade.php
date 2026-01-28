@@ -31,7 +31,7 @@
 
 <!-- Sidebar for Employee (Desktop & Mobile Drawer) -->
 <aside id="employeeSidebar"
-    class="fixed inset-y-0 left-0 z-50 w-72 flex-col border-r bg-white transition-all duration-300 ease-in-out -translate-x-full md:translate-x-0 md:flex h-screen overflow-hidden group shadow-2xl md:shadow-none">
+    class="fixed inset-y-0 left-0 z-50 w-72 flex flex-col border-r bg-white transition-all duration-300 ease-in-out -translate-x-full md:translate-x-0 h-[100dvh] overflow-hidden group shadow-2xl md:shadow-none">
     <div class="flex h-16 items-center border-b bg-white px-6 justify-between shrink-0">
         <a href="{{ route('employee.dashboard') }}" class="flex items-center gap-2">
             <img src="{{ asset('image/logo-kai.png') }}" alt="Logo" class="h-8 w-auto">
@@ -42,7 +42,7 @@
         </button>
     </div>
 
-    <div class="flex-1 overflow-y-auto px-4 py-8 space-y-8">
+    <div class="flex-1 overflow-y-auto px-4 py-8 space-y-8 scrollbar-hide">
         <!-- Main Navigation -->
         <div class="space-y-1.5">
             <p class="px-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Utama</p>
@@ -95,7 +95,7 @@
     </div>
 
     <!-- User Section Bottom -->
-    <div class="p-4 border-t bg-zinc-50/50">
+    <div class="p-4 border-t bg-zinc-50/50 pb-12 md:pb-4">
         <div class="flex items-center gap-3 p-2 mb-4 bg-white rounded-2xl border border-zinc-100 shadow-sm">
             @if (Auth::guard('employee')->user()->foto)
                 <img src="{{ asset('storage/' . Auth::guard('employee')->user()->foto) }}" alt="Avatar"
