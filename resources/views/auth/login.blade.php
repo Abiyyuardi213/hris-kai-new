@@ -12,6 +12,8 @@
             font-family: 'Inter', sans-serif;
         }
     </style>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('image/logo-kai.jpg') }}?v=1.0">
+    <link rel="icon" type="image/jpeg" href="{{ asset('image/logo-kai.jpg') }}?v=1.0">
 </head>
 
 <body>

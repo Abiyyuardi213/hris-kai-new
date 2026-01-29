@@ -46,7 +46,7 @@ class EmployeeAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('employee.login');
+        return redirect()->route('employee.login')->with('success', 'Berhasil logout!');
     }
 
     public function dashboard()

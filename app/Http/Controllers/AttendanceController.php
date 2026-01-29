@@ -97,7 +97,8 @@ class AttendanceController extends Controller
         $startTime = Carbon::today()->setTime($shiftStart->hour, $shiftStart->minute, $shiftStart->second);
 
         $terlambat = 0;
-        if ($now->greaterThan($startTime)) {
+        // Check if shift is NOT remote before calculating lateness
+        if (stripos($shift->name, 'remote') === false && $now->greaterThan($startTime)) {
             $terlambat = abs($now->diffInMinutes($startTime));
         }
 
@@ -151,7 +152,8 @@ class AttendanceController extends Controller
         $endTime = Carbon::today()->setTime($shiftEnd->hour, $shiftEnd->minute, $shiftEnd->second);
 
         $pulangCepat = 0;
-        if ($now->lessThan($endTime)) {
+        // Check if shift is NOT remote before calculating early departure
+        if (stripos($shift->name, 'remote') === false && $now->lessThan($endTime)) {
             $pulangCepat = abs($now->diffInMinutes($endTime));
         }
 

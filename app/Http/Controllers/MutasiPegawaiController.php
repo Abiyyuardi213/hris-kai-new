@@ -104,7 +104,35 @@ class MutasiPegawaiController extends Controller
             ]);
         });
 
-        return redirect()->route('mutations.index')->with('success', 'Mutasi berhasil diproses');
+        $type = $validated['type'];
+        $message = '';
+        $title = 'Informasi Mutasi Kepegawaian';
+        $icon = 'briefcase';
+        $notifType = 'info';
+
+        if (in_array($type, ['promosi', 'rotasi', 'mutasi'])) {
+            $message = "Selamat! Anda telah menjalani proses {$type}. Silakan cek detail perubahan pada profil Anda. Sukses selalu!";
+            $notifType = 'success';
+            $icon = 'award';
+        } elseif ($type === 'demosi') {
+            $message = "Tetap semangat dan terus berkembang. Anda telah menjalani proses {$type}. Silakan cek detail perubahan pada profil Anda.";
+            $notifType = 'warning';
+            $icon = 'trending-down';
+        }
+
+        try {
+            $employee->notify(new \App\Notifications\SystemNotification([
+                'title' => $title,
+                'message' => $message,
+                'url' => route('employee.mutations.index'),
+                'type' => $notifType,
+                'icon' => $icon,
+            ]));
+        } catch (\Exception $e) {
+            //
+        }
+
+        return redirect()->route('mutations.index')->with('success', 'Mutasi berhasil diproses dan notifikasi telah dikirim.');
     }
 
     public function show(MutasiPegawai $mutation)

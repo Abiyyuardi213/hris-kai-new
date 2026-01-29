@@ -63,6 +63,10 @@ Route::middleware(['auth:employee'])->group(function () {
     // Announcements
     Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('employee.announcements.index');
     Route::get('/announcements/{id}', [App\Http\Controllers\AnnouncementController::class, 'show'])->name('employee.announcements.show');
+
+    // Mutasi (Employee View)
+    Route::get('/mutations', [App\Http\Controllers\EmployeeMutasiController::class, 'index'])->name('employee.mutations.index');
+    Route::get('/mutations/{id}', [App\Http\Controllers\EmployeeMutasiController::class, 'show'])->name('employee.mutations.show');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
