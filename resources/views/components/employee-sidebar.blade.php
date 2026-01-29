@@ -5,7 +5,7 @@
 
 <!-- Bottom Navigation for Mobile (Only 4 Items) -->
 <nav
-    class="fixed bottom-0 left-0 z-40 w-full h-16 bg-white border-t border-zinc-200 flex items-center justify-around px-2 md:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.03)]">
+    class="fixed bottom-0 left-0 z-40 w-full bg-white border-t border-zinc-200 flex items-center justify-around px-2 pt-3 pb-[calc(0.75rem_+_env(safe-area-inset-bottom))] md:hidden shadow-[0_-4px_10px_rgba(0,0,0,0.03)]">
     <a href="{{ route('employee.dashboard') }}"
         class="flex flex-col items-center justify-center gap-1 flex-1 transition-colors {{ Request::is('dashboard-pegawai*') ? 'text-zinc-900' : 'text-zinc-400' }}">
         <i data-lucide="layout-dashboard"
