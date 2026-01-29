@@ -81,6 +81,11 @@
                 <i data-lucide="award" class="h-5 w-5"></i>
                 <span class="font-bold">Kinerja & KPI</span>
             </a>
+            <a href="{{ route('employee.announcements.index') }}"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('announcements*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900' }}">
+                <i data-lucide="megaphone" class="h-5 w-5"></i>
+                <span class="font-bold">Pusat Informasi</span>
+            </a>
         </div>
 
         <!-- Personal Section -->
@@ -116,7 +121,8 @@
                 </div>
             @endif
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold text-zinc-900 truncate">{{ Auth::guard('employee')->user()->nama_lengkap }}
+                <p class="text-sm font-bold text-zinc-900 truncate">
+                    {{ Auth::guard('employee')->user()->nama_lengkap }}
                 </p>
                 <p class="text-[10px] font-medium text-zinc-500 truncate">{{ Auth::guard('employee')->user()->nip }}
                 </p>

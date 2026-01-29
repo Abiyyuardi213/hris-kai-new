@@ -27,7 +27,7 @@
                 <div class="space-y-4">
                     <img src="{{ asset('image/logo-kai.png') }}" class="h-10 w-auto brightness-0 invert">
                     <div>
-                        <h3 class="text-2xl font-black italic uppercase tracking-tighter">Personal Performance Result</h3>
+                        <h3 class="text-2xl font-bold uppercase tracking-tight">Personal Performance Result</h3>
                         <p class="text-xs text-zinc-400 font-bold uppercase tracking-widest">Periode Tahun
                             {{ $appraisal->tahun }}</p>
                     </div>
@@ -47,9 +47,9 @@
                         </div>
                     @endif
                     <div>
-                        <h4 class="text-xl font-black text-zinc-900 uppercase italic tracking-tighter">
+                        <h4 class="text-xl font-bold text-zinc-900 uppercase tracking-tight">
                             {{ $appraisal->pegawai->nama_lengkap }}</h4>
-                        <p class="text-[10px] text-zinc-400 font-black uppercase tracking-widest mb-2">
+                        <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">
                             {{ $appraisal->pegawai->jabatan->name ?? '-' }}</p>
                         <div class="flex flex-col gap-1">
                             <span class="text-xs font-bold text-zinc-600">NIP: {{ $appraisal->pegawai->nip }}</span>
@@ -61,14 +61,14 @@
                 <div class="flex flex-col justify-center items-end text-right">
                     <div class="bg-zinc-50 p-6 rounded-3xl border border-zinc-100 flex items-center gap-6">
                         <div>
-                            <p class="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1">Total Score</p>
-                            <p class="text-4xl font-black text-zinc-900 tracking-tighter">
+                            <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Total Score</p>
+                            <p class="text-4xl font-bold text-zinc-900 tracking-tight">
                                 {{ number_format($appraisal->total_score, 1) }}</p>
                         </div>
                         <div
                             class="h-16 w-16 bg-zinc-900 text-white rounded-2xl flex flex-col items-center justify-center shadow-lg transform rotate-3">
                             <p class="text-[8px] font-black uppercase opacity-50">Rating</p>
-                            <p class="text-2xl font-black italic">{{ $appraisal->rating }}</p>
+                            <p class="text-2xl font-bold">{{ $appraisal->rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -104,7 +104,7 @@
                             </div>
                             @if ($item->comment)
                                 <div
-                                    class="mt-2 p-2 bg-zinc-50 rounded-lg border border-zinc-100 text-[10px] text-zinc-500 italic font-medium">
+                                    class="mt-2 p-2 bg-zinc-50 rounded-lg border border-zinc-100 text-[10px] text-zinc-500 font-medium">
                                     "{{ $item->comment }}"
                                 </div>
                             @endif
@@ -115,9 +115,9 @@
 
             <!-- Reviewer Note -->
             <div class="p-10 border-t border-zinc-100 bg-zinc-50/20">
-                <h4 class="text-xs font-black text-zinc-900 uppercase tracking-widest mb-4">Ulasan Penilai untuk Anda</h4>
+                <h4 class="text-xs font-bold text-zinc-900 uppercase tracking-widest mb-4">Ulasan Penilai untuk Anda</h4>
                 <div
-                    class="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm italic text-sm text-zinc-600 leading-relaxed font-medium">
+                    class="bg-white p-6 rounded-2xl border border-zinc-100 shadow-sm text-sm text-zinc-600 leading-relaxed font-medium">
                     "{{ $appraisal->catatan_reviewer ?? 'Tidak ada catatan tambahan.' }}"
                 </div>
             </div>
@@ -128,13 +128,13 @@
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-16 text-center">Tanda Tangan
                         Penilai</p>
                     <div class="border-b border-zinc-900 mx-auto w-48 mb-1"></div>
-                    <p class="text-xs font-black uppercase italic tracking-tighter">{{ $appraisal->appraiser->name }}</p>
+                    <p class="text-xs font-bold uppercase tracking-tight">{{ $appraisal->appraiser->name }}</p>
                 </div>
                 <div class="text-center">
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-16 text-center">Penerima
                         Laporan</p>
                     <div class="border-b border-zinc-900 mx-auto w-48 mb-1"></div>
-                    <p class="text-xs font-black uppercase italic tracking-tighter">{{ $appraisal->pegawai->nama_lengkap }}
+                    <p class="text-xs font-bold uppercase tracking-tight">{{ $appraisal->pegawai->nama_lengkap }}
                     </p>
                 </div>
             </div>

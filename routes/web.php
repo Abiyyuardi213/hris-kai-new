@@ -59,6 +59,10 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/performance', [App\Http\Controllers\PerformanceAppraisalController::class, 'index'])->name('employee.performance.index');
     Route::get('/performance/{id}', [App\Http\Controllers\PerformanceAppraisalController::class, 'show'])->name('employee.performance.show');
     Route::get('/performance/{id}/print', [App\Http\Controllers\PerformanceAppraisalController::class, 'print'])->name('employee.performance.print');
+
+    // Announcements
+    Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('employee.announcements.index');
+    Route::get('/announcements/{id}', [App\Http\Controllers\AnnouncementController::class, 'show'])->name('employee.announcements.show');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -142,4 +146,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::patch('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'update'])->name('admin.performance.update');
     Route::get('/performance/{id}/print', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'print'])->name('admin.performance.print');
     Route::delete('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'destroy'])->name('admin.performance.destroy');
+
+    // Announcements
+    Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->names('admin.announcements');
 });

@@ -62,6 +62,45 @@
             </div>
         </div>
 
+        <!-- Announcements Section -->
+        @if ($announcements->count() > 0)
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-400">Informasi & Pengumuman
+                    </h3>
+                    <a href="{{ route('employee.announcements.index') }}"
+                        class="text-[10px] font-bold uppercase tracking-widest text-zinc-900 border-b border-zinc-900 leading-none">Lihat
+                        Semua</a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    @foreach ($announcements as $announcement)
+                        <a href="{{ route('employee.announcements.show', $announcement->id) }}"
+                            class="group bg-white p-6 rounded-[2rem] border border-zinc-100 shadow-sm hover:shadow-xl transition-all">
+                            <div class="flex flex-col h-full justify-between gap-4">
+                                <div>
+                                    <span
+                                        class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest {{ $announcement->category == 'Penting' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-zinc-50 text-zinc-500 border border-zinc-100' }}">
+                                        {{ $announcement->category }}
+                                    </span>
+                                    <h4
+                                        class="mt-4 text-sm font-bold text-zinc-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                                        {{ $announcement->title }}
+                                    </h4>
+                                </div>
+                                <div class="flex items-center justify-between pt-4 border-t border-zinc-50">
+                                    <span class="text-[9px] text-zinc-400 font-bold uppercase tracking-widest">
+                                        {{ $announcement->published_at->diffForHumans() }}
+                                    </span>
+                                    <i data-lucide="arrow-right"
+                                        class="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 transition-colors"></i>
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <!-- Quick Stats -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div
@@ -163,7 +202,7 @@
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-zinc-500">Email Pribadi</span>
-                        <span class="font-semibold text-zinc-900 italic">{{ $employee->email_pribadi ?? '-' }}</span>
+                        <span class="font-semibold text-zinc-900">{{ $employee->email_pribadi ?? '-' }}</span>
                     </div>
                 </div>
             </div>

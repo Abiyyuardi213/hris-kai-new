@@ -54,6 +54,16 @@ class EmployeeAuthController extends Controller
         /** @var \App\Models\Pegawai $employee */
         $employee = Auth::guard('employee')->user();
         $employee->load(['jabatan', 'divisi', 'kantor', 'statusPegawai', 'shift']);
-        return view('employee.dashboard', compact('employee'));
+
+        $announcements = \App\Models\Announcement::where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            })
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('employee.dashboard', compact('employee', 'announcements'));
     }
 }

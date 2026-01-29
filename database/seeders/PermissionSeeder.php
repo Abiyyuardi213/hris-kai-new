@@ -49,6 +49,9 @@ class PermissionSeeder extends Seeder
 
             // Assets
             ['name' => 'manage-assets', 'display_name' => 'Manajemen Aset', 'module' => 'Assets'],
+
+            // Announcements
+            ['name' => 'manage-announcements', 'display_name' => 'Kelola Pengumuman', 'module' => 'Internal'],
         ];
 
         foreach ($permissions as $permission) {

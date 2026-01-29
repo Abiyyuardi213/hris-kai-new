@@ -9,7 +9,7 @@
             <img src="{{ asset('image/logo-kai.png') }}" alt="Logo" class="h-8 w-auto">
         </a>
     </div>
-    <div class="flex-1 overflow-x-hidden overflow-y-auto py-2">
+    <div id="sidebar-scroll-area" class="flex-1 overflow-x-hidden overflow-y-auto py-2">
         <nav class="grid items-start px-2 text-sm font-medium lg:px-4 space-y-1">
             @if (Auth::guard('web')->check())
                 <a href="{{ route('dashboard') }}"
@@ -159,6 +159,12 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Evaluasi Kinerja</span>
                     </a>
 
+                    <a href="{{ route('admin.announcements.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/announcements*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="megaphone" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Pengumuman & Broadcast</span>
+                    </a>
+
                     <div
                         class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
                         Lainnya</div>
@@ -207,4 +213,22 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById("sidebar-scroll-area");
+
+            if (sidebar) {
+                // Restore scroll position
+                const savedScroll = sessionStorage.getItem("sidebar-scroll");
+                if (savedScroll) {
+                    sidebar.scrollTop = savedScroll;
+                }
+
+                // Save scroll position on scroll
+                sidebar.addEventListener("scroll", function() {
+                    sessionStorage.setItem("sidebar-scroll", sidebar.scrollTop);
+                });
+            }
+        });
+    </script>
 </aside>
