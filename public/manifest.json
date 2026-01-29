@@ -1,0 +1,21 @@
+{
+    "name": "HRIS KAI Apps",
+    "short_name": "HRIS KAI",
+    "start_url": "/login-pegawai",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#18181b",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/image/logo-kai.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/image/logo-kai.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
