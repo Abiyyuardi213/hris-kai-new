@@ -11,7 +11,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="HRIS KAI">
-    <link rel="apple-touch-icon" href="{{ asset('image/logo-kai.jpg') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('image/logo-kai.jpg') }}?v=1.0">
+    <link rel="icon" type="image/jpeg" href="{{ asset('image/logo-kai.jpg') }}?v=1.0">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
