@@ -6,6 +6,8 @@ use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Cookie;
+
 class EmployeeAuthController extends Controller
 {
     public function showLoginForm()
@@ -13,7 +15,9 @@ class EmployeeAuthController extends Controller
         if (Auth::guard('employee')->check()) {
             return redirect()->route('employee.dashboard');
         }
-        return view('auth.employee-login');
+        $saved_nip = Cookie::get('remembered_nip');
+        $saved_dob = Cookie::get('remembered_dob');
+        return view('auth.employee-login', compact('saved_nip', 'saved_dob'));
     }
 
     public function login(Request $request)
@@ -28,8 +32,17 @@ class EmployeeAuthController extends Controller
             ->first();
 
         if ($pegawai) {
-            Auth::guard('employee')->login($pegawai, $request->remember);
+            $remember = $request->boolean('remember');
+            Auth::guard('employee')->login($pegawai, $remember);
             $request->session()->regenerate();
+
+            if ($remember) {
+                Cookie::queue('remembered_nip', $request->nip, 43200); // 30 days
+                Cookie::queue('remembered_dob', $request->tanggal_lahir, 43200);
+            } else {
+                Cookie::queue(Cookie::forget('remembered_nip'));
+                Cookie::queue(Cookie::forget('remembered_dob'));
+            }
 
             return redirect()->intended(route('employee.dashboard'))->with('success', 'Selamat datang kembali, ' . $pegawai->nama_lengkap . '!');
         }

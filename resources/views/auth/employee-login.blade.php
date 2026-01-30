@@ -20,6 +20,22 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-down {
+            animation: slideDown 0.4s ease-out forwards;
+        }
     </style>
 </head>
 
@@ -47,8 +63,9 @@
                         <div class="relative">
                             <i data-lucide="user-square-2"
                                 class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
-                            <input type="text" name="nip" id="nip" value="{{ old('nip') }}" required
-                                autofocus placeholder="Masukkan NIP Anda"
+                            <input type="text" name="nip" id="nip"
+                                value="{{ old('nip', $saved_nip ?? '') }}" required autofocus
+                                placeholder="Masukkan NIP Anda" autocomplete="username"
                                 class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2.5 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all">
                         </div>
                     </div>
@@ -60,7 +77,8 @@
                             <i data-lucide="key-round"
                                 class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                             <input type="password" name="tanggal_lahir" id="tanggal_lahir" required
-                                placeholder="YYYY-MM-DD"
+                                value="{{ old('tanggal_lahir', $saved_dob ?? '') }}" placeholder="YYYY-MM-DD"
+                                autocomplete="current-password"
                                 class="block w-full rounded-lg border border-zinc-300 pl-10 pr-12 py-2.5 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 transition-all">
                             <button type="button" onclick="togglePassword()"
                                 class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-zinc-900 transition-colors">
@@ -82,6 +100,7 @@
                     <div class="flex items-center justify-between">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" name="remember"
+                                {{ old('remember') || isset($saved_nip) ? 'checked' : '' }}
                                 class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
                             <span class="text-sm text-zinc-600">Ingat saya</span>
                         </label>
@@ -114,15 +133,16 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2">
+    <div id="toast-container"
+        class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-3 w-full max-w-xs px-4 sm:px-0">
         @if (session('success'))
-            <div class="toast flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 border-l-4 border-green-500"
+            <div class="toast animate-slide-down flex items-center w-full p-4 space-x-4 text-gray-500 bg-white rounded-xl shadow-lg dark:text-gray-400 dark:bg-gray-800 border-l-4 border-green-500"
                 role="alert">
                 <div
                     class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-green-200">
                     <i data-lucide="check-circle-2" class="w-5 h-5"></i>
                 </div>
-                <div class="ml-3 text-sm font-normal text-zinc-800">{{ session('success') }}</div>
+                <div class="ml-3 text-sm font-normal text-gray-800 dark:text-gray-100">{{ session('success') }}</div>
                 <button type="button"
                     class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
                     data-dismiss-target="#toast-success" aria-label="Close" onclick="this.parentElement.remove()">
@@ -132,13 +152,13 @@
             </div>
         @endif
         @if (session('error'))
-            <div class="toast flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 border-l-4 border-red-500"
+            <div class="toast animate-slide-down flex items-center w-full p-4 space-x-4 text-gray-500 bg-white rounded-xl shadow-lg dark:text-gray-400 dark:bg-gray-800 border-l-4 border-red-500"
                 role="alert">
                 <div
                     class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
                     <i data-lucide="alert-circle" class="w-5 h-5"></i>
                 </div>
-                <div class="ml-3 text-sm font-normal text-zinc-800">{{ session('error') }}</div>
+                <div class="ml-3 text-sm font-normal text-gray-800 dark:text-gray-100">{{ session('error') }}</div>
                 <button type="button"
                     class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
                     data-dismiss-target="#toast-danger" aria-label="Close" onclick="this.parentElement.remove()">
