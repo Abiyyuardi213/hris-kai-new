@@ -175,6 +175,16 @@ class PegawaiController extends Controller
         return redirect()->route('employees.index')->with('success', 'Data pegawai berhasil diperbarui');
     }
 
+    public function idCard(Pegawai $employee)
+    {
+        return view('employees.id-card', compact('employee'));
+    }
+
+    public function idCardBack(Pegawai $employee)
+    {
+        return view('employees.id-card-back', compact('employee'));
+    }
+
     public function destroy(Pegawai $employee)
     {
         if ($employee->foto) {

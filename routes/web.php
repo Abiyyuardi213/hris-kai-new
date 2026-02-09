@@ -101,6 +101,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('assets', App\Http\Controllers\AsetController::class)->middleware('permission:manage-assets');
     Route::resource('employment-statuses', App\Http\Controllers\StatusPegawaiController::class);
     Route::resource('employees', App\Http\Controllers\PegawaiController::class);
+    Route::get('employees/{employee}/id-card', [App\Http\Controllers\PegawaiController::class, 'idCard'])->name('employees.id-card');
+    Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back');
 
     Route::resource('mutations', App\Http\Controllers\MutasiPegawaiController::class)->except(['edit', 'update', 'destroy']); // Usually mutations are final records
     Route::resource('employee-shifts', App\Http\Controllers\ShiftPegawaiController::class)->only(['index', 'store', 'destroy']);

@@ -64,7 +64,18 @@ class ProfileController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        if ($request->hasFile('foto')) {
+        if ($request->filled('foto_cropped')) {
+            if ($user->foto) {
+                Storage::disk('public')->delete($user->foto);
+            }
+            $imageData = $request->foto_cropped;
+            // Extract the base64 data
+            $base64Image = substr($imageData, strpos($imageData, ',') + 1);
+            $fileName = 'profiles/' . uniqid() . '.jpg';
+
+            Storage::disk('public')->put($fileName, base64_decode($base64Image));
+            $data['foto'] = $fileName;
+        } elseif ($request->hasFile('foto')) {
             if ($user->foto) {
                 Storage::disk('public')->delete($user->foto);
             }

@@ -2,6 +2,22 @@
 
 @section('title', 'Edit Profil')
 
+@push('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+    <style>
+        .cropper-view-box,
+        .cropper-face {
+            border-radius: 50%;
+        }
+
+        /* Make the image responsive in modal */
+        #image-to-crop {
+            display: block;
+            max-width: 100%;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
@@ -21,17 +37,20 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <!-- Profile Summary Card -->
             <div class="lg:col-span-4 space-y-6">
-                <div class="bg-white rounded-xl border border-zinc-200 p-6 shadow-sm flex flex-col items-center text-center">
+                <div
+                    class="bg-white rounded-xl border border-zinc-200 p-6 shadow-sm flex flex-col items-center text-center">
                     <div class="relative group">
                         <div
                             class="h-32 w-32 rounded-full overflow-hidden border-4 border-zinc-50 bg-zinc-100 mb-4 shadow-inner">
                             @if ($user->foto)
                                 <img src="{{ asset('storage/' . $user->foto) }}" alt="Profile"
-                                    class="h-full w-full object-cover">
+                                    class="h-full w-full object-cover" id="current-profile-image">
                             @else
-                                <div class="h-full w-full flex items-center justify-center">
+                                <div class="h-full w-full flex items-center justify-center" id="default-profile-icon">
                                     <i data-lucide="user" class="h-16 w-16 text-zinc-300"></i>
                                 </div>
+                                <img src="" alt="Profile" class="h-full w-full object-cover hidden"
+                                    id="preview-profile-image">
                             @endif
                         </div>
                     </div>
@@ -60,8 +79,10 @@
             <div class="lg:col-span-8">
                 <div class="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
                     <form action="{{ $guard === 'web' ? route('profile.update') : route('employee.profile.update') }}"
-                        method="POST" enctype="multipart/form-data" class="divide-y divide-zinc-100">
+                        method="POST" enctype="multipart/form-data" class="divide-y divide-zinc-100" id="profile-form">
                         @csrf
+                        {{-- Hidden input to store base64 cropped image --}}
+                        <input type="hidden" name="foto_cropped" id="foto_cropped">
 
                         <div class="p-6 md:p-8 space-y-8">
                             <div>
@@ -121,7 +142,7 @@
                                         <label class="text-sm font-medium text-zinc-900 text-left block">Foto Profil</label>
                                         <div
                                             class="mt-1 flex items-center gap-4 p-4 rounded-lg border border-zinc-100 bg-zinc-50/50">
-                                            <input type="file" name="foto"
+                                            <input type="file" name="foto" id="foto-input" accept="image/*"
                                                 class="block w-full text-xs text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-zinc-900 file:text-white hover:file:bg-zinc-800 transition-all">
                                         </div>
                                         @error('foto')
@@ -144,7 +165,8 @@
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-sm font-medium text-zinc-900">Konfirmasi Kata Sandi</label>
-                                        <input type="password" name="password_confirmation" placeholder="Ulangi kata sandi"
+                                        <input type="password" name="password_confirmation"
+                                            placeholder="Ulangi kata sandi"
                                             class="w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition-all outline-none">
                                     </div>
                                 </div>
@@ -168,4 +190,136 @@
             </div>
         </div>
     </div>
+
+    <!-- Crop Modal -->
+    <div id="crop-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+            <!-- This element is to trick the browser into centering the modal contents. -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div
+                class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Potong Foto Profil
+                            </h3>
+                            <div class="mt-2 w-full">
+                                <div
+                                    class="img-container relative h-[400px] w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                                    <img id="image-to-crop" src="" alt="Picture to crop"
+                                        class="max-w-full max-h-full block">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="crop-button"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-zinc-900 text-base font-medium text-white hover:bg-zinc-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Potong & Simpan
+                    </button>
+                    <button type="button" id="cancel-crop-button"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var avatar = document.getElementById('current-profile-image');
+            var defaultIcon = document.getElementById('default-profile-icon');
+            var previewImage = document.getElementById('preview-profile-image');
+
+            var input = document.getElementById('foto-input');
+            var cropModal = document.getElementById('crop-modal');
+            var imageToCrop = document.getElementById('image-to-crop');
+            var cropButton = document.getElementById('crop-button');
+            var cancelCropButton = document.getElementById('cancel-crop-button');
+            var hiddenInput = document.getElementById('foto_cropped');
+            var cropper;
+
+            input.addEventListener('change', function(e) {
+                var files = e.target.files;
+                if (files && files.length > 0) {
+                    var file = files[0];
+                    var url = URL.createObjectURL(file);
+
+                    input.value = ''; // Clear input so same file can be selected again if needed
+                    imageToCrop.src = url;
+                    cropModal.classList.remove('hidden');
+
+                    if (cropper) {
+                        cropper.destroy();
+                    }
+
+                    // Small delay to ensure modal is rendered
+                    setTimeout(() => {
+                        cropper = new Cropper(imageToCrop, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            autoCropArea: 0.8,
+                            dragMode: 'move',
+                            guides: true,
+                            center: true,
+                        });
+                    }, 100);
+                }
+            });
+
+            cropButton.addEventListener('click', function() {
+                if (cropper) {
+                    var canvas = cropper.getCroppedCanvas({
+                        width: 400,
+                        height: 400,
+                    });
+
+                    // Get base64 result
+                    var croppedDataUrl = canvas.toDataURL(
+                    'image/jpeg'); // Force jpeg for smaller size usually
+
+                    // Update hidden input
+                    hiddenInput.value = croppedDataUrl;
+
+                    // Update UI Preview
+                    if (avatar) {
+                        avatar.src = croppedDataUrl;
+                    } else {
+                        // If user didn't have a photo before
+                        if (defaultIcon) defaultIcon.classList.add('hidden');
+                        if (previewImage) {
+                            previewImage.src = croppedDataUrl;
+                            previewImage.classList.remove('hidden');
+                        }
+                    }
+
+                    // Close modal and cleanup
+                    closeModal();
+                }
+            });
+
+            cancelCropButton.addEventListener('click', function() {
+                closeModal();
+            });
+
+            function closeModal() {
+                cropModal.classList.add('hidden');
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+                imageToCrop.src = '';
+            }
+        });
+    </script>
+@endpush

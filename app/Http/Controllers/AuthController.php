@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Support\Facades\Cookie;
+
 class AuthController extends Controller
 {
     public function showLoginForm()
@@ -12,7 +14,9 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('dashboard');
         }
-        return view('auth.login');
+
+        $saved_email = Cookie::get('saved_email');
+        return view('auth.login', compact('saved_email'));
     }
 
     public function login(Request $request)
@@ -25,14 +29,21 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
         $credentials['status'] = true; // Only active users can login
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            if ($request->boolean('remember')) {
+                Cookie::queue('saved_email', $request->email, 43200); // 30 days
+            } else {
+                Cookie::queue(Cookie::forget('saved_email'));
+            }
+
             return redirect()->intended(route('dashboard'))->with('success', 'Login berhasil! Selamat datang kembali.');
         }
 
         return back()->withErrors([
             'email' => 'Email atau password salah, atau akun tidak aktif.',
-        ])->withInput($request->only('email'));
+        ])->withInput($request->only('email', 'remember'));
     }
 
     public function logout(Request $request)

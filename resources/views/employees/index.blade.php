@@ -128,7 +128,7 @@
                                 <th class="px-6 py-4 font-medium">Jabatan & Divisi</th>
                                 <th class="px-6 py-4 font-medium">Status & Shift</th>
                                 <th class="px-6 py-4 font-medium">Kontak</th>
-                                <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
+                                <th class="px-6 py-4 font-medium text-right w-[160px]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
@@ -191,6 +191,11 @@
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
+                                            </a>
+                                            <a href="{{ route('employees.id-card', $employee->id) }}" target="_blank"
+                                                class="p-2 text-zinc-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                                title="Cetak ID Card">
+                                                <i data-lucide="id-card" class="h-4 w-4"></i>
                                             </a>
                                             <button
                                                 onclick="confirmDelete('{{ $employee->id }}', '{{ $employee->nama_lengkap }}')"
