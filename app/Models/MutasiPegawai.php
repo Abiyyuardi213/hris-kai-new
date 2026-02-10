@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class MutasiPegawai extends Model
 {
     use \Illuminate\Database\Eloquent\Factories\HasFactory;
+    use \App\Traits\HasOfficeScope;
+
+    public function applyOfficeScope($builder, $officeId)
+    {
+        $builder->where(function ($q) use ($officeId) {
+            $q->where('from_office_id', $officeId)
+                ->orWhere('to_office_id', $officeId);
+        });
+    }
 
     protected $table = 'employee_mutations';
 

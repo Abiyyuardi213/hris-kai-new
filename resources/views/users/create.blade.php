@@ -65,16 +65,34 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="role_id">Role</label>
-                                    <select name="role_id" class="form-control @error('role_id') is-invalid @enderror"
-                                        required>
+                                    <select name="role_id" id="role_id"
+                                        class="form-control @error('role_id') is-invalid @enderror" required>
                                         <option value="">Pilih Role</option>
                                         @foreach ($roles as $role)
-                                            <option value="{{ $role->id }}"
+                                            <option value="{{ $role->id }}" data-role-name="{{ $role->role_name }}"
                                                 {{ old('role_id') == $role->id ? 'selected' : '' }}>
                                                 {{ $role->role_name }}</option>
                                         @endforeach
                                     </select>
                                     @error('role_id')
+                                        <span class="invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group" id="office_container" style="display: none;">
+                                    <label for="kantor_id">Kantor (Wajib untuk Admin Daop/Regional)</label>
+                                    <select name="kantor_id" id="kantor_id"
+                                        class="form-control @error('kantor_id') is-invalid @enderror">
+                                        <option value="">Pilih Kantor</option>
+                                        @foreach ($offices as $office)
+                                            <option value="{{ $office->id }}"
+                                                {{ old('kantor_id') == $office->id ? 'selected' : '' }}>
+                                                {{ $office->office_name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="form-text text-muted">Pilih kantor yang akan dikelola oleh user
+                                        ini.</small>
+                                    @error('kantor_id')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
@@ -111,6 +129,38 @@
     <script>
         $(document).ready(function() {
             bsCustomFileInput.init();
+
+            const roleSelect = $('#role_id');
+            const officeContainer = $('#office_container');
+            const officeSelect = $('#kantor_id');
+            const adminRoles = ['Super Admin', 'Administrator', 'Admin'];
+
+            function toggleOffice() {
+                const selectedOption = roleSelect.find(':selected');
+                const roleName = selectedOption.data('role-name');
+
+                // Logic: Show office if role is NOT a global admin (e.g., Admin Daop, User)
+                // Adjust this logic if you have specific roles that MUST have an office.
+                // For now, assuming any non-Super/Admin role might need an office scope.
+                // Specifically for "Admin Daop" as requested.
+
+                if (roleName && !adminRoles.includes(roleName)) {
+                    officeContainer.show();
+                    if (roleName.toLowerCase().includes('admin daop') || roleName.toLowerCase().includes(
+                            'admin regional')) {
+                        officeSelect.attr('required', true);
+                    } else {
+                        officeSelect.attr('required', false);
+                    }
+                } else {
+                    officeContainer.hide();
+                    officeSelect.val(''); // Clear value
+                    officeSelect.attr('required', false);
+                }
+            }
+
+            roleSelect.change(toggleOffice);
+            toggleOffice(); // Run on load in case of validation error/old input
         });
     </script>
 </body>

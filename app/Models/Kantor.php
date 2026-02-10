@@ -11,6 +11,11 @@ class Kantor extends Model
 
     protected $table = 'offices';
 
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'direct';
+    public $officeScopeColumn = 'id';
+
     protected $fillable = [
         'office_code',
         'office_name',

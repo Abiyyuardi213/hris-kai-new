@@ -16,7 +16,19 @@ class PegawaiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pegawai::with(['statusPegawai', 'shift', 'divisi', 'jabatan', 'kantor']);
+        $query = Pegawai::with([
+            'statusPegawai',
+            'shift',
+            'divisi' => function ($q) {
+                $q->withoutGlobalScope('office_access');
+            },
+            'jabatan' => function ($q) {
+                $q->withoutGlobalScope('office_access');
+            },
+            'kantor' => function ($q) {
+                $q->withoutGlobalScope('office_access');
+            }
+        ]);
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -61,8 +73,11 @@ class PegawaiController extends Controller
         }
 
         $employees = $query->paginate(10)->withQueryString();
-        $divisions = Divisi::orderBy('name')->get();
-        $offices = Kantor::orderBy('office_name')->get();
+        // Divisi & Jabatan are global master data, should not be scoped by office usage for dropdowns
+        $divisions = Divisi::withoutGlobalScope('office_access')->orderBy('name')->get();
+        // Kantor can remain scoped or unscoped for filter. Unscoped allows filtering by other offices if user (Super Admin) can see them. 
+        // If user is restricted, Pegawai query handles the row visibility.
+        $offices = Kantor::withoutGlobalScope('office_access')->orderBy('office_name')->get();
         $statuses = StatusPegawai::orderBy('name')->get();
 
         return view('employees.index', compact('employees', 'divisions', 'offices', 'statuses'));
@@ -72,8 +87,9 @@ class PegawaiController extends Controller
     {
         $statuses = StatusPegawai::all();
         $shifts = ShiftKerja::all();
-        $divisions = Divisi::all();
-        $positions = Jabatan::all();
+        $divisions = Divisi::withoutGlobalScope('office_access')->get();
+        $positions = Jabatan::withoutGlobalScope('office_access')->get();
+        // Kantor remains scoped so admin can only assign to their own office(s)
         $offices = Kantor::all();
 
         // NIP Automation: Starts from 71000
@@ -130,8 +146,9 @@ class PegawaiController extends Controller
     {
         $statuses = StatusPegawai::all();
         $shifts = ShiftKerja::all();
-        $divisions = Divisi::all();
-        $positions = Jabatan::all();
+        $divisions = Divisi::withoutGlobalScope('office_access')->get();
+        $positions = Jabatan::withoutGlobalScope('office_access')->get();
+        // Kantor remains scoped so admin can only assign to their own office(s)
         $offices = Kantor::all();
 
         return view('employees.edit', compact('employee', 'statuses', 'shifts', 'divisions', 'positions', 'offices'));

@@ -87,28 +87,28 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::put('role/{id}/permissions', [PeranController::class, 'updatePermissions'])->name('role.update-permissions');
     });
 
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->middleware('permission:manage-users');
 
-    Route::resource('cities', App\Http\Controllers\KotaController::class);
-    Route::post('cities/sync', [App\Http\Controllers\KotaController::class, 'sync'])->name('cities.sync');
+    Route::resource('cities', App\Http\Controllers\KotaController::class)->middleware('permission:manage-cities');
+    Route::post('cities/sync', [App\Http\Controllers\KotaController::class, 'sync'])->name('cities.sync')->middleware('permission:manage-cities');
 
-    Route::get('offices/get-next-code', [App\Http\Controllers\KantorController::class, 'getNextCode'])->name('offices.get-next-code');
-    Route::resource('offices', App\Http\Controllers\KantorController::class);
+    Route::get('offices/get-next-code', [App\Http\Controllers\KantorController::class, 'getNextCode'])->name('offices.get-next-code')->middleware('permission:manage-offices');
+    Route::resource('offices', App\Http\Controllers\KantorController::class)->middleware('permission:manage-offices');
 
-    Route::resource('divisions', App\Http\Controllers\DivisiController::class);
-    Route::resource('positions', App\Http\Controllers\JabatanController::class);
+    Route::resource('divisions', App\Http\Controllers\DivisiController::class)->middleware('permission:manage-divisions');
+    Route::resource('positions', App\Http\Controllers\JabatanController::class)->middleware('permission:manage-positions');
 
     Route::resource('assets', App\Http\Controllers\AsetController::class)->middleware('permission:manage-assets');
-    Route::resource('employment-statuses', App\Http\Controllers\StatusPegawaiController::class);
-    Route::resource('employees', App\Http\Controllers\PegawaiController::class);
-    Route::get('employees/{employee}/id-card', [App\Http\Controllers\PegawaiController::class, 'idCard'])->name('employees.id-card');
-    Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back');
+    Route::resource('employment-statuses', App\Http\Controllers\StatusPegawaiController::class)->middleware('permission:manage-employee-statuses');
+    Route::resource('employees', App\Http\Controllers\PegawaiController::class)->middleware('permission:manage-employees');
+    Route::get('employees/{employee}/id-card', [App\Http\Controllers\PegawaiController::class, 'idCard'])->name('employees.id-card')->middleware('permission:manage-employees');
+    Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back')->middleware('permission:manage-employees');
 
-    Route::resource('mutations', App\Http\Controllers\MutasiPegawaiController::class)->except(['edit', 'update', 'destroy']); // Usually mutations are final records
-    Route::resource('employee-shifts', App\Http\Controllers\ShiftPegawaiController::class)->only(['index', 'store', 'destroy']);
-    Route::resource('shifts', App\Http\Controllers\ShiftController::class);
-    Route::post('holidays/sync-api', [App\Http\Controllers\HariLiburController::class, 'syncFromApi'])->name('holidays.sync-api');
-    Route::resource('holidays', App\Http\Controllers\HariLiburController::class)->only(['index', 'store', 'destroy']);
+    Route::resource('mutations', App\Http\Controllers\MutasiPegawaiController::class)->except(['edit', 'update', 'destroy'])->middleware('permission:manage-mutations');
+    Route::resource('employee-shifts', App\Http\Controllers\ShiftPegawaiController::class)->only(['index', 'store', 'destroy'])->middleware('permission:manage-shifts');
+    Route::resource('shifts', App\Http\Controllers\ShiftController::class)->middleware('permission:manage-shifts');
+    Route::post('holidays/sync-api', [App\Http\Controllers\HariLiburController::class, 'syncFromApi'])->name('holidays.sync-api')->middleware('permission:manage-holidays');
+    Route::resource('holidays', App\Http\Controllers\HariLiburController::class)->only(['index', 'store', 'destroy'])->middleware('permission:manage-holidays');
 
     // Monitoring Presensi
     Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index');

@@ -180,7 +180,19 @@
                             class="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                             <option value="">Pilih Role</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                <option value="{{ $role->id }}" data-role-name="{{ $role->role_name }}">
+                                    {{ $role->role_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="grid gap-2" id="office_container" style="display: none;">
+                        <label for="kantor_id" class="text-sm font-medium leading-none">Kantor (Wajib untuk Admin
+                            Daop)</label>
+                        <select id="kantor_id" name="kantor_id"
+                            class="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            <option value="">Pilih Kantor</option>
+                            @foreach ($offices as $office)
+                                <option value="{{ $office->id }}">{{ $office->office_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -246,7 +258,19 @@
                             class="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                             <option value="">Pilih Role</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                <option value="{{ $role->id }}" data-role-name="{{ $role->role_name }}">
+                                    {{ $role->role_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="grid gap-2" id="edit_office_container" style="display: none;">
+                        <label for="edit_kantor_id" class="text-sm font-medium leading-none">Kantor (Wajib untuk Admin
+                            Daop)</label>
+                        <select id="edit_kantor_id" name="kantor_id"
+                            class="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            <option value="">Pilih Kantor</option>
+                            @foreach ($offices as $office)
+                                <option value="{{ $office->id }}">{{ $office->office_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -389,13 +413,53 @@
             }
         }
 
+        const adminRoles = ['Super Admin', 'Administrator', 'Admin'];
+
+        function toggleOffice(roleSelectId, containerId, officeSelectId) {
+            const roleSelect = document.getElementById(roleSelectId);
+            const container = document.getElementById(containerId);
+            const officeSelect = document.getElementById(officeSelectId);
+
+            if (!roleSelect || !container || !officeSelect) return;
+
+            const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+            const roleName = selectedOption.getAttribute('data-role-name');
+
+            if (roleName && !adminRoles.includes(roleName)) {
+                container.style.display = 'grid'; // Match the 'grid' class of other fields
+                if (roleName.toLowerCase().includes('admin daop') || roleName.toLowerCase().includes('admin regional')) {
+                    officeSelect.required = true;
+                } else {
+                    officeSelect.required = false;
+                }
+            } else {
+                container.style.display = 'none';
+                officeSelect.value = '';
+                officeSelect.required = false;
+            }
+        }
+
+        // Initialize listeners
+        document.getElementById('role_id').addEventListener('change', function() {
+            toggleOffice('role_id', 'office_container', 'kantor_id');
+        });
+
+        document.getElementById('edit_role_id').addEventListener('change', function() {
+            toggleOffice('edit_role_id', 'edit_office_container', 'edit_kantor_id');
+        });
+
         function openEditUserModal(user) {
             document.getElementById('editUserForm').action = "{{ url('admin/users') }}/" + user.id;
             document.getElementById('edit_name').value = user.name;
             document.getElementById('edit_email').value = user.email;
             document.getElementById('edit_role_id').value = user.role_id;
+            document.getElementById('edit_kantor_id').value = user.kantor_id || '';
             document.getElementById('edit_status').checked = user.status == 1;
             document.getElementById('edit_cropped_foto').value = ''; // Reset cropped data
+
+            // Trigger office toggle logic
+            toggleOffice('edit_role_id', 'edit_office_container', 'edit_kantor_id');
+
             document.getElementById('editUserModal').classList.remove('hidden');
         }
 

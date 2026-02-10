@@ -24,7 +24,11 @@ class ShiftController extends Controller
             'name' => 'required|string|max:255',
             'start_time' => 'required',
             'end_time' => 'required',
+            'require_qr' => 'boolean',
         ]);
+
+        // Handle checkbox if unchecked (it won't be in request)
+        $validated['require_qr'] = $request->has('require_qr');
 
         ShiftKerja::create($validated);
 
@@ -42,7 +46,10 @@ class ShiftController extends Controller
             'name' => 'required|string|max:255',
             'start_time' => 'required',
             'end_time' => 'required',
+            'require_qr' => 'boolean',
         ]);
+
+        $validated['require_qr'] = $request->has('require_qr');
 
         $shift->update($validated);
 

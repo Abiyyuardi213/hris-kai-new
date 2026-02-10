@@ -10,6 +10,11 @@ class Aset extends Model
 
     protected $table = 'assets';
 
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'direct';
+    public $officeScopeColumn = 'office_id';
+
     protected $fillable = [
         'code',
         'name',

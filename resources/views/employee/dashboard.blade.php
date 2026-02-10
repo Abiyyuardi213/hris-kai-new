@@ -140,41 +140,7 @@
         </div>
 
         <!-- Details Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Personal Info -->
-            <div class="bg-white rounded-3xl border border-zinc-100 shadow-sm overflow-hidden">
-                <div class="px-8 py-6 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/50">
-                    <h3 class="font-bold text-zinc-900 flex items-center gap-2">
-                        <i data-lucide="user" class="h-5 w-5 text-zinc-400"></i>
-                        Informasi Pribadi
-                    </h3>
-                </div>
-                <div class="p-8 grid grid-cols-1 gap-6">
-                    <div class="flex justify-between items-center border-b border-zinc-50 pb-4">
-                        <span class="text-sm text-zinc-500">NIK (KTP)</span>
-                        <span class="font-semibold text-zinc-900">{{ $employee->nik }}</span>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-zinc-50 pb-4">
-                        <span class="text-sm text-zinc-500">Tempat, Tgl Lahir</span>
-                        <span class="font-semibold text-zinc-900">{{ $employee->tempat_lahir }},
-                            {{ $employee->tanggal_lahir }}</span>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-zinc-50 pb-4">
-                        <span class="text-sm text-zinc-500">Jenis Kelamin</span>
-                        <span
-                            class="font-semibold text-zinc-900">{{ $employee->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</span>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-zinc-50 pb-4">
-                        <span class="text-sm text-zinc-500">Agama</span>
-                        <span class="font-semibold text-zinc-900">{{ $employee->agama ?? '-' }}</span>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <span class="text-sm text-zinc-500">Alamat Lengkap</span>
-                        <p class="font-medium text-zinc-900 leading-relaxed">{{ $employee->alamat_domisili ?? '-' }}</p>
-                    </div>
-                </div>
-            </div>
-
+        <div class="grid grid-cols-1 gap-8">
             <!-- Job Info -->
             <div class="bg-white rounded-3xl border border-zinc-100 shadow-sm overflow-hidden">
                 <div class="px-8 py-6 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/50">
@@ -183,7 +149,7 @@
                         Informasi Pekerjaan
                     </h3>
                 </div>
-                <div class="p-8 grid grid-cols-1 gap-6">
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="flex justify-between items-center border-b border-zinc-50 pb-4">
                         <span class="text-sm text-zinc-500">NIP</span>
                         <span class="font-semibold text-zinc-900">{{ $employee->nip }}</span>
@@ -200,7 +166,7 @@
                         <span class="text-sm text-zinc-500">Hubungi (Kontak)</span>
                         <span class="font-semibold text-zinc-900">{{ $employee->no_hp ?? '-' }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center md:col-span-2">
                         <span class="text-sm text-zinc-500">Email Pribadi</span>
                         <span class="font-semibold text-zinc-900">{{ $employee->email_pribadi ?? '-' }}</span>
                     </div>

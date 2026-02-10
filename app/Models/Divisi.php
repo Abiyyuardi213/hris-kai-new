@@ -11,6 +11,11 @@ class Divisi extends Model
 
     protected $table = 'divisions';
 
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'has_many_relation';
+    public $officeScopeRelation = 'employees';
+
     protected $fillable = ['code', 'name', 'description'];
 
     public function positions()

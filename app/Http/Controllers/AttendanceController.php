@@ -87,10 +87,23 @@ class AttendanceController extends Controller
             return back()->with('error', 'Anda sudah melakukan absensi masuk hari ini.');
         }
 
-        $request->validate([
-            'image' => 'required|string', // Base64 image
-            'location' => 'required|string',
-        ]);
+        if ($shift->require_qr) {
+            $request->validate([
+                'image' => 'nullable|string', // Optional if QR required
+                'location' => 'required|string',
+                'qr_content' => 'required|string',
+            ]);
+        } else {
+            $request->validate([
+                'image' => 'required|string', // Base64 image
+                'location' => 'required|string',
+                'qr_content' => 'nullable|string',
+            ]);
+        }
+
+        if ($shift->require_qr && empty($request->qr_content)) {
+            return back()->with('error', 'Shift ini mewajibkan scan QR Code.');
+        }
 
         $now = Carbon::now();
         $shiftStart = Carbon::parse($shift->start_time);
@@ -102,12 +115,15 @@ class AttendanceController extends Controller
             $terlambat = abs($now->diffInMinutes($startTime));
         }
 
-        // Save image
-        $image = $request->image;
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-        $image = str_replace(' ', '+', $image);
-        $imageName = 'attendance/in_' . uniqid() . '.jpg';
-        Storage::disk('public')->put($imageName, base64_decode($image));
+        // Save image if exists
+        $imageName = null;
+        if ($request->image) {
+            $image = $request->image;
+            $image = str_replace('data:image/jpeg;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+            $imageName = 'attendance/in_' . uniqid() . '.jpg';
+            Storage::disk('public')->put($imageName, base64_decode($image));
+        }
 
         Presensi::create([
             'pegawai_id' => $employee->id,
@@ -142,10 +158,23 @@ class AttendanceController extends Controller
             return back()->with('error', 'Anda sudah melakukan absensi pulang hari ini.');
         }
 
-        $request->validate([
-            'image' => 'required|string', // Base64 image
-            'location' => 'required|string',
-        ]);
+        if ($shift->require_qr) {
+            $request->validate([
+                'image' => 'nullable|string',
+                'location' => 'required|string',
+                'qr_content' => 'required|string',
+            ]);
+        } else {
+            $request->validate([
+                'image' => 'required|string', // Base64 image
+                'location' => 'required|string',
+                'qr_content' => 'nullable|string',
+            ]);
+        }
+
+        if ($shift->require_qr && empty($request->qr_content)) {
+            return back()->with('error', 'Shift ini mewajibkan scan QR Code.');
+        }
 
         $now = Carbon::now();
         $shiftEnd = Carbon::parse($shift->end_time);
@@ -157,12 +186,15 @@ class AttendanceController extends Controller
             $pulangCepat = abs($now->diffInMinutes($endTime));
         }
 
-        // Save image
-        $image = $request->image;
-        $image = str_replace('data:image/jpeg;base64,', '', $image);
-        $image = str_replace(' ', '+', $image);
-        $imageName = 'attendance/out_' . uniqid() . '.jpg';
-        Storage::disk('public')->put($imageName, base64_decode($image));
+        // Save image if exists
+        $imageName = null;
+        if ($request->image) {
+            $image = $request->image;
+            $image = str_replace('data:image/jpeg;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+            $imageName = 'attendance/out_' . uniqid() . '.jpg';
+            Storage::disk('public')->put($imageName, base64_decode($image));
+        }
 
         $attendance->update([
             'jam_pulang' => $now->toTimeString(),

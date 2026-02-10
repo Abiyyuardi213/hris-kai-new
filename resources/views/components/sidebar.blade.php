@@ -19,15 +19,26 @@
                 </a>
 
                 @if (Auth::user()->role && strtolower(Auth::user()->role->role_name) != 'pegawai')
-                    <div
-                        class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
-                        Master Data</div>
+                    @php
+                        $hasMasterAccess =
+                            Auth::user()->hasPermission('manage-cities') ||
+                            Auth::user()->hasPermission('manage-offices') ||
+                            Auth::user()->hasPermission('manage-divisions') ||
+                            Auth::user()->hasPermission('manage-positions') ||
+                            Auth::user()->hasPermission('manage-employee-statuses');
+                    @endphp
 
-                    <a href="{{ route('master.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/master-data*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="database" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Dashboard Master</span>
-                    </a>
+                    @if ($hasMasterAccess)
+                        <div
+                            class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
+                            Master Data</div>
+
+                        <a href="{{ route('master.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/master-data*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="database" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Dashboard Master</span>
+                        </a>
+                    @endif
 
                     @if (Auth::user()->hasPermission('manage-roles'))
                         <a href="{{ route('role.index') }}"
@@ -45,45 +56,55 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('cities.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/cities*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="map-pin" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Kota</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-cities'))
+                        <a href="{{ route('cities.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/cities*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="map-pin" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Kota</span>
+                        </a>
+                    @endif
 
-                    <div
-                        class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
-                        Master Office</div>
+                    @if (Auth::user()->hasPermission('manage-offices'))
+                        <div
+                            class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
+                            Master Office</div>
 
-                    <a href="{{ route('master.office') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/master-office*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="layout-grid" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Dashboard Office</span>
-                    </a>
+                        <a href="{{ route('master.office') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/master-office*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="layout-grid" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Dashboard Office</span>
+                        </a>
 
-                    <a href="{{ route('offices.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/offices*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="building-2" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Kantor</span>
-                    </a>
+                        <a href="{{ route('offices.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/offices*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="building-2" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Kantor</span>
+                        </a>
+                    @endif
 
-                    <a href="{{ route('divisions.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/divisions*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="layers" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Divisi</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-divisions'))
+                        <a href="{{ route('divisions.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/divisions*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="layers" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Divisi</span>
+                        </a>
+                    @endif
 
-                    <a href="{{ route('positions.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/positions*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="briefcase" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Jabatan</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-positions'))
+                        <a href="{{ route('positions.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/positions*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="briefcase" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Jabatan</span>
+                        </a>
+                    @endif
 
-                    <a href="{{ route('employment-statuses.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/employment-statuses*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="user-check" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Status Pegawai</span>
-                    </a>
+                    @if (Auth::user()->hasPermission('manage-employee-statuses'))
+                        <a href="{{ route('employment-statuses.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/employment-statuses*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="user-check" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Status Pegawai</span>
+                        </a>
+                    @endif
 
                     <div
                         class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">

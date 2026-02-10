@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class Overtime extends Model
 {
     use HasUuids;
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'relation';
+    public $officeScopeRelation = 'pegawai';
 
     protected $fillable = [
         'pegawai_id',

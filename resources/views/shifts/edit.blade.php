@@ -62,6 +62,15 @@
                             @enderror
                         </div>
                     </div>
+
+                    <div class="flex items-center p-1">
+                        <input id="require_qr" name="require_qr" type="checkbox" value="1"
+                            {{ old('require_qr', $shift->require_qr) ? 'checked' : '' }}
+                            class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                        <label for="require_qr" class="ml-2 block text-sm font-medium text-zinc-900">
+                            Wajib Absensi dengan QR Code
+                        </label>
+                    </div>
                 </div>
 
                 <div class="bg-zinc-50 px-8 py-4 flex justify-end gap-3 border-t border-zinc-100">

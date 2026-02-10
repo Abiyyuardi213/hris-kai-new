@@ -24,7 +24,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'manage-users', 'display_name' => 'Manajemen User Admin', 'module' => 'Users'],
 
             // Master Data (Cities, Offices, Divisions, Positions, Employment Status)
-            ['name' => 'manage-master-data', 'display_name' => 'Manajemen Master Data', 'module' => 'Master Data'],
+            // Master Data (Permissions separated)
+            // ['name' => 'manage-master-data', 'display_name' => 'Manajemen Master Data', 'module' => 'Master Data'], // deprecated/legacy
+            ['name' => 'manage-offices', 'display_name' => 'Kelola Data Kantor', 'module' => 'Master Data'],
+            ['name' => 'manage-divisions', 'display_name' => 'Kelola Data Divisi', 'module' => 'Master Data'],
+            ['name' => 'manage-positions', 'display_name' => 'Kelola Data Jabatan', 'module' => 'Master Data'],
+            ['name' => 'manage-employee-statuses', 'display_name' => 'Kelola Status Pegawai', 'module' => 'Master Data'],
+            ['name' => 'manage-cities', 'display_name' => 'Kelola Data Kota', 'module' => 'Master Data'],
 
             // Employees
             ['name' => 'view-employees', 'display_name' => 'Melihat Daftar Pegawai', 'module' => 'Employees'],

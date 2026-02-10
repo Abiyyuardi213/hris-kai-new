@@ -12,6 +12,14 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class Announcement extends Model
 {
     use HasFactory, SoftDeletes, HasUuids;
+    use \App\Traits\HasOfficeScope;
+
+    public function applyOfficeScope($builder, $officeId)
+    {
+        $builder->whereHas('author.employee', function ($q) use ($officeId) {
+            $q->where('kantor_id', $officeId);
+        });
+    }
 
     protected $fillable = [
         'title',

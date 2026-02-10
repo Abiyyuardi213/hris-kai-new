@@ -11,6 +11,11 @@ class Pegawai extends Authenticatable
 
     protected $table = 'pegawais';
 
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'direct';
+    public $officeScopeColumn = 'kantor_id';
+
     protected $fillable = [
         'status_pegawai_id',
         'sisa_cuti',

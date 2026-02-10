@@ -15,6 +15,10 @@ class User extends Authenticatable
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasUuids;
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'relation';
+    public $officeScopeRelation = 'employee';
 
     /**
      * The attributes that are mass assignable.
@@ -27,12 +31,18 @@ class User extends Authenticatable
         'password',
         'foto',
         'role_id',
+        'kantor_id', // Added
         'status',
     ];
 
     public function role()
     {
         return $this->belongsTo(Peran::class);
+    }
+
+    public function office()
+    {
+        return $this->belongsTo(Kantor::class, 'kantor_id');
     }
 
     public function employee()

@@ -76,7 +76,45 @@
             </div>
 
             <!-- Form Card -->
-            <div class="lg:col-span-8">
+            <div class="lg:col-span-8 space-y-6">
+                @if ($guard === 'employee')
+                    <!-- Personal Info moved from Dashboard -->
+                    <div class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
+                        <div class="px-6 py-4 border-b border-zinc-50 flex items-center justify-between bg-zinc-50/50">
+                            <h3 class="font-bold text-zinc-900 flex items-center gap-2">
+                                <i data-lucide="user" class="h-5 w-5 text-zinc-400"></i>
+                                Informasi Pribadi
+                            </h3>
+                        </div>
+                        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <span class="text-xs text-zinc-500 uppercase font-bold tracking-wider">NIK (KTP)</span>
+                                <p class="font-semibold text-zinc-900">{{ $user->nik }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-xs text-zinc-500 uppercase font-bold tracking-wider">Tempat, Tgl
+                                    Lahir</span>
+                                <p class="font-semibold text-zinc-900">{{ $user->tempat_lahir }},
+                                    {{ $user->tanggal_lahir }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-xs text-zinc-500 uppercase font-bold tracking-wider">Jenis Kelamin</span>
+                                <p class="font-semibold text-zinc-900">
+                                    {{ $user->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <span class="text-xs text-zinc-500 uppercase font-bold tracking-wider">Agama</span>
+                                <p class="font-semibold text-zinc-900">{{ $user->agama ?? '-' }}</p>
+                            </div>
+                            <div class="md:col-span-2 space-y-1">
+                                <span class="text-xs text-zinc-500 uppercase font-bold tracking-wider">Alamat Lengkap</span>
+                                <p class="font-medium text-zinc-900 leading-relaxed">{{ $user->alamat_domisili ?? '-' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
                     <form action="{{ $guard === 'web' ? route('profile.update') : route('employee.profile.update') }}"
                         method="POST" enctype="multipart/form-data" class="divide-y divide-zinc-100" id="profile-form">
@@ -139,7 +177,8 @@
                                     </div>
 
                                     <div class="md:col-span-2 space-y-2">
-                                        <label class="text-sm font-medium text-zinc-900 text-left block">Foto Profil</label>
+                                        <label class="text-sm font-medium text-zinc-900 text-left block">Foto
+                                            Profil</label>
                                         <div
                                             class="mt-1 flex items-center gap-4 p-4 rounded-lg border border-zinc-100 bg-zinc-50/50">
                                             <input type="file" name="foto" id="foto-input" accept="image/*"
@@ -286,7 +325,7 @@
 
                     // Get base64 result
                     var croppedDataUrl = canvas.toDataURL(
-                    'image/jpeg'); // Force jpeg for smaller size usually
+                        'image/jpeg'); // Force jpeg for smaller size usually
 
                     // Update hidden input
                     hiddenInput.value = croppedDataUrl;

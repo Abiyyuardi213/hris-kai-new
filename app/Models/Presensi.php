@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Presensi extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'relation';
+    public $officeScopeRelation = 'pegawai';
 
     protected $fillable = [
         'pegawai_id',

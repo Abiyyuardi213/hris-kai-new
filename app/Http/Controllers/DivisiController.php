@@ -62,7 +62,16 @@ class DivisiController extends Controller
 
     public function edit(Divisi $division)
     {
-        return view('divisions.edit', compact('division'));
+        // specific logic to extract number from code (e.g. IT-DEV-001 -> 001)
+        $parts = explode('-', $division->code);
+        $number = end($parts);
+
+        // Ensure it's numeric, otherwise fallback to id padded
+        if (!is_numeric($number)) {
+            $number = str_pad($division->id, 3, '0', STR_PAD_LEFT);
+        }
+
+        return view('divisions.edit', compact('division', 'number'));
     }
 
     public function update(Request $request, Divisi $division)

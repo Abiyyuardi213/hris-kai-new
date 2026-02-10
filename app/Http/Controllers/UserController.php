@@ -14,6 +14,18 @@ class UserController extends Controller
     {
         $query = User::with('role')->latest();
 
+        $currentUser = auth()->user();
+        if ($currentUser && !in_array($currentUser->role->role_name ?? '', ['Super Admin', 'Administrator', 'Admin'])) {
+            $officeId = $currentUser->kantor_id;
+            if (!$officeId && $currentUser->employee) {
+                $officeId = $currentUser->employee->kantor_id;
+            }
+
+            if ($officeId) {
+                $query->where('kantor_id', $officeId);
+            }
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -32,13 +44,17 @@ class UserController extends Controller
 
         $users = $query->paginate(10)->withQueryString();
         $roles = Peran::where('role_status', true)->get();
-        return view('users.index', compact('users', 'roles'));
+        $offices = \App\Models\Kantor::withoutGlobalScope('office_access')->orderBy('office_name')->get();
+
+        return view('users.index', compact('users', 'roles', 'offices'));
     }
 
     public function create()
     {
         $roles = Peran::where('role_status', true)->get();
-        return view('users.create', compact('roles'));
+        // Fetch offices without global scope to ensure Super Admin can see all offices even if there is some scope logic elsewhere
+        $offices = \App\Models\Kantor::withoutGlobalScope('office_access')->orderBy('office_name')->get();
+        return view('users.create', compact('roles', 'offices'));
     }
 
     public function store(Request $request)
@@ -48,6 +64,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role_id' => 'required|exists:role,id',
+            'kantor_id' => 'nullable|exists:offices,id', // Validate kantor_id
             'cropped_foto' => 'nullable|string',
         ]);
 
@@ -76,7 +93,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
         $roles = Peran::where('role_status', true)->get();
-        return view('users.edit', compact('user', 'roles'));
+        $offices = \App\Models\Kantor::withoutGlobalScope('office_access')->orderBy('office_name')->get();
+        return view('users.edit', compact('user', 'roles', 'offices'));
     }
 
     public function update(Request $request, $id)
@@ -88,6 +106,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role_id' => 'required|exists:role,id',
+            'kantor_id' => 'nullable|exists:offices,id', // Validate kantor_id
             'cropped_foto' => 'nullable|string',
             'status' => 'boolean',
         ]);

@@ -8,6 +8,11 @@ class IzinPegawai extends Model
 {
     protected $table = 'izin_pegawais';
 
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'relation';
+    public $officeScopeRelation = 'pegawai';
+
     protected $fillable = [
         'pegawai_id',
         'type',

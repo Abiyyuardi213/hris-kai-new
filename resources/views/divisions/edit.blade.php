@@ -20,23 +20,23 @@
 
                 <div class="space-y-4">
                     <div>
-                        <label for="code" class="block text-sm font-medium text-zinc-900">Kode Divisi</label>
-                        <input type="text" name="code" id="code" value="{{ old('code', $division->code) }}"
+                        <label for="name" class="block text-sm font-medium text-zinc-900">Nama Divisi</label>
+                        <input type="text" name="name" id="name" value="{{ old('name', $division->name) }}"
                             required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('code') border-red-500 @enderror"
-                            placeholder="Contoh: IT-DEV">
-                        @error('code')
+                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('name') border-red-500 @enderror"
+                            placeholder="Contoh: Information Technology" oninput="generateCode()">
+                        @error('name')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="name" class="block text-sm font-medium text-zinc-900">Nama Divisi</label>
-                        <input type="text" name="name" id="name" value="{{ old('name', $division->name) }}"
-                            required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('name') border-red-500 @enderror"
-                            placeholder="Contoh: Information Technology">
-                        @error('name')
+                        <label for="code" class="block text-sm font-medium text-zinc-900">Kode Divisi (Otomatis)</label>
+                        <input type="text" name="code" id="code" value="{{ old('code', $division->code) }}"
+                            required readonly
+                            class="mt-1 block w-full rounded-lg border border-zinc-100 bg-zinc-50 px-3 py-2 text-sm text-zinc-500 cursor-not-allowed @error('code') border-red-500 @enderror"
+                            placeholder="Contoh: IT-DEV">
+                        @error('code')
                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -65,4 +65,39 @@
             </form>
         </div>
     </div>
+    <script>
+        function generateCode() {
+            const name = document.getElementById('name').value;
+            // Use the number extracted in controller, treated as string to preserve leading zeros
+            const number = '{{ $number }}';
+
+            if (!name) {
+                // If name is empty, we might want to keep the original code or clear it.
+                // But typically if name is empty, validation will fail efficiently.
+                // Let's mimic create behavior but keep number if possible or just clear.
+                // Ideally if name is cleared, code prefix disappears but what about number?
+                // Let's just clear it like in create.
+                document.getElementById('code').value = '';
+                return;
+            }
+
+            // Split name into words, remove empty strings
+            const words = name.trim().toUpperCase().split(/\s+/);
+            let abbreviation = '';
+
+            words.forEach((word) => {
+                if (word.length > 0) {
+                    // Logic for "UTM" if word is "UTAMA"
+                    if (word === 'UTAMA') {
+                        abbreviation += 'UTM-';
+                    } else {
+                        // Take first 3 letters
+                        abbreviation += word.substring(0, 3) + '-';
+                    }
+                }
+            });
+
+            document.getElementById('code').value = abbreviation + number;
+        }
+    </script>
 @endsection

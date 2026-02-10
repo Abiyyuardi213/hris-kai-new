@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class PerjalananDinas extends Model
 {
     use HasFactory, SoftDeletes, HasUuids;
+    use \App\Traits\HasOfficeScope;
+
+    public $officeScopeType = 'relation';
+    public $officeScopeRelation = 'pemohon';
 
     public static function generateNoSuratTugas()
     {

@@ -17,95 +17,102 @@
             </div>
         </div>
 
-        <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Pegawai -->
-            <div
-                class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-                <div class="flex items-center justify-between space-y-0 pb-2">
-                    <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Total Pegawai</h3>
-                    <div
-                        class="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                        <i data-lucide="users" class="h-5 w-5"></i>
+            @if (Auth::user()->hasPermission('view-employees') || Auth::user()->hasPermission('manage-employees'))
+                <div
+                    class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Total Pegawai</h3>
+                        <div
+                            class="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                            <i data-lucide="users" class="h-5 w-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-3xl font-black text-zinc-900">{{ $stats['total_pegawai'] }}</div>
+                        <p class="text-[10px] font-bold text-zinc-400 mt-1">PEGAWAI AKTIF TERDAFTAR</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
+                        <a href="{{ route('employees.index') }}"
+                            class="font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                            Kelola Data <i data-lucide="chevron-right" class="h-3 w-3"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-black text-zinc-900">{{ $stats['total_pegawai'] }}</div>
-                    <p class="text-[10px] font-bold text-zinc-400 mt-1">PEGAWAI AKTIF TERDAFTAR</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
-                    <a href="{{ route('employees.index') }}"
-                        class="font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                        Kelola Data <i data-lucide="chevron-right" class="h-3 w-3"></i>
-                    </a>
-                </div>
-            </div>
+            @endif
 
             <!-- Presensi Hari Ini -->
-            <div
-                class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-                <div class="flex items-center justify-between space-y-0 pb-2">
-                    <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Presensi Hari Ini</h3>
-                    <div
-                        class="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                        <i data-lucide="list-check" class="h-5 w-5"></i>
+            @if (Auth::user()->hasPermission('view-attendance') || Auth::user()->hasPermission('manage-attendance'))
+                <div
+                    class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Presensi Hari Ini</h3>
+                        <div
+                            class="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                            <i data-lucide="list-check" class="h-5 w-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-3xl font-black text-zinc-900">{{ $stats['presensi_hari_ini'] }}</div>
+                        <p class="text-[10px] font-bold text-zinc-400 mt-1">PEGAWAI SUDAH ABSEN</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
+                        <a href="{{ route('admin.presensi.index') }}"
+                            class="font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                            Monitor Kehadiran <i data-lucide="chevron-right" class="h-3 w-3"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-black text-zinc-900">{{ $stats['presensi_hari_ini'] }}</div>
-                    <p class="text-[10px] font-bold text-zinc-400 mt-1">PEGAWAI SUDAH ABSEN</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
-                    <a href="{{ route('admin.presensi.index') }}"
-                        class="font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
-                        Monitor Kehadiran <i data-lucide="chevron-right" class="h-3 w-3"></i>
-                    </a>
-                </div>
-            </div>
+            @endif
 
             <!-- Izin Pending -->
-            <div
-                class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-                <div class="flex items-center justify-between space-y-0 pb-2">
-                    <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Izin Pending</h3>
-                    <div
-                        class="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                        <i data-lucide="file-text" class="h-5 w-5"></i>
+            @if (Auth::user()->hasPermission('manage-izin'))
+                <div
+                    class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Izin Pending</h3>
+                        <div
+                            class="h-10 w-10 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                            <i data-lucide="file-text" class="h-5 w-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-3xl font-black text-zinc-900">{{ $stats['izin_pending'] }}</div>
+                        <p class="text-[10px] font-bold text-zinc-400 mt-1">PENGAJUAN MENUNGGU KONFIRMASI</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
+                        <a href="{{ route('admin.izin.index') }}"
+                            class="font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                            Tinjau Pengajuan <i data-lucide="chevron-right" class="h-3 w-3"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-black text-zinc-900">{{ $stats['izin_pending'] }}</div>
-                    <p class="text-[10px] font-bold text-zinc-400 mt-1">PENGAJUAN MENUNGGU KONFIRMASI</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
-                    <a href="{{ route('admin.izin.index') }}"
-                        class="font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1">
-                        Tinjau Pengajuan <i data-lucide="chevron-right" class="h-3 w-3"></i>
-                    </a>
-                </div>
-            </div>
+            @endif
 
             <!-- Lembur Pending -->
-            <div
-                class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
-                <div class="flex items-center justify-between space-y-0 pb-2">
-                    <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Lembur Pending</h3>
-                    <div
-                        class="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
-                        <i data-lucide="timer" class="h-5 w-5"></i>
+            @if (Auth::user()->hasPermission('manage-overtime'))
+                <div
+                    class="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between space-y-0 pb-2">
+                        <h3 class="text-sm font-bold text-zinc-500 uppercase tracking-wider">Lembur Pending</h3>
+                        <div
+                            class="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center transition-transform group-hover:scale-110">
+                            <i data-lucide="timer" class="h-5 w-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-3xl font-black text-zinc-900">{{ $stats['lembur_pending'] }}</div>
+                        <p class="text-[10px] font-bold text-zinc-400 mt-1">PERMINTAAN LEMBUR BARU</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
+                        <a href="{{ route('admin.overtime.index') }}"
+                            class="font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1">
+                            Proses Lembur <i data-lucide="chevron-right" class="h-3 w-3"></i>
+                        </a>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <div class="text-3xl font-black text-zinc-900">{{ $stats['lembur_pending'] }}</div>
-                    <p class="text-[10px] font-bold text-zinc-400 mt-1">PERMINTAAN LEMBUR BARU</p>
-                </div>
-                <div class="mt-4 pt-4 border-t border-zinc-50 text-[11px]">
-                    <a href="{{ route('admin.overtime.index') }}"
-                        class="font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1">
-                        Proses Lembur <i data-lucide="chevron-right" class="h-3 w-3"></i>
-                    </a>
-                </div>
-            </div>
+            @endif
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -234,21 +241,29 @@
                         Pastikan data pegawai selalu diperbarui untuk keakuratan payroll.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
-                    <div
-                        class="flex flex-col items-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                        <span class="text-2xl font-black text-white">{{ $stats['total_users'] }}</span>
-                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Users</span>
-                    </div>
-                    <div
-                        class="flex flex-col items-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                        <span class="text-2xl font-black text-white">{{ $stats['total_kantor'] }}</span>
-                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Kantor</span>
-                    </div>
-                    <div
-                        class="flex flex-col items-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-                        <span class="text-2xl font-black text-white">{{ $stats['total_peran'] }}</span>
-                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Roles</span>
-                    </div>
+                    @if (Auth::user()->hasPermission('manage-users'))
+                        <div
+                            class="flex flex-col items-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                            <span class="text-2xl font-black text-white">{{ $stats['total_users'] }}</span>
+                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Users</span>
+                        </div>
+                    @endif
+
+                    @if (Auth::user()->hasPermission('manage-offices'))
+                        <div
+                            class="flex flex-col items-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                            <span class="text-2xl font-black text-white">{{ $stats['total_kantor'] }}</span>
+                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Kantor</span>
+                        </div>
+                    @endif
+
+                    @if (Auth::user()->hasPermission('manage-roles'))
+                        <div
+                            class="flex flex-col items-center px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                            <span class="text-2xl font-black text-white">{{ $stats['total_peran'] }}</span>
+                            <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-1">Roles</span>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

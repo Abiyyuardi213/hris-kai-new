@@ -34,6 +34,7 @@
                             <th class="px-6 py-4 font-medium">Jam Masuk</th>
                             <th class="px-6 py-4 font-medium">Jam Pulang</th>
                             <th class="px-6 py-4 font-medium">Durasi</th>
+                            <th class="px-6 py-4 font-medium text-center">Wajib QR</th>
                             <th class="px-6 py-4 font-medium text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -60,6 +61,15 @@
                                 </td>
                                 <td class="px-6 py-4 text-zinc-600">
                                     {{ $hours }}j {{ $minutes > 0 ? $minutes . 'm' : '' }}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    @if ($shift->require_qr)
+                                        <span
+                                            class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">Wajib</span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center rounded-full bg-zinc-50 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">Tidak</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-2">
@@ -146,6 +156,13 @@
                                             <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
                                         @enderror
                                     </div>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="require_qr" name="require_qr" type="checkbox" value="1"
+                                        class="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                                    <label for="require_qr" class="ml-2 block text-sm font-medium text-zinc-900">
+                                        Wajib Absensi dengan QR Code
+                                    </label>
                                 </div>
                             </div>
                         </div>
