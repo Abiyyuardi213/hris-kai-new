@@ -78,9 +78,22 @@ class KantorController extends Controller
             'JEMBER' => 'JR',
             'BANYUWANGI' => 'BW',
             'CILACAP' => 'CP',
+            'BANDAR LAMPUNG' => 'TNK',
+            'BANDA ACEH' => 'BTJ',
+            'MATARAM' => 'MTR',
+            'KUPANG' => 'KOE',
+            'JAYAPURA' => 'DJJ',
+            'AMBON' => 'AMQ',
+            'PALU' => 'PLW',
+            'KENDARI' => 'KDI',
+            'GORONTALO' => 'GTO',
+            'MAMUJU' => 'MJU',
         ];
 
         $cityName = strtoupper($city->name);
+
+        // Remove text in parentheses (e.g., "(LAMPUNG)")
+        $cityName = preg_replace('/\s*\(.*\)/', '', $cityName);
 
         // Clean city name from "KOTA " or "KABUPATEN "
         $cleanName = str_replace(['KOTA ', 'KABUPATEN '], '', $cityName);

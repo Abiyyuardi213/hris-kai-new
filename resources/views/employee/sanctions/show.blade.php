@@ -5,24 +5,24 @@
 @section('content')
     <div class="font-medium">
 
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-3 md:gap-4 mb-6">
             <a href="{{ route('employee.sanctions.index') }}"
-                class="h-10 w-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-900 shadow-sm transition-all hover:bg-zinc-50">
-                <i data-lucide="arrow-left" class="h-5 w-5"></i>
+                class="h-8 w-8 md:h-10 md:w-10 rounded-xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-500 hover:text-zinc-900 shadow-sm transition-all hover:bg-zinc-50">
+                <i data-lucide="arrow-left" class="h-4 w-4 md:h-5 md:w-5"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-zinc-900">Detail Sanksi</h1>
-                <p class="text-zinc-500 text-sm">Rincian surat peringatan atau sanksi disiplin.</p>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight text-zinc-900">Detail Sanksi</h1>
+                <p class="text-zinc-500 text-xs md:text-sm">Rincian surat peringatan atau sanksi disiplin.</p>
             </div>
         </div>
 
-        <div class="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
             <!-- Header Status -->
             <div
-                class="p-6 md:p-8 bg-zinc-50 border-b border-zinc-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                class="p-4 md:p-8 bg-zinc-50 border-b border-zinc-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
                     <div
-                        class="h-14 w-14 rounded-2xl flex items-center justify-center
+                        class="h-12 w-12 md:h-14 md:w-14 rounded-2xl flex items-center justify-center
                     {{ $sanction->type === 'Termination'
                         ? 'bg-red-100 text-red-600'
                         : ($sanction->type === 'SP3'
@@ -30,11 +30,11 @@
                             : ($sanction->type === 'SP2'
                                 ? 'bg-yellow-100 text-yellow-600'
                                 : 'bg-blue-100 text-blue-600')) }}">
-                        <i data-lucide="alert-triangle" class="h-7 w-7"></i>
+                        <i data-lucide="alert-triangle" class="h-6 w-6 md:h-7 md:w-7"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-zinc-900">{{ $sanction->type }}</h2>
-                        <p class="text-zinc-500 text-sm">Diterbitkan pada
+                        <h2 class="text-lg md:text-xl font-bold text-zinc-900">{{ $sanction->type }}</h2>
+                        <p class="text-zinc-500 text-xs md:text-sm">Diterbitkan pada
                             {{ $sanction->created_at->translatedFormat('d F Y') }}</p>
                     </div>
                 </div>
@@ -42,12 +42,13 @@
                 <div class="flex items-center gap-3">
                     @if ($sanction->status === 'Active')
                         <span
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold bg-emerald-100 text-emerald-700">
+                            class="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-bold bg-emerald-100 text-emerald-700">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
                             Status: Aktif
                         </span>
                     @else
-                        <span class="inline-flex px-3 py-1.5 rounded-full text-sm font-bold bg-zinc-100 text-zinc-600">
+                        <span
+                            class="inline-flex px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-xs md:text-sm font-bold bg-zinc-100 text-zinc-600">
                             Status: {{ $sanction->status === 'Expired' ? 'Berakhir' : 'Dicabut' }}
                         </span>
                     @endif

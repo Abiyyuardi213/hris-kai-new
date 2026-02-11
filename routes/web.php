@@ -111,6 +111,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back')->middleware('permission:manage-employees');
 
     Route::resource('mutations', App\Http\Controllers\MutasiPegawaiController::class)->except(['edit', 'update', 'destroy'])->middleware('permission:manage-mutations');
+    Route::get('mutations/{mutation}/print', [App\Http\Controllers\MutasiPegawaiController::class, 'print'])->name('mutations.print')->middleware('permission:manage-mutations');
     Route::resource('employee-shifts', App\Http\Controllers\ShiftPegawaiController::class)->only(['index', 'store', 'destroy'])->middleware('permission:manage-shifts');
     Route::resource('shifts', App\Http\Controllers\ShiftController::class)->middleware('permission:manage-shifts');
     Route::post('holidays/sync-api', [App\Http\Controllers\HariLiburController::class, 'syncFromApi'])->name('holidays.sync-api')->middleware('permission:manage-holidays');

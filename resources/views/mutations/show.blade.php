@@ -5,17 +5,25 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold tracking-tight">Detail Mutasi</h2>
-            <a href="{{ route('mutations.index') }}"
-                class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
-                <i data-lucide="arrow-left" class="h-4 w-4"></i>
-                Kembali
-            </a>
+            <div class="flex gap-2">
+                <a href="{{ route('mutations.index') }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-4 w-4"></i>
+                    Kembali
+                </a>
+                <a href="{{ route('mutations.print', $mutation->id) }}" target="_blank"
+                    class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-lg shadow-zinc-900/10">
+                    <i data-lucide="printer" class="h-4 w-4"></i>
+                    Cetak SK
+                </a>
+            </div>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
             <div class="p-6 border-b border-zinc-200 bg-zinc-50/50 flex justify-between items-center">
                 <div>
-                    <h3 class="text-lg font-semibold text-zinc-900">SK Mutasi #{{ $mutation->id }}</h3>
+                    <h3 class="text-lg font-semibold text-zinc-900">SK Mutasi
+                        {{ $mutation->mutation_code ?? '#' . $mutation->id }}</h3>
                     <p class="text-sm text-zinc-500">Dibuat pada {{ $mutation->created_at->format('d M Y, H:i') }}</p>
                 </div>
                 <div
@@ -102,20 +110,7 @@
                             <dd class="text-sm text-zinc-700 bg-zinc-50 p-3 rounded-lg border border-zinc-100 mt-1">
                                 {{ $mutation->reason }}</dd>
                         </div>
-                        <div class="md:col-span-2">
-                            <dt class="text-xs text-zinc-500 mb-1">Dokumen Lampiran (SK)</dt>
-                            <dd>
-                                @if ($mutation->file_sk)
-                                    <a href="{{ asset('storage/' . $mutation->file_sk) }}" target="_blank"
-                                        class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-lg text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm">
-                                        <i data-lucide="file-text" class="h-4 w-4 text-red-500"></i>
-                                        Lihat Dokumen SK
-                                    </a>
-                                @else
-                                    <span class="text-sm text-zinc-400 italic">Tidak ada dokumen dilampirkan</span>
-                                @endif
-                            </dd>
-                        </div>
+
                     </dl>
                 </div>
             </div>

@@ -28,10 +28,21 @@ class MutasiPegawai extends Model
         'to_division_id',
         'to_position_id',
         'to_office_id',
+        'mutation_code',
         'mutation_date',
         'reason',
-        'file_sk',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $latest = static::orderBy('id', 'desc')->first();
+            $number = $latest ? intval(substr($latest->mutation_code, 4)) + 1 : 1;
+            $model->mutation_code = 'MUT-' . str_pad($number, 3, '0', STR_PAD_LEFT);
+        });
+    }
 
     public function employee()
     {

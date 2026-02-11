@@ -107,13 +107,7 @@
                             </select>
                         </div>
 
-                        <div>
-                            <label for="file_sk" class="block text-sm font-medium text-zinc-900">Upload SK Mutasi
-                                (Opsional)</label>
-                            <input type="file" name="file_sk" id="file_sk" accept=".pdf,.png,.jpg,.jpeg"
-                                class="mt-1 block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-zinc-200 file:text-zinc-700 hover:file:bg-zinc-300">
-                            <p class="mt-1 text-xs text-zinc-500">PDF, JPG atau PNG (Max 2MB).</p>
-                        </div>
+
                     </div>
                 </div>
 
