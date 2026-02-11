@@ -52,7 +52,6 @@ class UserController extends Controller
     public function create()
     {
         $roles = Peran::where('role_status', true)->get();
-        // Fetch offices without global scope to ensure Super Admin can see all offices even if there is some scope logic elsewhere
         $offices = \App\Models\Kantor::withoutGlobalScope('office_access')->orderBy('office_name')->get();
         return view('users.create', compact('roles', 'offices'));
     }
@@ -64,7 +63,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role_id' => 'required|exists:role,id',
-            'kantor_id' => 'nullable|exists:offices,id', // Validate kantor_id
+            'kantor_id' => 'nullable|exists:offices,id',
             'cropped_foto' => 'nullable|string',
         ]);
 
@@ -76,7 +75,6 @@ class UserController extends Controller
             $imageData = $request->cropped_foto;
             $fileName = 'profile-photos/' . uniqid() . '.jpg';
 
-            // Remove 'data:image/jpeg;base64,' part
             $imageData = str_replace('data:image/jpeg;base64,', '', $imageData);
             $imageData = str_replace(' ', '+', $imageData);
 
@@ -106,7 +104,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8',
             'role_id' => 'required|exists:role,id',
-            'kantor_id' => 'nullable|exists:offices,id', // Validate kantor_id
+            'kantor_id' => 'nullable|exists:offices,id',
             'cropped_foto' => 'nullable|string',
             'status' => 'boolean',
         ]);

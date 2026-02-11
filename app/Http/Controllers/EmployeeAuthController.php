@@ -79,4 +79,16 @@ class EmployeeAuthController extends Controller
 
         return view('employee.dashboard', compact('employee', 'announcements'));
     }
+
+    public function idCard()
+    {
+        $employee = Auth::guard('employee')->user();
+        return view('employees.id-card', compact('employee'));
+    }
+
+    public function idCardBack()
+    {
+        $employee = Auth::guard('employee')->user();
+        return view('employees.id-card-back', compact('employee'));
+    }
 }

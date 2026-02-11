@@ -22,16 +22,8 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Screen Only: Scale down to fit better */
-        @media screen {
-            .id-card-container {
-                zoom: 0.6;
-                -moz-transform: scale(0.6);
-                -moz-transform-origin: top center;
-                margin-bottom: -400px;
-            }
+            transform-origin: top left;
+            /* Changed to top left for easier JS sizing */
         }
 
         @media print {
@@ -49,8 +41,8 @@
                 box-shadow: none;
                 margin: 0;
                 page-break-after: always;
-                zoom: 1 !important;
-                -moz-transform: none !important;
+                transform: none !important;
+                /* Reset transform for print */
             }
 
             @page {
@@ -61,12 +53,12 @@
     </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen p-8">
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
         <!-- Left Column: Employee Details -->
-        <div class="lg:col-span-3 no-print">
+        <div class="lg:col-span-3 no-print order-2 lg:order-1">
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden sticky top-8">
                 <div class="bg-zinc-900 px-6 py-4 flex items-center justify-between">
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -144,11 +136,11 @@
         </div>
 
         <!-- Right Column: ID Card Preview -->
-        <div class="lg:col-span-9 flex flex-col items-center">
+        <div class="lg:col-span-9 flex flex-col items-center order-1 lg:order-2" id="cards-column">
 
             <!-- Controls -->
             <div
-                class="no-print w-full mb-6 flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
+                class="no-print w-full mb-6 flex flex-col md:flex-row items-start md:items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-zinc-200 gap-4">
                 <div class="flex items-center gap-3">
                     <div class="bg-blue-50 p-2 rounded-lg text-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -164,9 +156,9 @@
                         <p class="text-xs text-gray-500">Depan & Belakang siap dicetak</p>
                     </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2 w-full md:w-auto">
                     <button onclick="downloadCard('front')"
-                        class="flex items-center gap-2 bg-white text-emerald-600 border border-emerald-200 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors text-sm">
+                        class="flex-1 md:flex-none justify-center items-center gap-2 bg-white text-emerald-600 border border-emerald-200 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors text-xs md:text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round">
@@ -174,10 +166,10 @@
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
-                        Simpan Depan
+                        <span class="whitespace-nowrap">Simpan Depan</span>
                     </button>
                     <button onclick="downloadCard('back')"
-                        class="flex items-center gap-2 bg-white text-emerald-600 border border-emerald-200 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors text-sm">
+                        class="flex-1 md:flex-none justify-center items-center gap-2 bg-white text-emerald-600 border border-emerald-200 px-4 py-2 rounded-lg font-medium hover:bg-emerald-50 transition-colors text-xs md:text-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round">
@@ -185,10 +177,10 @@
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
-                        Simpan Belakang
-                    </button>
+                        <span class="whitespace-nowrap">Simpan Belakang</span>
+                    </button> //
                     <button onclick="window.print()"
-                        class="flex items-center gap-2 bg-zinc-900 text-white px-5 py-2 rounded-lg font-medium hover:bg-zinc-800 transition-colors text-sm shadow-lg shadow-zinc-200">
+                        class="flex-1 md:flex-none justify-center items-center gap-2 bg-zinc-900 text-white px-5 py-2 rounded-lg font-medium hover:bg-zinc-800 transition-colors text-xs md:text-sm shadow-lg shadow-zinc-200">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round">
@@ -203,11 +195,17 @@
 
             <!-- ID Card Container Wrapper to handle centering -->
             <div class="relative w-full flex flex-wrap justify-center gap-8 overflow-visible">
-                <div id="card-front" class="relative">
-                    @include('employees.id-card-front')
+                <!-- Wrapper for Front Card -->
+                <div id="card-front-wrapper" class="relative">
+                    <div id="card-front" class="relative">
+                        @include('employees.id-card-front')
+                    </div>
                 </div>
-                <div id="card-back" class="relative">
-                    @include('employees.id-card-back')
+                <!-- Wrapper for Back Card -->
+                <div id="card-back-wrapper" class="relative">
+                    <div id="card-back" class="relative">
+                        @include('employees.id-card-back')
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,14 +214,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        function adjustCardScale() {
+            const column = document.getElementById('cards-column');
+            if (!column) return;
+
+            const availableWidth = column.clientWidth - 32;
+            const cardBaseWidth = 638;
+            const cardBaseHeight = 1011;
+
+            let scale = availableWidth / cardBaseWidth;
+
+            if (scale > 1) scale = 1; // Limit max size to original 100%
+
+            const cardWrappers = ['card-front-wrapper', 'card-back-wrapper'];
+
+            cardWrappers.forEach(id => {
+                const wrapper = document.getElementById(id);
+                if (wrapper) {
+                    wrapper.style.width = (cardBaseWidth * scale) + "px";
+                    wrapper.style.height = (cardBaseHeight * scale) + "px";
+
+                    const innerDiv = wrapper.querySelector('.id-card-container');
+                    if (innerDiv) {
+                        innerDiv.style.transform = `scale(${scale})`;
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('resize', adjustCardScale);
+        window.addEventListener('DOMContentLoaded', adjustCardScale);
+        setTimeout(adjustCardScale, 100);
+
+
         async function downloadCard(side) {
+            const elementWrapperId = side === 'front' ? '#card-front-wrapper' : '#card-back-wrapper';
+
             const elementId = side === 'front' ? '#card-front .id-card-container' : '#card-back .id-card-container';
             const element = document.querySelector(elementId);
             const fileName = `ID-Card-${side}-{{ $employee->nip }}.png`;
 
             if (!element) return;
 
-            // Show loading modal
             Swal.fire({
                 title: 'Sedang memproses...',
                 text: 'Mohon tunggu sebentar, gambar sedang dibuat.',
@@ -233,7 +265,6 @@
                 }
             });
 
-            // 1. Setup Robust Color Converter (Extracts true RGB via 1x1 pixel)
             const pixelCanvas = document.createElement('canvas');
             pixelCanvas.width = 1;
             pixelCanvas.height = 1;
@@ -242,24 +273,16 @@
             });
 
             function colorToRgb(cssColor) {
-                // Return immediately if invalid or already safe
                 if (!cssColor) return 'transparent';
 
-                // Clear and draw
                 pixelCtx.clearRect(0, 0, 1, 1);
                 pixelCtx.fillStyle = cssColor;
                 pixelCtx.fillRect(0, 0, 1, 1);
 
-                // Get sRGB data
                 const [r, g, b, a] = pixelCtx.getImageData(0, 0, 1, 1).data;
                 const alpha = a / 255;
 
-                // If it failed to draw (invalid color), alpha usually remains 0 (if we cleared) 
-                // BUT if we cleared to transparent, and the color was invalid, it remains transparent.
-                // We assume valid input or fallback.
-
                 if (alpha === 0 && cssColor !== 'transparent' && !cssColor.includes('rgba(0,0,0,0)')) {
-                    // Fallback for totally unparsable colors by canvas
                     return cssColor;
                 }
 
@@ -271,22 +294,17 @@
 
             function sanitizeStyleString(str) {
                 if (!str) return str;
-                // Regex to find oklch/oklab functions. Handles basic parentheses nesting.
-                // Note: html2canvas 1.x definitely crashes on 'oklch'. Converting to rgb is mandatory.
                 return str.replace(/(oklch|oklab)\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\)/g, (match) => {
                     return colorToRgb(match);
                 });
             }
 
-            // Timeout Wrapper to preventing hanging forever
             const processPromise = new Promise(async (resolve, reject) => {
                 const originalStyles = new Map();
                 const originalSrcs = new Map();
 
                 try {
-                    // --- STEP A: Sanitize DOM Colors ---
                     const allElements = [element, ...element.querySelectorAll('*')];
-                    // extensive list of properties that might contain colors
                     const propsToCheck = [
                         'color', 'backgroundColor', 'borderColor', 'outlineColor',
                         'textDecorationColor',
@@ -305,10 +323,8 @@
                                 styleToSave[prop] = el.style[prop];
                                 const safeVal = sanitizeStyleString(val);
 
-                                // Only write if changed
                                 if (safeVal !== val) {
-                                    el.style[prop] = safeVal; // Write inline
-                                    hasChange = true;
+                                    el.style[prop] = safeVal;
                                 }
                             }
                         });
@@ -318,7 +334,6 @@
                         }
                     });
 
-                    // --- STEP B: Convert Images to Base64 (CORS Fix) ---
                     const images = element.querySelectorAll('img');
                     const conversionTasks = Array.from(images).map(async (img) => {
                         originalSrcs.set(img, img.src);
@@ -327,7 +342,7 @@
                         try {
                             const controller = new AbortController();
                             const timeoutId = setTimeout(() => controller.abort(),
-                            5000); // 5s timeout per image
+                                5000);
 
                             const response = await fetch(img.src, {
                                 signal: controller.signal
@@ -346,14 +361,11 @@
                             });
                         } catch (e) {
                             console.warn('Image conversion failed/timed out:', img.src);
-                            // Proceed without this image converted (might look broken but won't hang)
                         }
                     });
 
                     await Promise.all(conversionTasks);
 
-                    // --- STEP C: Capture Canvas ---
-                    // Wait a tick for DOM to settle
                     await new Promise(r => setTimeout(r, 100));
 
                     const canvas = await html2canvas(element, {
@@ -368,7 +380,8 @@
                                 clonedElement.style.zoom = '1';
                                 clonedElement.style.transform = 'none';
                                 clonedElement.style.margin = '0';
-                                clonedElement.style.boxShadow = 'none';
+                                clonedElement.style.boxShadow =
+                                    'none';
                             }
                         }
                     });
@@ -388,7 +401,6 @@
                 }
             });
 
-            // Run process with 15s global timeout
             const timeoutLimit = new Promise((_, reject) =>
                 setTimeout(() => reject({
                     isTimeout: true
@@ -396,7 +408,6 @@
             );
 
             try {
-                // Race the process against timeout
                 const result = await Promise.race([processPromise, timeoutLimit]);
                 const {
                     canvas,
@@ -404,13 +415,11 @@
                     originalSrcs
                 } = result;
 
-                // Download
                 const link = document.createElement('a');
                 link.download = fileName;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
 
-                // Cleanup
                 originalStyles.forEach((styles, el) => {
                     Object.keys(styles).forEach(p => el.style[p] = styles[p]);
                 });
@@ -428,11 +437,6 @@
 
             } catch (err) {
                 console.error(err);
-
-                // Cleanup partial state if possible (requires accessing the maps from rejection if passed)
-                // Note: If timeout occurs, we might not have reference to styles easily unless we scoped them out.
-                // In this structure, we just reload the page in worst case, or let the user do it.
-                // The error modal suggests refreshing.
 
                 let msg = 'Terjadi kesalahan saat membuat gambar.';
                 if (err.isTimeout) msg = 'Proses terlalu lama (waktu habis). Cek koneksi internet Anda.';

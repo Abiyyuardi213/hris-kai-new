@@ -180,6 +180,12 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Evaluasi Kinerja</span>
                     </a>
 
+                    <a href="{{ route('admin.sanctions.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/sanctions*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="alert-triangle" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Kedisiplinan (SP)</span>
+                    </a>
+
                     <a href="{{ route('admin.announcements.index') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/announcements*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                         <i data-lucide="megaphone" class="h-4 w-4"></i>

@@ -50,6 +50,11 @@
                         <i data-lucide="user-cog" class="h-5 w-5"></i>
                         Profil
                     </a>
+                    <a href="{{ route('employee.id-card') }}" target="_blank"
+                        class="inline-flex items-center gap-2 px-6 py-3 bg-zinc-800 text-white rounded-xl font-bold transition-all hover:bg-zinc-700 border border-zinc-700">
+                        <i data-lucide="credit-card" class="h-5 w-5"></i>
+                        ID Card
+                    </a>
                 </div>
             </div>
 

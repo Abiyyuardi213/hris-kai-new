@@ -146,9 +146,10 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-blue-900">Jadwal Shift: {{ $shift->name }}</h4>
-                        <p class="text-sm text-blue-700 mt-1">Anda diharapkan melakukan absensi masuk antara jam
-                            {{ \Carbon\Carbon::parse($shift->start_time)->subMinutes(30)->format('H:i') }} -
-                            {{ \Carbon\Carbon::parse($shift->start_time)->addMinutes(15)->format('H:i') }}.</p>
+                        <p class="text-sm text-blue-700 mt-1">
+                            Jam Kerja: {{ \Carbon\Carbon::parse($shift->start_time)->format('H:i') }} -
+                            {{ \Carbon\Carbon::parse($shift->end_time)->format('H:i') }}.
+                        </p>
                     </div>
                 </div>
             </div>

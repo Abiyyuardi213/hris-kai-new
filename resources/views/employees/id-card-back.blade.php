@@ -29,7 +29,7 @@
 
         <!-- Rules List -->
         <div class="w-full text-left space-y-4 mb-auto">
-            <ol class="list-decimal list-outside pl-5 space-y-4 text-[#404040] font-medium text-lg leading-relaxed">
+            <ol class="list-decimal list-outside pl-5 space-y-4 text-[#404040] font-medium text-xl leading-relaxed">
                 <li>Kartu ini adalah tanda pengenal karyawan yang harus dikenakan pada saat jam kerja/dinas</li>
                 <li>Karyawan diharapkan menjaga kartu ini dari kerusakan dan kehilangan</li>
                 <li>Jika sudah tidak tercatat sebagai karyawan PT. KAI, Kartu ini wajib dikembalikan ke bagian Corporate
@@ -40,10 +40,10 @@
 
         <!-- Address Info -->
         <div class="w-full mt-12 bg-zinc-50 rounded-2xl p-6 border border-zinc-100">
-            <h3 class="font-bold text-xl text-[#001D85] mb-2">PT. KAI</h3>
-            <p class="text-[#505050] font-bold text-lg mb-4">Branch Office Daerah Operasi 8</p>
+            <h3 class="font-bold text-2xl text-[#001D85] mb-2">PT. KAI</h3>
+            <p class="text-[#505050] font-bold text-xl mb-4">Branch Office Daerah Operasi 8</p>
 
-            <div class="space-y-1 text-[#606060] text-base leading-relaxed">
+            <div class="space-y-1 text-[#606060] text-lg leading-relaxed">
                 <p>Jl. Gubeng Masjid No.39, Pacar Keling,</p>
                 <p>Kec. Tambaksari, Surabaya, Jawa Timur 60131, Indonesia</p>
                 <p class="font-medium mt-3">62 (31) 503 6575</p>

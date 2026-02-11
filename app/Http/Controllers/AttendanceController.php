@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ShiftPegawai;
 
 class AttendanceController extends Controller
 {
@@ -26,7 +27,8 @@ class AttendanceController extends Controller
             ->take(7)
             ->get();
 
-        $shift = $employee->shift;
+
+        $shift = $this->getTodayShift($employee);
 
         return view('employee.attendance.index', compact(
             'employee',
@@ -73,7 +75,7 @@ class AttendanceController extends Controller
     {
         /** @var \App\Models\Pegawai $employee */
         $employee = Auth::guard('employee')->user();
-        $shift = $employee->shift;
+        $shift = $this->getTodayShift($employee);
 
         if (!$shift) {
             return back()->with('error', 'Anda belum memiliki shift kerja. Hubungi Admin.');
@@ -144,7 +146,7 @@ class AttendanceController extends Controller
     {
         /** @var \App\Models\Pegawai $employee */
         $employee = Auth::guard('employee')->user();
-        $shift = $employee->shift;
+        $shift = $this->getTodayShift($employee);
 
         $attendance = Presensi::where('pegawai_id', $employee->id)
             ->where('tanggal', Carbon::today())
@@ -181,12 +183,10 @@ class AttendanceController extends Controller
         $endTime = Carbon::today()->setTime($shiftEnd->hour, $shiftEnd->minute, $shiftEnd->second);
 
         $pulangCepat = 0;
-        // Check if shift is NOT remote before calculating early departure
         if (stripos($shift->name, 'remote') === false && $now->lessThan($endTime)) {
             $pulangCepat = abs($now->diffInMinutes($endTime));
         }
 
-        // Save image if exists
         $imageName = null;
         if ($request->image) {
             $image = $request->image;
@@ -204,5 +204,24 @@ class AttendanceController extends Controller
         ]);
 
         return redirect()->route('employee.attendance.index')->with('success', 'Berhasil Absen Pulang. Hati-hati di jalan!');
+    }
+
+    private function getTodayShift($employee)
+    {
+        $today = Carbon::today();
+        $scheduledShift = ShiftPegawai::where('employee_id', $employee->id)
+            ->whereDate('start_date', '<=', $today)
+            ->where(function ($q) use ($today) {
+                $q->whereDate('end_date', '>=', $today)
+                    ->orWhereNull('end_date');
+            })
+            ->with('shift')
+            ->first();
+
+        if ($scheduledShift && $scheduledShift->shift) {
+            return $scheduledShift->shift;
+        }
+
+        return $employee->shift;
     }
 }

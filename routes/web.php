@@ -32,6 +32,8 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::post('/attendance/clock-out', [App\Http\Controllers\AttendanceController::class, 'clockOut'])->name('employee.attendance.clock-out');
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('employee.profile');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('employee.profile.update');
+    Route::get('/id-card', [App\Http\Controllers\EmployeeAuthController::class, 'idCard'])->name('employee.id-card');
+    Route::get('/id-card-back', [App\Http\Controllers\EmployeeAuthController::class, 'idCardBack'])->name('employee.id-card-back');
     Route::post('/logout-pegawai', [App\Http\Controllers\EmployeeAuthController::class, 'logout'])->name('employee.logout');
 
     // Izin / Sakit
@@ -64,9 +66,13 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/announcements', [App\Http\Controllers\AnnouncementController::class, 'index'])->name('employee.announcements.index');
     Route::get('/announcements/{id}', [App\Http\Controllers\AnnouncementController::class, 'show'])->name('employee.announcements.show');
 
-    // Mutasi (Employee View)
     Route::get('/mutations', [App\Http\Controllers\EmployeeMutasiController::class, 'index'])->name('employee.mutations.index');
     Route::get('/mutations/{id}', [App\Http\Controllers\EmployeeMutasiController::class, 'show'])->name('employee.mutations.show');
+
+    // Sanksi (Disciplinary Action)
+    Route::get('/sanctions', [App\Http\Controllers\SanctionController::class, 'index'])->name('employee.sanctions.index');
+    Route::get('/sanctions/{id}', [App\Http\Controllers\SanctionController::class, 'show'])->name('employee.sanctions.show');
+    Route::get('/sanctions/{id}/print', [App\Http\Controllers\SanctionController::class, 'print'])->name('employee.sanctions.print');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -152,6 +158,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::patch('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'update'])->name('admin.performance.update');
     Route::get('/performance/{id}/print', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'print'])->name('admin.performance.print');
     Route::delete('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'destroy'])->name('admin.performance.destroy');
+
+    // Disciplinary Sanctions
+    Route::resource('sanctions', App\Http\Controllers\Admin\DisciplinarySanctionController::class)->names('admin.sanctions')->only(['index', 'create', 'store', 'show', 'destroy']);
+    Route::get('sanctions/{sanction}/print', [App\Http\Controllers\Admin\DisciplinarySanctionController::class, 'print'])->name('admin.sanctions.print');
 
     // Announcements
     Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->names('admin.announcements');
