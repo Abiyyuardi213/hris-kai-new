@@ -109,11 +109,22 @@ class KantorController extends Controller
 
         $prefix = strtoupper($prefix);
 
-        // Count existing offices in this city
-        $count = Kantor::where('city_id', $cityId)->count();
-        $nextNumber = str_pad($count + 1, 3, '0', STR_PAD_LEFT);
+        // Count existing offices with this prefix to avoid duplicates across different cities
+        $latestOffice = Kantor::where('office_code', 'like', $prefix . '-%')
+            ->orderByRaw('LENGTH(office_code) DESC')
+            ->orderBy('office_code', 'desc')
+            ->first();
 
-        $code = $prefix . '-' . $nextNumber;
+        $nextNumber = 1;
+        if ($latestOffice) {
+            $parts = explode('-', $latestOffice->office_code);
+            $lastNumber = end($parts);
+            if (is_numeric($lastNumber)) {
+                $nextNumber = intval($lastNumber) + 1;
+            }
+        }
+
+        $code = $prefix . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
         return response()->json(['code' => $code]);
     }

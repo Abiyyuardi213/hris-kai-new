@@ -105,8 +105,12 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <div
-                                            class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('divisions.show', $division->id) }}"
+                                                class="p-2 text-zinc-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                title="Lihat Detail">
+                                                <i data-lucide="eye" class="h-4 w-4"></i>
+                                            </a>
                                             <a href="{{ route('divisions.edit', $division->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">

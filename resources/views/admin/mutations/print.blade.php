@@ -249,10 +249,10 @@
             <p style="margin-bottom: 2px; font-weight: bold;">
                 @if ($officeCode === 'KP' || $officeCode === 'DZ')
                     Corporate Deputy Director of Personnel Care, Control and Development,
-                @elseif($officeCode === 'DV')
-                    Vice President Divre,
+                @elseif(substr($officeCode, 0, 2) === 'DV')
+                    Vice President {{ $officeName ?? 'Divre' }},
                 @else
-                    Vice President {{ $mutation->toOffice->office_name ?? 'Daerah Operasi' }},
+                    Vice President {{ $officeName ?? 'Daerah Operasi' }},
                 @endif
             </p>
 
@@ -280,6 +280,93 @@
                 <p style="margin-top: 5px; font-size: 10pt;">NIPP ...........................</p>
             @endif
         </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <div class="attachment-content" style="font-size: 10pt;">
+        <p>Penerima:</p>
+        <ol>
+            <li>Executive Vice President Daerah Operasi 1 Jakarta | SURYAWAN PUTRA HIA | 40985</li>
+            <li>Executive Vice President Daerah Operasi 2 Bandung | JOKO WIDAGDO | 46872</li>
+            <li>Executive Vice President Daerah Operasi 4 Semarang | WISNU PRAMUDYO | 44342</li>
+            <li>Executive Vice President Daerah Operasi 6 Yogyakarta | IWAN EKA PUTRA | 46930</li>
+            <li>Executive Vice President Daerah Operasi 8 Surabaya | HERI SISWANTO | 40866</li>
+            <li>Executive Vice President UPT Balai Yasa Manggarai | IRWANSYAH | 40971</li>
+            <li>Executive Vice President UPT Balai Yasa Yogyakarta | EKO WINDU WIDIO PURNOMO | 46914</li>
+            <li>Executive Vice President UPT Balai Yasa Lahat | DEDDY HENDRADY | 46909</li>
+            <li>Kepala Divisi Regional III Palembang | JUNAIDI NASUTION | 46870</li>
+            <li>Kepala Divisi Regional IV Tanjungkarang | MUH. SAIFUL ALAM | 46895</li>
+            <li>Vice President Daerah Operasi 3 Cirebon | TAKDIR SANTOSO | 46892</li>
+            <li>Vice President Daerah Operasi 5 Purwokerto | DANIEL JOHANNES HUTABARAT | 40994</li>
+            <li>Vice President Daerah Operasi 7 Madiun | HENDRA WAHYONO | 41124</li>
+            <li>Vice President Daerah Operasi 9 Jember | BROER RIZAL | 42353</li>
+            <li>Vice President Divisi Regional I Sumatera Utara | YUSKAL SETIAWAN | 42350</li>
+            <li>Vice President Divisi Regional II Sumatera Barat | MOHAMAD ARIE FATHURROCHMAN | 40975</li>
+            <li>General Manager UPT Balai Yasa Surabaya Gubeng | DOMINICUS AGUNG WAWAN PURNAWAN | 40962</li>
+            <li>General Manager UPT Balai Yasa Tegal | AGUS NADI | 40963</li>
+            <li>PLT General Manager UPT Balai Yasa Pulubrayan | DARWIN NAPITUPULU | 40954</li>
+        </ol>
+
+        <p>Tembusan Internal:</p>
+        <ol>
+            <li>Senior Manager Sumber Daya Manusia dan Umum RONY BIMA YUDIANTO</li>
+            <li>Manager Sumber Daya Manusia Dan Umum MAYA</li>
+            <li>Manager Sumber Daya Manusia Dan Umum IWAN DUDUNG APRIANTONI</li>
+            <li>Manager Sumber Daya Manusia dan Umum AGUS JUNAEDI</li>
+            <li>Manager Sumber Daya Manusia dan Umum FEBRIAN DWI PRASOJO</li>
+            <li>Manager Sumber Daya Manusia Dan Umum DARMUJI</li>
+            <li>Manager Sumber Daya Manusia dan Umum TIVEN RONIKKO</li>
+            <li>Manager Sumber Daya Manusia Dan Umum WAWIK SUHARJONO</li>
+            <li>Manager Sumber Daya Manusia dan Umum MOCH ARIF HARI MARWANTO</li>
+            <li>Manager Sumber Daya Manusia dan Umum AHMADI FAISOL</li>
+            <li>Manager Keuangan dan Sumber Daya Manusia ADRIYAN YUDISTIARA</li>
+            <li>Kepala Bagian Sumber Daya Manusia dan Umum IRVAN BUDI IRAWAN</li>
+            <li>Kepala Bagian Sumber Daya Manusia dan Umum ANDRITIYO NUGROHO</li>
+            <li>Manager Keuangan, SDM dan Teknologi Informasi FRI ANISTUTI</li>
+            <li>Manager Keuangan, SDM dan Teknologi Informasi SUPRIYANTO</li>
+            <li>Manager Keuangan, SDM dan Teknologi Informasi NUR ELLY</li>
+            <li>Manager Keuangan, SDM dan Teknologi Informasi ISMAIL FIKRI</li>
+            <li>Manager Keuangan, SDM dan Teknologi Informasi ANARITA</li>
+            <li>Manager Keuangan, Sumber Daya Manusia dan Teknologi Informasi DIKI CHARMEIN</li>
+            <li>Junior Manager Sumber Daya Manusia AGANIA AGROVIGNASINENSIA MUSTIKA AYU</li>
+            <li>Junior Manager Sumber Daya Manusia SHANTY MARIA IKAWATI</li>
+            <li>Junior Manager Sumber Daya Manusia AGUS WIDODO</li>
+            <li>Junior Manager Sumber Daya Manusia RANI MARTINI</li>
+            <li>Assistant Manager Sumber Daya Manusia ANDIKA KHOLIFAH GILAR PRATIWI</li>
+            <li>PLT Assistant Manager Sumber Daya Manusia ANDIKA GAUTAMA</li>
+            <li>Assistant Manager Sumber Daya Manusia IQBAL AHMAD DHUHA</li>
+            <li>Assistant Manager Sumber Daya Manusia EMI YATUN</li>
+            <li>Assistant Manager Sumber Daya Manusia SOFWAN FAHRI</li>
+            <li>Assistant Manager Sumber Daya Manusia NATALIA PANDIANGAN</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan Dan Protokoler, dan Dokumen REZKI SATRIA</li>
+            <li>Kepala Unit Sumber Daya Manusia ALGA WINATHA PUTRA SHAZALI</li>
+            <li>Kepala Unit Sumber Daya Manusia FEBRIADI</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan dan Protokoler BUDI PRASETYONO</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan dan Protokoler ICUK SUHARNO</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan dan Protokoler EKO PURWADI</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan dan Protokoler FURQON PRATIKNO WIBOWO</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan dan Protokoler JAZIROH</li>
+            <li>Assistant Manager Sumber Daya Manusia, Kerumahtanggaan dan Protokoler YAN FIRMANSYAH</li>
+        </ol>
+
+        <p>Lampiran :</p>
+        <ol style="list-style-type: decimal;">
+            <li>Form Surat Rekomendasi dari Kepala Bagian SDM Anak Perusahaan_Mitra Perusahaan + Contoh Pengisian
+                (Send).pdf</li>
+        </ol>
+    </div>
+
+    <div class="footer-note"
+        style="margin-top: 50px; font-size: 8pt; color: #555; border-top: 1px solid #ccc; padding-top: 5px;">
+        <div style="float: left; width: 80%;">
+            Sesuai dengan ketentuan peraturan perundang-undangan yang berlaku, surat ini telah ditandatangani secara
+            elektronik sehingga tidak diperlukan tanda tangan dan stempel basah.
+        </div>
+        <div style="float: right; text-align: right;">
+            www.kai.id &nbsp;&nbsp;&nbsp; Hlm. 2 | 2
+        </div>
+        <div style="clear: both;"></div>
     </div>
 
 </body>

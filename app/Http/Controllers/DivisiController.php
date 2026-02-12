@@ -87,6 +87,15 @@ class DivisiController extends Controller
         return redirect()->route('divisions.index')->with('success', 'Divisi berhasil diperbarui');
     }
 
+    public function show(Divisi $division)
+    {
+        $division->load(['positions' => function ($query) {
+            $query->withCount('employees');
+        }]);
+
+        return view('divisions.show', compact('division'));
+    }
+
     public function destroy(Divisi $division)
     {
         $division->delete();

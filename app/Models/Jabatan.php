@@ -11,7 +11,7 @@ class Jabatan extends Model
 
     protected $table = 'positions';
 
-    use \App\Traits\HasOfficeScope;
+
 
     public $officeScopeType = 'has_many_relation';
     public $officeScopeRelation = 'employees';

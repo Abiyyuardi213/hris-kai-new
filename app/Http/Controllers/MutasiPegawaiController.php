@@ -16,7 +16,6 @@ class MutasiPegawaiController extends Controller
     {
         $query = MutasiPegawai::with(['employee', 'fromDivision', 'fromPosition', 'fromOffice', 'toDivision', 'toPosition', 'toOffice']);
 
-        // Search by Employee Name or NIP
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('employee', function ($q) use ($search) {
@@ -25,22 +24,18 @@ class MutasiPegawaiController extends Controller
             });
         }
 
-        // Filter by Type
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
 
-        // Filter by Division (Target)
         if ($request->filled('division')) {
             $query->where('to_division_id', $request->division);
         }
 
-        // Filter by Office (Target)
         if ($request->filled('office')) {
             $query->where('to_office_id', $request->office);
         }
 
-        // Filter by Date Range
         if ($request->filled('start_date')) {
             $query->whereDate('mutation_date', '>=', $request->start_date);
         }
@@ -50,7 +45,6 @@ class MutasiPegawaiController extends Controller
 
         $mutations = $query->latest()->paginate(10);
 
-        // Metadata for filters
         $divisions = Divisi::orderBy('name')->get();
         $offices = Kantor::orderBy('office_name')->get();
         $types = ['promosi', 'demosi', 'rotasi', 'mutasi'];
@@ -87,10 +81,8 @@ class MutasiPegawaiController extends Controller
         $validated['from_office_id'] = $employee->kantor_id;
 
         DB::transaction(function () use ($validated, $employee) {
-            // Create Mutation Record
             MutasiPegawai::create($validated);
 
-            // Update Employee Data
             $employee->update([
                 'divisi_id' => $validated['to_division_id'] ?? $employee->divisi_id,
                 'jabatan_id' => $validated['to_position_id'] ?? $employee->jabatan_id,
@@ -138,7 +130,6 @@ class MutasiPegawaiController extends Controller
     {
         $mutation->load(['employee', 'fromOffice', 'toOffice', 'toDivision', 'toPosition']);
 
-        // Roman Numerals for Month
         $months = [
             1 => 'I',
             2 => 'II',
@@ -155,65 +146,97 @@ class MutasiPegawaiController extends Controller
         ];
         $monthRoman = $months[date('n')];
 
-        // Generate Letter Number sequence (e.g. 001 instead of just mutation id)
-        // For simplicity, we can use the numeric part of mutation_code if available, or just ID padded
-        $sequence = $mutation->mutation_code
-            ? substr($mutation->mutation_code, 4) // extract number from MUT-001
-            : str_pad($mutation->id, 3, '0', STR_PAD_LEFT);
+        if ($mutation->mutation_code) {
+            $parts = explode('/', $mutation->mutation_code);
+            $sequence = $parts[0];
+        } else {
+            $sequence = str_pad($mutation->id, 3, '0', STR_PAD_LEFT);
+        }
 
-        // Office Code Logic (D1, D8, KP etc.)
-        $officeCode = 'KP'; // Default Kantor Pusat
-        $signerCode = 'DZ'; // Default for Admin Pusat / Super Admin
+        $officeCode = 'KP';
+        $signerCode = 'DZ';
 
         $admin = auth()->user();
 
-        // Check Admin's office if linked
-        if ($admin && $admin->employee && $admin->employee->kantor) {
-            $officeName = strtolower($admin->employee->kantor->office_name);
-
-            if (str_contains($officeName, 'daop 1')) {
-                $officeCode = 'D1';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 2')) {
-                $officeCode = 'D2';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 3')) {
-                $officeCode = 'D3';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 4')) {
-                $officeCode = 'D4';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 5')) {
-                $officeCode = 'D5';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 6')) {
-                $officeCode = 'D6';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 7')) {
-                $officeCode = 'D7';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 8')) {
-                $officeCode = 'D8';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'daop 9')) {
-                $officeCode = 'D9';
-                $signerCode = 'VP';
-            } elseif (str_contains($officeName, 'divre')) {
-                $officeCode = 'DV';
-                $signerCode = 'DV';
-            } # Assuming Divre uses DV as code? Or maybe KP? User said "jika divre maka DV" for VP context.
+        $officeName = '';
+        if ($admin->role) {
+            $roleName = $admin->role->role_name;
         }
 
-        // Get the Vice President / Signer
+        $officeName = '';
+        if ($admin->office) {
+            $officeName = $admin->office->office_name;
+        } elseif ($admin->employee && $admin->employee->kantor) {
+            $officeName = $admin->employee->kantor->office_name;
+        }
+
+        if (in_array($roleName, ['Admin', 'Super Admin'])) {
+            $officeCode = 'KP';
+            $signerCode = 'DZ';
+        } elseif ($roleName === 'Admin Daop') {
+            $officeNameLower = strtolower($officeName);
+
+            if ($officeNameLower) {
+                if (str_contains($officeNameLower, 'daop 1')) {
+                    $officeCode = 'D1';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 2')) {
+                    $officeCode = 'D2';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 3')) {
+                    $officeCode = 'D3';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 4')) {
+                    $officeCode = 'D4';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 5')) {
+                    $officeCode = 'D5';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 6')) {
+                    $officeCode = 'D6';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 7')) {
+                    $officeCode = 'D7';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 8')) {
+                    $officeCode = 'D8';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'daop 9')) {
+                    $officeCode = 'D9';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'divre iii')) {
+                    $officeCode = 'DV3';
+                    $signerCode = 'DV';
+                } elseif (str_contains($officeNameLower, 'divre ii')) {
+                    $officeCode = 'DV2';
+                    $signerCode = 'DV';
+                } elseif (str_contains($officeNameLower, 'divre iv')) {
+                    $officeCode = 'DV4';
+                    $signerCode = 'DV';
+                } elseif (str_contains($officeNameLower, 'divre i')) {
+                    $officeCode = 'DV1';
+                    $signerCode = 'DV';
+                } elseif (str_contains($officeNameLower, 'lrt')) {
+                    $officeCode = 'LRT';
+                    $signerCode = 'VP';
+                } elseif (str_contains($officeNameLower, 'pusat')) {
+                    $officeCode = 'KP';
+                    $signerCode = 'DZ';
+                }
+            }
+        }
+
         $vp = null;
-        if ($signerCode == 'VP' || $signerCode == 'DV') {
-            $vp = Pegawai::where('kantor_id', $admin->employee->kantor_id ?? 0)
+        $officeId = $admin->kantor_id ?? ($admin->employee->kantor_id ?? null);
+
+        if (($signerCode == 'VP' || $signerCode == 'DV') && $officeId) {
+            $vp = Pegawai::where('kantor_id', $officeId)
                 ->whereHas('jabatan', function ($query) {
                     $query->where('name', 'like', '%Vice President%');
                 })
                 ->first();
         }
 
-        return view('admin.mutations.print', compact('mutation', 'vp', 'monthRoman', 'sequence', 'officeCode', 'signerCode'));
+        return view('admin.mutations.print', compact('mutation', 'vp', 'monthRoman', 'sequence', 'officeCode', 'signerCode', 'officeName'));
     }
 }
