@@ -56,23 +56,6 @@
                         @enderror
                     </div>
 
-                    <div>
-                        <label for="division_id" class="block text-sm font-medium text-zinc-900">Divisi</label>
-                        <select name="division_id" id="division_id" required
-                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('division_id') border-red-500 @enderror">
-                            <option value="">Pilih Divisi</option>
-                            @foreach ($divisions as $division)
-                                <option value="{{ $division->id }}"
-                                    {{ old('division_id') == $division->id ? 'selected' : '' }}>
-                                    {{ $division->code }} | {{ $division->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('division_id')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="gaji_per_hari" class="block text-sm font-medium text-zinc-900">Gaji Per Hari</label>
@@ -124,7 +107,7 @@
                         Batal
                     </a>
                     <button type="submit"
-                        class="inline-flex items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2">
+                        class="inline-flex items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 text-white">
                         Simpan Jabatan
                     </button>
                 </div>
@@ -134,20 +117,7 @@
 @endsection
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            new TomSelect('#division_id', {
-                create: false,
-                sortField: {
-                    field: "text",
-                    direction: "asc"
-                },
-                placeholder: "Cari dan pilih divisi...",
-                allowEmptyOption: true,
-            });
-        });
-
         function generateCode() {
             const name = document.getElementById('name').value;
             const nextNumber = {{ $nextNumber }};

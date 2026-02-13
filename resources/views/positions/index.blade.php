@@ -26,21 +26,8 @@
                     <div class="relative flex-1 min-w-[240px]">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode, nama, atau divisi..."
+                            placeholder="Cari kode atau nama jabatan..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
-                    </div>
-
-                    <div class="w-full sm:w-56">
-                        <select name="division_id" onchange="this.form.submit()"
-                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
-                            <option value="">Semua Divisi</option>
-                            @foreach ($divisions as $division)
-                                <option value="{{ $division->id }}"
-                                    {{ request('division_id') == $division->id ? 'selected' : '' }}>
-                                    {{ $division->name }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
 
                     <div class="w-full sm:w-48">
@@ -59,12 +46,12 @@
                             class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
                             Filter
                         </button>
-                        @if (request()->anyFilled(['search', 'division_id', 'sort']) && request('sort') != 'latest')
+                        @if (request()->anyFilled(['search', 'sort']) && request('sort') != 'latest')
                             <a href="{{ route('positions.index') }}"
                                 class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
                                 Reset
                             </a>
-                        @elseif(request('search') || request('division_id'))
+                        @elseif(request('search'))
                             <a href="{{ route('positions.index') }}"
                                 class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
                                 Reset
@@ -91,7 +78,6 @@
                             <tr>
                                 <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
                                 <th class="px-6 py-4 font-medium">Nama Jabatan</th>
-                                <th class="px-6 py-4 font-medium">Divisi</th>
                                 <th class="px-6 py-4 font-medium">Deskripsi</th>
                                 <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                             </tr>
@@ -107,13 +93,6 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="font-medium text-zinc-900">{{ $position->name }}</div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
-                                            <i data-lucide="layers" class="h-3 w-3"></i>
-                                            {{ $position->division->name ?? '-' }}
-                                        </span>
                                     </td>
                                     <td class="px-6 py-4 text-zinc-500">
                                         {{ Str::limit($position->description ?? '-', 50) }}
@@ -142,7 +121,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-16 text-center text-zinc-500">
+                                    <td colspan="4" class="px-6 py-16 text-center text-zinc-500">
                                         <div class="flex flex-col items-center justify-center space-y-3">
                                             <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
                                                 <i data-lucide="briefcase" class="h-8 w-8 text-zinc-300"></i>
@@ -188,17 +167,11 @@
 
                     <!-- Modal Body -->
                     <div class="bg-white px-6 py-6 space-y-6">
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider text-right">Kode
                                     Jabatan</label>
                                 <p id="detailCode"
-                                    class="mt-1 text-sm font-medium text-zinc-900 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-100">
-                                </p>
-                            </div>
-                            <div>
-                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Divisi</label>
-                                <p id="detailDivision"
                                     class="mt-1 text-sm font-medium text-zinc-900 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-100">
                                 </p>
                             </div>
@@ -290,7 +263,6 @@
         function showDetails(position) {
             document.getElementById('detailCode').textContent = position.code;
             document.getElementById('detailName').textContent = position.name;
-            document.getElementById('detailDivision').textContent = position.division ? position.division.name : '-';
             document.getElementById('detailDescription').textContent = position.description || 'Tidak ada deskripsi.';
 
             openModal('detailsModal');

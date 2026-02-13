@@ -80,7 +80,6 @@
                             <tr>
                                 <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
                                 <th class="px-6 py-4 font-medium">Nama Divisi</th>
-                                <th class="px-6 py-4 font-medium">Jumlah Jabatan</th>
                                 <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                             </tr>
                         </thead>
@@ -96,13 +95,6 @@
                                     <td class="px-6 py-4">
                                         <div class="font-medium text-zinc-900">{{ $division->name }}</div>
                                         <div class="text-xs text-zinc-500 mt-0.5">{{ $division->description ?? '-' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-zinc-600">
-                                        <span
-                                            class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                                            <i data-lucide="users" class="h-3 w-3"></i>
-                                            {{ $division->positions_count ?? 0 }} Jabatan
-                                        </span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex justify-end gap-2">
@@ -127,7 +119,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-6 py-16 text-center text-zinc-500">
+                                    <td colspan="3" class="px-6 py-16 text-center text-zinc-500">
                                         <div class="flex flex-col items-center justify-center space-y-3">
                                             <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
                                                 <i data-lucide="layers" class="h-8 w-8 text-zinc-300"></i>

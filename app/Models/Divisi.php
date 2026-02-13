@@ -18,10 +18,7 @@ class Divisi extends Model
 
     protected $fillable = ['code', 'name', 'description'];
 
-    public function positions()
-    {
-        return $this->hasMany(Jabatan::class, 'division_id');
-    }
+    // public function positions() relationship removed
 
     public function employees()
     {

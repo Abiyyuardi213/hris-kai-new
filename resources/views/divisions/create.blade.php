@@ -69,26 +69,83 @@
                 return;
             }
 
-            // Split name into words, remove empty strings
-            const words = name.trim().toUpperCase().split(/\s+/);
-            let abbreviation = '';
+            let text = name.trim().toUpperCase();
 
-            words.forEach((word) => {
-                if (word.length > 0) {
-                    // Logic for "UTM" if word is "UTAMA"
-                    if (word === 'UTAMA') {
-                        abbreviation += 'UTM-';
+            const phraseSubs = {
+                'SUMBER DAYA MANUSIA': 'SDM',
+                'TEKNOLOGI INFORMASI': 'TI',
+                'SARANA PRASARANA': 'SARPRAS',
+                'HUBUNGAN MASYARAKAT': 'HUMAS',
+                'JALAN DAN JEMBATAN': 'JJ',
+                'SINYAL DAN TELEKOMUNIKASI': 'SINTEL',
+                'PENGAMBAHAN DAN PEMELIHARAAN': 'PP',
+                'KESELAMATAN DAN KEAMANAN': 'K3',
+                'NON ANGKUTAN': 'NONANG',
+                'QUALITY ASSURANCE': 'QA',
+                'INTERNAL AUDIT': 'SPI'
+            };
+
+            for (const [phrase, abbr] of Object.entries(phraseSubs)) {
+                if (text.includes(phrase)) {
+                    text = text.replace(phrase, abbr);
+                }
+            }
+
+            let words = text.split(/\s+/);
+
+            const wordSubs = {
+                'UMUM': 'UM',
+                'KEUANGAN': 'KEU',
+                'OPERASI': 'OP',
+                'KOMERSIAL': 'KOM',
+                'TEKNIK': 'TEK',
+                'ADMINISTRASI': 'ADM',
+                'LOGISTIK': 'LOG',
+                'PELAYANAN': 'YAN',
+                'PEMASARAN': 'SAR',
+                'ANGKUTAN': 'ANG',
+                'FASILITAS': 'FAS',
+                'KONSTRUKSI': 'KON',
+                'JARINGAN': 'JAR',
+                'PENGADAAN': 'ADA',
+                'STRATEGIS': 'STRA',
+                'BISNIS': 'BIS',
+                'HUKUM': 'HK',
+                'PERENCANAAN': 'REN',
+                'PENGEMBANGAN': 'BANG',
+                'SISTEM': 'SIS',
+                'DATA': 'DAT',
+                'PUSAT': 'PST',
+                'DAERAH': 'DA',
+                'KERUMAHTANGGAAN': 'KRT',
+                'PROTOKOLER': 'PRO'
+            };
+
+            const ignoreWords = ['DAN', '&', 'OF', 'THE', 'UNTUK', 'DARI', 'DI', 'KE'];
+
+            let codeParts = [];
+
+            words.forEach(word => {
+                word = word.replace(/[^A-Z0-9]/g, '');
+
+                if (!word || ignoreWords.includes(word)) return;
+
+                if (wordSubs[word]) {
+                    codeParts.push(wordSubs[word]);
+                } else {
+                    if (word.length <= 4) {
+                        codeParts.push(word);
                     } else {
-                        // Take first 3 letters
-                        abbreviation += word.substring(0, 3) + '-';
+                        codeParts.push(word.substring(0, 3));
                     }
                 }
             });
 
-            // Format number to 001, 002, etc.
+            const abbreviation = codeParts.join('-');
+
             const paddedNumber = nextNumber.toString().padStart(3, '0');
 
-            document.getElementById('code').value = abbreviation + paddedNumber;
+            document.getElementById('code').value = abbreviation + '-' + paddedNumber;
         }
     </script>
 @endsection

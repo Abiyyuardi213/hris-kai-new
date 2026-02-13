@@ -9,7 +9,7 @@ class DivisiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Divisi::withCount('positions');
+        $query = Divisi::query();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -27,9 +27,6 @@ class DivisiController extends Controller
                 break;
             case 'name_desc':
                 $query->orderBy('name', 'desc');
-                break;
-            case 'positions_desc':
-                $query->orderBy('positions_count', 'desc');
                 break;
             case 'latest':
             default:
@@ -89,10 +86,6 @@ class DivisiController extends Controller
 
     public function show(Divisi $division)
     {
-        $division->load(['positions' => function ($query) {
-            $query->withCount('employees');
-        }]);
-
         return view('divisions.show', compact('division'));
     }
 
