@@ -16,9 +16,12 @@ class Divisi extends Model
     public $officeScopeType = 'has_many_relation';
     public $officeScopeRelation = 'employees';
 
-    protected $fillable = ['code', 'name', 'description'];
+    protected $fillable = ['directorate_id', 'code', 'name', 'description'];
 
-    // public function positions() relationship removed
+    public function directorate()
+    {
+        return $this->belongsTo(Directorate::class);
+    }
 
     public function employees()
     {

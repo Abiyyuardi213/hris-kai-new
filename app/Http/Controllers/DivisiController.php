@@ -5,18 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Divisi;
 use Illuminate\Http\Request;
 
+use App\Models\Directorate;
+
 class DivisiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Divisi::query();
+        $query = Divisi::with('directorate');
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%");
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhereHas('directorate', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
             });
+        }
+
+        if ($request->filled('directorate_id')) {
+            $query->where('directorate_id', $request->directorate_id);
         }
 
         // Sorting logic
@@ -35,18 +44,22 @@ class DivisiController extends Controller
         }
 
         $divisions = $query->paginate(10)->withQueryString();
-        return view('divisions.index', compact('divisions'));
+        $directorates = Directorate::orderBy('name')->get();
+
+        return view('divisions.index', compact('divisions', 'directorates'));
     }
 
     public function create()
     {
         $nextNumber = Divisi::count() + 1;
-        return view('divisions.create', compact('nextNumber'));
+        $directorates = Directorate::orderBy('name')->get();
+        return view('divisions.create', compact('nextNumber', 'directorates'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'directorate_id' => 'required|exists:directorates,id',
             'code' => 'required|unique:divisions,code',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -68,12 +81,15 @@ class DivisiController extends Controller
             $number = str_pad($division->id, 3, '0', STR_PAD_LEFT);
         }
 
-        return view('divisions.edit', compact('division', 'number'));
+        $directorates = Directorate::orderBy('name')->get();
+
+        return view('divisions.edit', compact('division', 'number', 'directorates'));
     }
 
     public function update(Request $request, Divisi $division)
     {
         $validated = $request->validate([
+            'directorate_id' => 'required|exists:directorates,id',
             'code' => 'required|unique:divisions,code,' . $division->id,
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -86,6 +102,7 @@ class DivisiController extends Controller
 
     public function show(Divisi $division)
     {
+        $division->load('directorate');
         return view('divisions.show', compact('division'));
     }
 

@@ -1,19 +1,19 @@
 @extends('layouts.app')
-@section('title', 'Divisi')
+@section('title', 'Direktorat')
 
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-                <h2 class="text-3xl font-bold tracking-tight">Manajemen Divisi</h2>
-                <p class="text-zinc-500 mt-1">Kelola data divisi perusahaan.</p>
+                <h2 class="text-3xl font-bold tracking-tight">Manajemen Direktorat</h2>
+                <p class="text-zinc-500 mt-1">Kelola data direktorat perusahaan.</p>
             </div>
             <div>
-                <a href="{{ route('divisions.create') }}"
+                <a href="{{ route('directorates.create') }}"
                     class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
                     <i data-lucide="plus" class="h-4 w-4"></i>
-                    Tambah Divisi
+                    Tambah Direktorat
                 </a>
             </div>
         </div>
@@ -22,25 +22,12 @@
         <div class="space-y-4">
             <!-- Search and Filter -->
             <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('divisions.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
+                <form action="{{ route('directorates.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
                     <div class="relative flex-1 min-w-[240px]">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode atau nama divisi..."
+                            placeholder="Cari kode atau nama direktorat..."
                             class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
-                    </div>
-
-                    <div class="w-full sm:w-64">
-                        <select name="directorate_id" onchange="this.form.submit()"
-                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
-                            <option value="">Semua Direktorat</option>
-                            @foreach ($directorates as $directorate)
-                                <option value="{{ $directorate->id }}"
-                                    {{ request('directorate_id') == $directorate->id ? 'selected' : '' }}>
-                                    {{ $directorate->name }}
-                                </option>
-                            @endforeach
-                        </select>
                     </div>
 
                     <div class="w-full sm:w-64">
@@ -59,13 +46,13 @@
                             class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
                             Filter
                         </button>
-                        @if (request()->anyFilled(['search', 'sort', 'directorate_id']) && request('sort') != 'latest')
-                            <a href="{{ route('divisions.index') }}"
+                        @if (request()->anyFilled(['search', 'sort']) && request('sort') != 'latest')
+                            <a href="{{ route('directorates.index') }}"
                                 class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
                                 Reset
                             </a>
-                        @elseif(request('search') || request('directorate_id'))
-                            <a href="{{ route('divisions.index') }}"
+                        @elseif(request('search'))
+                            <a href="{{ route('directorates.index') }}"
                                 class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
                                 Reset
                             </a>
@@ -77,9 +64,9 @@
             <!-- Table Info -->
             <div class="flex items-center justify-between pb-1">
                 <p class="text-sm text-zinc-500">
-                    Menampilkan <span class="font-medium text-zinc-900">{{ $divisions->firstItem() ?? 0 }}</span> -
-                    <span class="font-medium text-zinc-900">{{ $divisions->lastItem() ?? 0 }}</span> dari
-                    <span class="font-medium text-zinc-900">{{ $divisions->total() }}</span> divisi
+                    Menampilkan <span class="font-medium text-zinc-900">{{ $directorates->firstItem() ?? 0 }}</span> -
+                    <span class="font-medium text-zinc-900">{{ $directorates->lastItem() ?? 0 }}</span> dari
+                    <span class="font-medium text-zinc-900">{{ $directorates->total() }}</span> direktorat
                 </p>
             </div>
 
@@ -90,41 +77,38 @@
                         <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                             <tr>
                                 <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
-                                <th class="px-6 py-4 font-medium">Direktorat</th>
-                                <th class="px-6 py-4 font-medium">Nama Divisi</th>
+                                <th class="px-6 py-4 font-medium">Nama Direktorat</th>
                                 <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
-                            @forelse ($divisions as $division)
+                            @forelse ($directorates as $directorate)
                                 <tr class="group hover:bg-zinc-50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <span
                                             class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
-                                            {{ $division->code }}
+                                            {{ $directorate->code }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 text-zinc-600">
-                                        {{ $division->directorate->name ?? '-' }}
-                                    </td>
                                     <td class="px-6 py-4">
-                                        <div class="font-medium text-zinc-900">{{ $division->name }}</div>
-                                        <div class="text-xs text-zinc-500 mt-0.5">{{ $division->description ?? '-' }}</div>
+                                        <div class="font-medium text-zinc-900">{{ $directorate->name }}</div>
+                                        <div class="text-xs text-zinc-500 mt-0.5">{{ $directorate->description ?? '-' }}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex justify-end gap-2">
-                                            <a href="{{ route('divisions.show', $division->id) }}"
+                                            <a href="{{ route('directorates.show', $directorate->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                                                 title="Lihat Detail">
                                                 <i data-lucide="eye" class="h-4 w-4"></i>
                                             </a>
-                                            <a href="{{ route('divisions.edit', $division->id) }}"
+                                            <a href="{{ route('directorates.edit', $directorate->id) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
                                             </a>
                                             <button
-                                                onclick="confirmDelete('{{ $division->id }}', '{{ $division->name }}')"
+                                                onclick="confirmDelete('{{ $directorate->id }}', '{{ $directorate->name }}')"
                                                 class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                 title="Hapus">
                                                 <i data-lucide="trash-2" class="h-4 w-4"></i>
@@ -137,11 +121,11 @@
                                     <td colspan="3" class="px-6 py-16 text-center text-zinc-500">
                                         <div class="flex flex-col items-center justify-center space-y-3">
                                             <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
-                                                <i data-lucide="layers" class="h-8 w-8 text-zinc-300"></i>
+                                                <i data-lucide="building-2" class="h-8 w-8 text-zinc-300"></i>
                                             </div>
                                             <div class="text-center">
-                                                <p class="font-medium text-zinc-900">Belum ada data divisi</p>
-                                                <p class="text-sm mt-1">Mulai dengan menambahkan divisi baru.</p>
+                                                <p class="font-medium text-zinc-900">Belum ada data direktorat</p>
+                                                <p class="text-sm mt-1">Mulai dengan menambahkan direktorat baru.</p>
                                             </div>
                                         </div>
                                     </td>
@@ -150,9 +134,9 @@
                         </tbody>
                     </table>
                 </div>
-                @if ($divisions->hasPages())
+                @if ($directorates->hasPages())
                     <div class="p-4 border-t border-zinc-200 bg-zinc-50/50">
-                        {{ $divisions->links() }}
+                        {{ $directorates->links() }}
                     </div>
                 @endif
             </div>
@@ -174,10 +158,10 @@
                                 <i data-lucide="alert-triangle" class="h-5 w-5 text-red-600"></i>
                             </div>
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                <h3 class="text-base font-semibold leading-6 text-zinc-900">Hapus Data Divisi</h3>
+                                <h3 class="text-base font-semibold leading-6 text-zinc-900">Hapus Data Direktorat</h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-zinc-500">
-                                        Apakah Anda yakin ingin menghapus divisi <span id="deleteName"
+                                        Apakah Anda yakin ingin menghapus direktorat <span id="deleteName"
                                             class="font-medium text-zinc-900"></span>?
                                     </p>
                                 </div>
@@ -210,7 +194,7 @@
 
         function confirmDelete(id, name) {
             document.getElementById('deleteName').textContent = name;
-            document.getElementById('deleteForm').action = "{{ url('admin/divisions') }}/" + id;
+            document.getElementById('deleteForm').action = "{{ url('admin/directorates') }}/" + id;
             openModal('deleteModal');
         }
     </script>

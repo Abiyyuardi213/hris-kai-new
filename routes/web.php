@@ -101,6 +101,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('offices/get-next-code', [App\Http\Controllers\KantorController::class, 'getNextCode'])->name('offices.get-next-code')->middleware('permission:manage-offices');
     Route::resource('offices', App\Http\Controllers\KantorController::class)->middleware('permission:manage-offices');
 
+    Route::resource('directorates', App\Http\Controllers\DirectorateController::class)->middleware('permission:manage-divisions');
     Route::resource('divisions', App\Http\Controllers\DivisiController::class)->middleware('permission:manage-divisions');
     Route::resource('positions', App\Http\Controllers\JabatanController::class)->middleware('permission:manage-positions');
 

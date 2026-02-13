@@ -17,6 +17,12 @@
                         class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
                         {{ $division->code }}
                     </span>
+                    @if ($division->directorate)
+                        <span
+                            class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                            {{ $division->directorate->name }}
+                        </span>
+                    @endif
                     <p class="text-zinc-500">{{ $division->description ?? 'Tidak ada deskripsi' }}</p>
                 </div>
             </div>

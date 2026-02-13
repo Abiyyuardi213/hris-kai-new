@@ -83,6 +83,12 @@
                     @endif
 
                     @if (Auth::user()->hasPermission('manage-divisions'))
+                        <a href="{{ route('directorates.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/directorates*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="building" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Direktorat</span>
+                        </a>
+
                         <a href="{{ route('divisions.index') }}"
                             class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/divisions*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                             <i data-lucide="layers" class="h-4 w-4"></i>

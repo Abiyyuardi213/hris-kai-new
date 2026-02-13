@@ -1,5 +1,22 @@
 @extends('layouts.app')
 
+@push('styles')
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <style>
+        .ts-control {
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            border-color: #d4d4d8 !important;
+            font-size: 0.875rem !important;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            box-shadow: 0 0 0 1px #18181b !important;
+            border-color: #18181b !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
@@ -19,6 +36,23 @@
                 @method('PUT')
 
                 <div class="space-y-4">
+                    <div>
+                        <label for="directorate_id" class="block text-sm font-medium text-zinc-900">Direktorat</label>
+                        <select name="directorate_id" id="directorate_id" required
+                            class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('directorate_id') border-red-500 @enderror">
+                            <option value="">Pilih Direktorat</option>
+                            @foreach ($directorates as $directorate)
+                                <option value="{{ $directorate->id }}"
+                                    {{ old('directorate_id', $division->directorate_id) == $directorate->id ? 'selected' : '' }}>
+                                    {{ $directorate->code }} | {{ $directorate->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('directorate_id')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <div>
                         <label for="name" class="block text-sm font-medium text-zinc-900">Nama Divisi</label>
                         <input type="text" name="name" id="name" value="{{ old('name', $division->name) }}"
@@ -65,39 +99,54 @@
             </form>
         </div>
     </div>
-    <script>
-        function generateCode() {
-            const name = document.getElementById('name').value;
-            // Use the number extracted in controller, treated as string to preserve leading zeros
-            const number = '{{ $number }}';
-
-            if (!name) {
-                // If name is empty, we might want to keep the original code or clear it.
-                // But typically if name is empty, validation will fail efficiently.
-                // Let's mimic create behavior but keep number if possible or just clear.
-                // Ideally if name is cleared, code prefix disappears but what about number?
-                // Let's just clear it like in create.
-                document.getElementById('code').value = '';
-                return;
-            }
-
-            // Split name into words, remove empty strings
-            const words = name.trim().toUpperCase().split(/\s+/);
-            let abbreviation = '';
-
-            words.forEach((word) => {
-                if (word.length > 0) {
-                    // Logic for "UTM" if word is "UTAMA"
-                    if (word === 'UTAMA') {
-                        abbreviation += 'UTM-';
-                    } else {
-                        // Take first 3 letters
-                        abbreviation += word.substring(0, 3) + '-';
-                    }
-                }
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                new TomSelect('#directorate_id', {
+                    create: false,
+                    sortField: {
+                        field: "text",
+                        direction: "asc"
+                    },
+                    placeholder: "Cari dan pilih direktorat...",
+                    allowEmptyOption: true,
+                });
             });
 
-            document.getElementById('code').value = abbreviation + number;
-        }
-    </script>
+            function generateCode() {
+                const name = document.getElementById('name').value;
+                // Use the number extracted in controller, treated as string to preserve leading zeros
+                const number = '{{ $number }}';
+
+                if (!name) {
+                    // If name is empty, we might want to keep the original code or clear it.
+                    // But typically if name is empty, validation will fail efficiently.
+                    // Let's mimic create behavior but keep number if possible or just clear.
+                    // Ideally if name is cleared, code prefix disappears but what about number?
+                    // Let's just clear it like in create.
+                    document.getElementById('code').value = '';
+                    return;
+                }
+
+                // Split name into words, remove empty strings
+                const words = name.trim().toUpperCase().split(/\s+/);
+                let abbreviation = '';
+
+                words.forEach((word) => {
+                    if (word.length > 0) {
+                        // Logic for "UTM" if word is "UTAMA"
+                        if (word === 'UTAMA') {
+                            abbreviation += 'UTM-';
+                        } else {
+                            // Take first 3 letters
+                            abbreviation += word.substring(0, 3) + '-';
+                        }
+                    }
+                });
+
+                document.getElementById('code').value = abbreviation + number;
+            }
+        </script>
+    @endpush
 @endsection
