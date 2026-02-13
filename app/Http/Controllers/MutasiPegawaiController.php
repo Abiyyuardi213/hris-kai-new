@@ -55,11 +55,13 @@ class MutasiPegawaiController extends Controller
     public function create()
     {
         $employees = Pegawai::orderBy('nama_lengkap')->get();
-        $divisions = Divisi::all();
+        // Initially pass all divisions, JS will filter them
+        $divisions = Divisi::with('directorate')->orderBy('name')->get();
         $positions = Jabatan::all();
         $offices = Kantor::all();
+        $directorates = \App\Models\Directorate::orderBy('name')->get();
 
-        return view('mutations.create', compact('employees', 'divisions', 'positions', 'offices'));
+        return view('mutations.create', compact('employees', 'divisions', 'positions', 'offices', 'directorates'));
     }
 
     public function store(Request $request)

@@ -66,6 +66,18 @@
                     <div class="space-y-6 bg-zinc-50 p-6 rounded-lg border border-zinc-100">
                         <h3 class="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-2">Posisi / Lokasi Baru
                         </h3>
+
+                        <div>
+                            <label for="directorate_id" class="block text-sm font-medium text-zinc-900">Direktorat</label>
+                            <select name="directorate_id" id="directorate_id"
+                                class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
+                                <option value="">(Pilih Direktorat)</option>
+                                @foreach ($directorates as $directorate)
+                                    <option value="{{ $directorate->id }}">{{ $directorate->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                         <div>
                             <label for="to_division_id" class="block text-sm font-medium text-zinc-900">Divisi
                                 Tujuan</label>
@@ -73,7 +85,7 @@
                                 class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                                 <option value="">(Tetap / Tidak Berubah)</option>
                                 @foreach ($divisions as $div)
-                                    <option value="{{ $div->id }}"
+                                    <option value="{{ $div->id }}" data-directorate="{{ $div->directorate_id }}"
                                         {{ old('to_division_id') == $div->id ? 'selected' : '' }}>{{ $div->name }}
                                     </option>
                                 @endforeach
@@ -124,4 +136,43 @@
             </form>
         </div>
     </div>
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const directorateSelect = document.getElementById('directorate_id');
+                const divisionSelect = document.getElementById('to_division_id');
+                const divisionOptions = Array.from(divisionSelect.options);
+
+                directorateSelect.addEventListener('change', function() {
+                    const selectedDirectorateId = this.value;
+
+                    // Reset division selection
+                    divisionSelect.value = '';
+
+                    // Show/hide options based on selected directorate
+                    divisionOptions.forEach(option => {
+                        const optionDirectorateId = option.getAttribute('data-directorate');
+
+                        if (option.value === "") {
+                            // Always show the placeholder option
+                            option.style.display = '';
+                            return;
+                        }
+
+                        if (!selectedDirectorateId) {
+                            // If no directorate selected, show all divisions
+                            // Or hide all? Assuming show all if no filter
+                            option.style.display = '';
+                        } else {
+                            if (optionDirectorateId == selectedDirectorateId) {
+                                option.style.display = '';
+                            } else {
+                                option.style.display = 'none';
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+    @endpush
 @endsection
