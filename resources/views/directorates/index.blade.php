@@ -19,126 +19,131 @@
         </div>
 
         <!-- Content -->
-        <div class="space-y-4">
-            <!-- Search and Filter -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
-                <form action="{{ route('directorates.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
-                    <div class="relative flex-1 min-w-[240px]">
-                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari kode atau nama direktorat..."
-                            class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Table Section (Left, larger width) -->
+            <div class="lg:col-span-3 space-y-4 order-2 lg:order-1">
+                <!-- Table -->
+                <div class="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+                    <div class="border-b border-zinc-200 px-6 py-4">
+                        <p class="text-sm text-zinc-500">
+                            Menampilkan <span class="font-medium text-zinc-900">{{ $directorates->firstItem() ?? 0 }}</span>
+                            -
+                            <span class="font-medium text-zinc-900">{{ $directorates->lastItem() ?? 0 }}</span> dari
+                            <span class="font-medium text-zinc-900">{{ $directorates->total() }}</span> direktorat
+                        </p>
                     </div>
-
-                    <div class="w-full sm:w-64">
-                        <select name="sort" onchange="this.form.submit()"
-                            class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
-                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama (A-Z)
-                            </option>
-                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nama (Z-A)
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <button type="submit"
-                            class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors">
-                            Filter
-                        </button>
-                        @if (request()->anyFilled(['search', 'sort']) && request('sort') != 'latest')
-                            <a href="{{ route('directorates.index') }}"
-                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-                                Reset
-                            </a>
-                        @elseif(request('search'))
-                            <a href="{{ route('directorates.index') }}"
-                                class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors">
-                                Reset
-                            </a>
-                        @endif
-                    </div>
-                </form>
-            </div>
-
-            <!-- Table Info -->
-            <div class="flex items-center justify-between pb-1">
-                <p class="text-sm text-zinc-500">
-                    Menampilkan <span class="font-medium text-zinc-900">{{ $directorates->firstItem() ?? 0 }}</span> -
-                    <span class="font-medium text-zinc-900">{{ $directorates->lastItem() ?? 0 }}</span> dari
-                    <span class="font-medium text-zinc-900">{{ $directorates->total() }}</span> direktorat
-                </p>
-            </div>
-
-            <!-- Table -->
-            <div class="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-                <div class="w-full overflow-x-auto">
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
-                            <tr>
-                                <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
-                                <th class="px-6 py-4 font-medium">Nama Direktorat</th>
-                                <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-zinc-100">
-                            @forelse ($directorates as $directorate)
-                                <tr class="group hover:bg-zinc-50/50 transition-colors">
-                                    <td class="px-6 py-4">
-                                        <span
-                                            class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
-                                            {{ $directorate->code }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="font-medium text-zinc-900">{{ $directorate->name }}</div>
-                                        <div class="text-xs text-zinc-500 mt-0.5">{{ $directorate->description ?? '-' }}
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex justify-end gap-2">
-                                            <a href="{{ route('directorates.show', $directorate->id) }}"
-                                                class="p-2 text-zinc-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                                                title="Lihat Detail">
-                                                <i data-lucide="eye" class="h-4 w-4"></i>
-                                            </a>
-                                            <a href="{{ route('directorates.edit', $directorate->id) }}"
-                                                class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                title="Edit">
-                                                <i data-lucide="edit-2" class="h-4 w-4"></i>
-                                            </a>
-                                            <button
-                                                onclick="confirmDelete('{{ $directorate->id }}', '{{ $directorate->name }}')"
-                                                class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                title="Hapus">
-                                                <i data-lucide="trash-2" class="h-4 w-4"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
+                    <div class="w-full overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                                 <tr>
-                                    <td colspan="3" class="px-6 py-16 text-center text-zinc-500">
-                                        <div class="flex flex-col items-center justify-center space-y-3">
-                                            <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
-                                                <i data-lucide="building-2" class="h-8 w-8 text-zinc-300"></i>
-                                            </div>
-                                            <div class="text-center">
-                                                <p class="font-medium text-zinc-900">Belum ada data direktorat</p>
-                                                <p class="text-sm mt-1">Mulai dengan menambahkan direktorat baru.</p>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
+                                    <th class="px-6 py-4 font-medium">Nama Direktorat</th>
+                                    <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                                 </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-                @if ($directorates->hasPages())
-                    <div class="p-4 border-t border-zinc-200 bg-zinc-50/50">
-                        {{ $directorates->links() }}
+                            </thead>
+                            <tbody class="divide-y divide-zinc-100">
+                                @forelse ($directorates as $directorate)
+                                    <tr class="group hover:bg-zinc-50/50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
+                                                {{ $directorate->code }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-medium text-zinc-900">{{ $directorate->name }}</div>
+                                            <div class="text-xs text-zinc-500 mt-0.5">{{ $directorate->description ?? '-' }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <div class="flex justify-end gap-2">
+                                                <a href="{{ route('directorates.show', $directorate->id) }}"
+                                                    class="p-2 text-zinc-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                    title="Lihat Detail">
+                                                    <i data-lucide="eye" class="h-4 w-4"></i>
+                                                </a>
+                                                <a href="{{ route('directorates.edit', $directorate->id) }}"
+                                                    class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    title="Edit">
+                                                    <i data-lucide="edit-2" class="h-4 w-4"></i>
+                                                </a>
+                                                <button
+                                                    onclick="confirmDelete('{{ $directorate->id }}', '{{ $directorate->name }}')"
+                                                    class="p-2 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    title="Hapus">
+                                                    <i data-lucide="trash-2" class="h-4 w-4"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-16 text-center text-zinc-500">
+                                            <div class="flex flex-col items-center justify-center space-y-3">
+                                                <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
+                                                    <i data-lucide="building-2" class="h-8 w-8 text-zinc-300"></i>
+                                                </div>
+                                                <div class="text-center">
+                                                    <p class="font-medium text-zinc-900">Belum ada data direktorat</p>
+                                                    <p class="text-sm mt-1">Mulai dengan menambahkan direktorat baru.</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
-                @endif
+                    @if ($directorates->hasPages())
+                        <div class="p-4 border-t border-zinc-200 bg-zinc-50/50">
+                            {{ $directorates->links() }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Filter Section (Right, smaller width) -->
+            <div class="lg:col-span-1 space-y-4 order-1 lg:order-2">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-zinc-200">
+                    <h3 class="font-medium text-zinc-900 mb-4">Filter Data</h3>
+                    <form action="{{ route('directorates.index') }}" method="GET" class="flex flex-col gap-4">
+                        <div class="relative">
+                            <i data-lucide="search"
+                                class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari..."
+                                class="flex h-10 w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                        </div>
+
+                        <div>
+                            <select name="sort" onchange="this.form.submit()"
+                                class="flex h-10 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru</option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama (A-Z)
+                                </option>
+                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nama (Z-A)
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="flex flex-col gap-2 pt-2">
+                            <button type="submit"
+                                class="inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors w-full">
+                                Filter
+                            </button>
+                            @if (request()->anyFilled(['search', 'sort']) && request('sort') != 'latest')
+                                <a href="{{ route('directorates.index') }}"
+                                    class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors w-full">
+                                    Reset
+                                </a>
+                            @elseif(request('search'))
+                                <a href="{{ route('directorates.index') }}"
+                                    class="inline-flex h-10 items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors w-full">
+                                    Reset
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
