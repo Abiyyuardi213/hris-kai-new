@@ -161,11 +161,23 @@
                         </div>
 
                         <div>
+                            <label for="directorate_id" class="block text-sm font-medium text-zinc-900">Direktorat</label>
+                            <select name="directorate_id" id="directorate_id" class="searchable">
+                                <option value="">Pilih Direktorat</option>
+                                @foreach ($directorates as $directorate)
+                                    <option value="{{ $directorate->id }}"
+                                        {{ old('directorate_id') == $directorate->id ? 'selected' : '' }}>
+                                        {{ $directorate->code }} | {{ $directorate->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label for="divisi_id" class="block text-sm font-medium text-zinc-900">Divisi</label>
                             <select name="divisi_id" id="divisi_id" class="searchable">
                                 <option value="">Pilih Divisi</option>
                                 @foreach ($divisions as $div)
-                                    <option value="{{ $div->id }}"
+                                    <option value="{{ $div->id }}" data-directorate-id="{{ $div->directorate_id }}"
                                         {{ old('divisi_id') == $div->id ? 'selected' : '' }}>{{ $div->code }} |
                                         {{ $div->name }}</option>
                                 @endforeach
@@ -356,6 +368,79 @@
                     allowEmptyOption: true,
                 });
             });
+
+            // Store all division options
+            const allDivisions = [
+                @foreach ($divisions as $div)
+                    {
+                        id: "{{ $div->id }}",
+                        directorate_id: "{{ $div->directorate_id }}",
+                        text: "{{ $div->code }} | {{ $div->name }}"
+                    },
+                @endforeach
+            ];
+
+            // Handle Directorate Change
+            const directorateSelect = document.getElementById('directorate_id');
+            const divisionSelect = document.getElementById('divisi_id');
+            let divisionTomSelect;
+
+            // Wait for TomSelect to initialize
+            setTimeout(() => {
+                if (divisionSelect.tomselect) {
+                    divisionTomSelect = divisionSelect.tomselect;
+
+                    // Initial filter if directorate is selected (e.g. old value)
+                    if (directorateSelect.value) {
+                        filterDivisions(directorateSelect.value);
+                    }
+                }
+            }, 100);
+
+            // Listen for changes on Directorate (using TomSelect if applied, or standard change)
+            // Since we applied .searchable to directorate, it will be a TomSelect instance
+            setTimeout(() => {
+                if (directorateSelect.tomselect) {
+                    directorateSelect.tomselect.on('change', (value) => {
+                        filterDivisions(value);
+                    });
+                } else {
+                    directorateSelect.addEventListener('change', (e) => {
+                        filterDivisions(e.target.value);
+                    });
+                }
+            }, 100);
+
+            function filterDivisions(directorateId) {
+                if (!divisionTomSelect) return;
+
+                divisionTomSelect.clear();
+                divisionTomSelect.clearOptions();
+
+                if (directorateId) {
+                    const filteredDivisions = allDivisions.filter(div => div.directorate_id == directorateId);
+                    filteredDivisions.forEach(div => {
+                        divisionTomSelect.addOption({
+                            value: div.id,
+                            text: div.text
+                        });
+                    });
+                } else {
+                    // If no directorate selected, show all (or maybe show none? usually better to show none or all)
+                    // Let's show all for now, or we can choose to reset.
+                    // User request implies hierarchy, so maybe show none if no directorate? 
+                    // "ketika sudah memilih direktorat, maka divisi yang di munculkan..." 
+                    // implies dependency. But let's keep all if nothing selected to avoid confusion if they want to search directly.
+                    // Actually, stricter is better: only show relevant ones.
+
+                    allDivisions.forEach(div => {
+                        divisionTomSelect.addOption({
+                            value: div.id,
+                            text: div.text
+                        });
+                    });
+                }
+            }
 
             // NIP Toggle
             function toggleNip() {

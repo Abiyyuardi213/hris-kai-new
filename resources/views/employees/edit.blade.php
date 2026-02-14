@@ -1,6 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.bootstrap5.min.css">
+        <style>
+            .ts-control {
+                border-radius: 0.5rem !important;
+                padding: 0.5rem 0.75rem !important;
+                border-color: #d4d4d8 !important;
+                font-size: 0.875rem !important;
+                background-color: white !important;
+            }
+
+            .ts-control:focus {
+                border-color: #18181b !important;
+                box-shadow: 0 0 0 1px #18181b !important;
+            }
+
+            .ts-dropdown {
+                border-radius: 0.5rem !important;
+                box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+            }
+        </style>
+    @endpush
     <div class="flex flex-col space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
@@ -130,12 +152,24 @@
                         </div>
 
                         <div>
+                            <label for="directorate_id" class="block text-sm font-medium text-zinc-900">Direktorat</label>
+                            <select name="directorate_id" id="directorate_id" class="searchable">
+                                <option value="">Pilih Direktorat</option>
+                                @foreach ($directorates as $directorate)
+                                    <option value="{{ $directorate->id }}"
+                                        {{ old('directorate_id', $employee->divisi ? $employee->divisi->directorate_id : '') == $directorate->id ? 'selected' : '' }}>
+                                        {{ $directorate->code }} | {{ $directorate->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label for="divisi_id" class="block text-sm font-medium text-zinc-900">Divisi</label>
                             <select name="divisi_id" id="divisi_id"
                                 class="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900">
                                 <option value="">Pilih Divisi</option>
                                 @foreach ($divisions as $div)
-                                    <option value="{{ $div->id }}"
+                                    <option value="{{ $div->id }}" data-directorate-id="{{ $div->directorate_id }}"
                                         {{ old('divisi_id', $employee->divisi_id) == $div->id ? 'selected' : '' }}>
                                         {{ $div->name }}</option>
                                 @endforeach
@@ -275,3 +309,97 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        // Initialize TomSelect
+        document.querySelectorAll('.searchable').forEach(el => {
+            new TomSelect(el, {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: el.getAttribute('placeholder') || 'Pilih data...',
+                allowEmptyOption: true,
+            });
+        });
+
+        // Store all division options
+        const allDivisions = [
+            @foreach ($divisions as $div)
+                {
+                    id: "{{ $div->id }}",
+                    directorate_id: "{{ $div->directorate_id }}",
+                    text: "{{ $div->name }}"
+                },
+            @endforeach
+        ];
+
+        // Handle Directorate Change
+        const directorateSelect = document.getElementById('directorate_id');
+        const divisionSelect = document.getElementById('divisi_id');
+        let divisionTomSelect;
+
+        // Wait for TomSelect to initialize
+        setTimeout(() => {
+            if (divisionSelect.tomselect) {
+                divisionTomSelect = divisionSelect.tomselect;
+
+                // Keep selected value if it matches the directorate
+                const initialDirectorateId = directorateSelect.value;
+                const initialDivisionId = "{{ $employee->divisi_id }}";
+
+                if (initialDirectorateId) {
+                    filterDivisions(initialDirectorateId, initialDivisionId);
+                }
+            }
+        }, 100);
+
+        // Listen for changes on Directorate
+        setTimeout(() => {
+            if (directorateSelect.tomselect) {
+                directorateSelect.tomselect.on('change', (value) => {
+                    filterDivisions(value);
+                });
+            } else {
+                directorateSelect.addEventListener('change', (e) => {
+                    filterDivisions(e.target.value);
+                });
+            }
+        }, 100);
+
+        function filterDivisions(directorateId, selectedDivisionId = null) {
+            if (!divisionTomSelect) return;
+
+            const currentVal = selectedDivisionId || divisionTomSelect.getValue();
+
+            divisionTomSelect.clear();
+            divisionTomSelect.clearOptions();
+
+            if (directorateId) {
+                const filteredDivisions = allDivisions.filter(div => div.directorate_id == directorateId);
+                filteredDivisions.forEach(div => {
+                    divisionTomSelect.addOption({
+                        value: div.id,
+                        text: div.text
+                    });
+                });
+            } else {
+                allDivisions.forEach(div => {
+                    divisionTomSelect.addOption({
+                        value: div.id,
+                        text: div.text
+                    });
+                });
+            }
+
+            // Restore selection if it's still valid
+            if (currentVal && allDivisions.find(d => d.id == currentVal && (d.directorate_id == directorateId || !
+                    directorateId))) {
+                divisionTomSelect.setValue(currentVal);
+            }
+        }
+    </script>
+@endpush

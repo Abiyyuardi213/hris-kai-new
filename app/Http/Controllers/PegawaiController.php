@@ -96,7 +96,9 @@ class PegawaiController extends Controller
         $lastPegawai = Pegawai::whereRaw("nip REGEXP '^[0-9]+$'")->orderByRaw('CAST(nip AS UNSIGNED) DESC')->first();
         $nextNip = $lastPegawai ? intval($lastPegawai->nip) + 1 : 71000;
 
-        return view('employees.create', compact('statuses', 'shifts', 'divisions', 'positions', 'offices', 'nextNip'));
+        $directorates = \App\Models\Directorate::all();
+
+        return view('employees.create', compact('statuses', 'shifts', 'divisions', 'positions', 'offices', 'nextNip', 'directorates'));
     }
 
     public function store(Request $request)
@@ -150,8 +152,9 @@ class PegawaiController extends Controller
         $positions = Jabatan::withoutGlobalScope('office_access')->get();
         // Kantor remains scoped so admin can only assign to their own office(s)
         $offices = Kantor::all();
+        $directorates = \App\Models\Directorate::all();
 
-        return view('employees.edit', compact('employee', 'statuses', 'shifts', 'divisions', 'positions', 'offices'));
+        return view('employees.edit', compact('employee', 'statuses', 'shifts', 'divisions', 'positions', 'offices', 'directorates'));
     }
 
     public function update(Request $request, Pegawai $employee)

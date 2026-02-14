@@ -67,6 +67,9 @@
                 @endif
                 @if ($employee->divisi)
                     <p>{{ $employee->divisi->name }}</p>
+                    @if ($employee->divisi->directorate)
+                        <p>{{ $employee->divisi->directorate->name }}</p>
+                    @endif
                 @endif
                 @if ($employee->kantor)
                     <p>{{ $employee->kantor->office_name }}</p>

@@ -105,6 +105,11 @@
                             <div class="font-medium text-gray-900 text-right">{{ $employee->divisi->name ?? '-' }}</div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 text-sm border-b border-gray-100 pb-3">
+                            <div class="text-gray-500">Direktorat</div>
+                            <div class="font-medium text-gray-900 text-right">
+                                {{ $employee->divisi->directorate->name ?? '-' }}</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm border-b border-gray-100 pb-3">
                             <div class="text-gray-500">Kantor</div>
                             <div class="font-medium text-gray-900 text-right">
                                 {{ $employee->kantor->office_name ?? '-' }}</div>
