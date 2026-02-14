@@ -140,8 +140,8 @@
             @if (Auth::user()->hasPermission('manage-divisions'))
                 <div class="col-span-3 rounded-xl border bg-white shadow-sm">
                     <div class="p-6 pb-4 border-b border-zinc-100">
-                        <h3 class="font-semibold text-zinc-900">Distribusi Jabatan</h3>
-                        <p class="text-sm text-zinc-500">Jumlah jabatan per divisi.</p>
+                        <h3 class="font-semibold text-zinc-900">Distribusi Pegawai</h3>
+                        <p class="text-sm text-zinc-500">Jumlah pegawai per divisi.</p>
                     </div>
                     <div class="p-6 space-y-4">
                         @forelse ($divisionStats as $stat)
@@ -149,12 +149,12 @@
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="font-medium text-zinc-700 truncate max-w-[180px]"
                                         title="{{ $stat->name }}">{{ $stat->name }}</span>
-                                    <span class="text-zinc-500">{{ $stat->positions_count }} Jabatan</span>
+                                    <span class="text-zinc-500">{{ $stat->employees_count }} Pegawai</span>
                                 </div>
                                 <div class="h-2 w-full rounded-full bg-zinc-100 overflow-hidden">
                                     @php
-                                        $max = $divisionStats->first()->positions_count ?? 1;
-                                        $width = $max > 0 ? ($stat->positions_count / $max) * 100 : 0;
+                                        $max = $divisionStats->first()->employees_count ?? 1;
+                                        $width = $max > 0 ? ($stat->employees_count / $max) * 100 : 0;
                                     @endphp
                                     <div class="h-full rounded-full bg-indigo-600" style="width: {{ $width }}%">
                                     </div>

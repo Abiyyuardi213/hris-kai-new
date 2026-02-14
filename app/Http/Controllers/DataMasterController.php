@@ -58,8 +58,8 @@ class DataMasterController extends Controller
         // Latest offices
         $latestOffices = Kantor::with('city')->latest()->take(5)->get();
 
-        // Divisions with position count
-        $divisionStats = Divisi::withCount('positions')->orderByDesc('positions_count')->take(5)->get();
+        // Divisions with employee count
+        $divisionStats = Divisi::withCount('employees')->orderByDesc('employees_count')->take(5)->get();
 
         return view('admin.master_office.index', compact(
             'officesCount',
