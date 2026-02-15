@@ -103,6 +103,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::resource('directorates', App\Http\Controllers\DirectorateController::class)->middleware('permission:manage-divisions');
     Route::resource('divisions', App\Http\Controllers\DivisiController::class)->middleware('permission:manage-divisions');
+    Route::get('divisions/{division}/dependencies', [App\Http\Controllers\DivisiController::class, 'dependencies'])->name('divisions.dependencies')->middleware('permission:manage-divisions');
     Route::resource('positions', App\Http\Controllers\JabatanController::class)->middleware('permission:manage-positions');
 
     Route::resource('assets', App\Http\Controllers\AsetController::class)->middleware('permission:manage-assets');

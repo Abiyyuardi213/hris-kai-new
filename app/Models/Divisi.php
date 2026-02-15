@@ -22,4 +22,14 @@ class Divisi extends Model
     {
         return $this->hasMany(Pegawai::class, 'divisi_id');
     }
+
+    public function mutationsFrom()
+    {
+        return $this->hasMany(MutasiPegawai::class, 'from_division_id');
+    }
+
+    public function mutationsTo()
+    {
+        return $this->hasMany(MutasiPegawai::class, 'to_division_id');
+    }
 }

@@ -118,7 +118,7 @@
                                                 title="Lihat Detail">
                                                 <i data-lucide="eye" class="h-4 w-4"></i>
                                             </a>
-                                            <a href="{{ route('divisions.edit', $division->id) }}"
+                                            <a href="{{ route('divisions.edit', array_merge(['division' => $division->id], request()->query())) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
@@ -210,7 +210,7 @@
 
         function confirmDelete(id, name) {
             document.getElementById('deleteName').textContent = name;
-            document.getElementById('deleteForm').action = "{{ url('admin/divisions') }}/" + id;
+            document.getElementById('deleteForm').action = "{{ url('admin/divisions') }}/" + id + window.location.search;
             openModal('deleteModal');
         }
     </script>

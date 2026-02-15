@@ -97,7 +97,7 @@ class DivisiController extends Controller
 
         $division->update($validated);
 
-        return redirect()->route('divisions.index')->with('success', 'Divisi berhasil diperbarui');
+        return redirect()->route('divisions.index', $request->query())->with('success', 'Divisi berhasil diperbarui');
     }
 
     public function show(Divisi $division)
@@ -106,9 +106,23 @@ class DivisiController extends Controller
         return view('divisions.show', compact('division'));
     }
 
-    public function destroy(Divisi $division)
+    public function destroy(Request $request, Divisi $division)
     {
-        $division->delete();
-        return redirect()->route('divisions.index')->with('success', 'Divisi berhasil dihapus');
+        try {
+            $division->delete();
+            return redirect()->route('divisions.index', $request->query())->with('success', 'Divisi berhasil dihapus');
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                return redirect()->route('divisions.dependencies', $division->id)
+                    ->with('error', 'Divisi tidak dapat dihapus karena masih memiliki data terkait. Silakan tinjau data di bawah ini.');
+            }
+            throw $e;
+        }
+    }
+
+    public function dependencies(Divisi $division)
+    {
+        $division->load(['employees', 'mutationsFrom', 'mutationsTo']);
+        return view('divisions.dependencies', compact('division'));
     }
 }
