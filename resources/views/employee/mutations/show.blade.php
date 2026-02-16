@@ -36,7 +36,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Info -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="lg:col-span-3 space-y-6">
                 <!-- Change Details -->
                 <div class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-zinc-100">
@@ -122,46 +122,8 @@
                 </div>
             </div>
 
-            <!-- Documents -->
-            <div class="space-y-6">
-                <div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
-                    <h3 class="font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-                        <i data-lucide="file-text" class="h-5 w-5 text-indigo-500"></i>
-                        Dokumen Pendukung
-                    </h3>
-
-                    @if ($mutation->file_sk)
-                        <div
-                            class="p-4 rounded-lg border border-zinc-200 bg-zinc-50 group hover:border-indigo-200 hover:bg-indigo-50/50 transition-all">
-                            <div class="flex items-start gap-3">
-                                <div class="p-2 bg-white rounded-lg border border-zinc-200 shadow-sm text-red-500">
-                                    <i data-lucide="file-check" class="h-6 w-6"></i>
-                                </div>
-                                <div class="flex-grow min-w-0">
-                                    <p class="text-sm font-medium text-zinc-900 truncate">SK Mutasi.pdf</p>
-                                    <p class="text-xs text-zinc-500 mt-0.5">Dokumen Resmi</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 flex gap-2">
-                                <a href="{{ asset('storage/' . $mutation->file_sk) }}" target="_blank"
-                                    class="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition-colors">
-                                    <i data-lucide="eye" class="h-3.5 w-3.5"></i>
-                                    Lihat
-                                </a>
-                                <a href="{{ asset('storage/' . $mutation->file_sk) }}" download
-                                    class="flex-shrink-0 flex items-center justify-center px-3 py-2 rounded-lg border border-zinc-200 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 hover:border-zinc-300 transition-all">
-                                    <i data-lucide="download" class="h-3.5 w-3.5"></i>
-                                </a>
-                            </div>
-                        </div>
-                    @else
-                        <div class="text-center py-8 text-zinc-400">
-                            <i data-lucide="file-x" class="h-8 w-8 mx-auto mb-2 opacity-50"></i>
-                            <p class="text-sm">Tidak ada dokumen SK terlampir.</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
         </div>
+    </div>
+    </div>
     </div>
 @endsection

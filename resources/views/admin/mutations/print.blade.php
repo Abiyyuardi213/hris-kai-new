@@ -138,6 +138,10 @@
             .header-container {
                 border-bottom: 3px solid #000 !important;
             }
+
+            .page-break {
+                page-break-before: always;
+            }
         }
     </style>
 </head>

@@ -53,13 +53,20 @@
                                                     {{ \Carbon\Carbon::parse($mutation->mutation_date)->translatedFormat('d F Y') }}
                                                 </span>
                                             </div>
-                                            <p class="text-sm text-zinc-500 mt-1">No. SK: Perubahan Struktur Organisasi</p>
+                                            <p class="text-sm text-zinc-500 mt-1">No. SK: {{ $mutation->sk_number }}</p>
                                         </div>
-                                        <a href="{{ route('employee.mutations.show', $mutation->id) }}"
-                                            class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
-                                            Lihat Detail
-                                            <i data-lucide="arrow-right" class="h-4 w-4"></i>
-                                        </a>
+                                        <div class="flex items-center gap-3">
+                                            <a href="{{ route('employee.mutations.print', $mutation->id) }}" target="_blank"
+                                                class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors bg-zinc-50 hover:bg-zinc-100 px-3 py-1.5 rounded-lg border border-zinc-200">
+                                                <i data-lucide="printer" class="h-4 w-4"></i>
+                                                Cetak SK
+                                            </a>
+                                            <a href="{{ route('employee.mutations.show', $mutation->id) }}"
+                                                class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
+                                                Lihat Detail
+                                                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                                            </a>
+                                        </div>
                                     </div>
 
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-zinc-100">

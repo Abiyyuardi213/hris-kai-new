@@ -73,4 +73,96 @@ class MutasiPegawai extends Model
     {
         return $this->belongsTo(Kantor::class, 'to_office_id');
     }
+
+    public function getSkNumberAttribute()
+    {
+        // 1. Sequence and Number
+        $sequence = $this->mutation_code;
+        if ($this->mutation_code && str_starts_with($this->mutation_code, 'MUT-')) {
+            $sequence = substr($this->mutation_code, 4); // Get the number part, e.g. 001
+        } elseif (!$this->mutation_code) {
+            $sequence = str_pad($this->id, 3, '0', STR_PAD_LEFT);
+        } else {
+            // Handle existing slashes if any, usually just take first part
+            $parts = explode('/', $this->mutation_code);
+            $sequence = $parts[0];
+        }
+
+        // 2. Office & Signer Code
+        // Logic: Try to determine issuer based on To Office (Destination) or From Office
+        $officeName = $this->toOffice->office_name ?? ($this->fromOffice->office_name ?? '');
+        $officeNameLower = strtolower($officeName);
+        $officeCode = 'KP';
+        $signerCode = 'DZ';
+
+        if ($officeNameLower) {
+            if (str_contains($officeNameLower, 'daop 1')) {
+                $officeCode = 'D1';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 2')) {
+                $officeCode = 'D2';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 3')) {
+                $officeCode = 'D3';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 4')) {
+                $officeCode = 'D4';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 5')) {
+                $officeCode = 'D5';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 6')) {
+                $officeCode = 'D6';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 7')) {
+                $officeCode = 'D7';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 8')) {
+                $officeCode = 'D8';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 9')) {
+                $officeCode = 'D9';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'divre iii')) {
+                $officeCode = 'DV3';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'divre ii')) {
+                $officeCode = 'DV2';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'divre iv')) {
+                $officeCode = 'DV4';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'divre i')) {
+                $officeCode = 'DV1';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'lrt')) {
+                $officeCode = 'LRT';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'pusat')) {
+                $officeCode = 'KP';
+                $signerCode = 'DZ';
+            }
+        }
+
+        // 3. Month Roman
+        $months = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII'
+        ];
+        $month = date('n', strtotime($this->mutation_date));
+        $monthRoman = $months[$month];
+        $year = date('Y', strtotime($this->mutation_date));
+
+        return "{$sequence}/SK/{$signerCode}/{$officeCode}/{$monthRoman}/{$year}";
+    }
 }

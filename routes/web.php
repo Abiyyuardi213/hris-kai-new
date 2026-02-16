@@ -68,6 +68,7 @@ Route::middleware(['auth:employee'])->group(function () {
 
     Route::get('/mutations', [App\Http\Controllers\EmployeeMutasiController::class, 'index'])->name('employee.mutations.index');
     Route::get('/mutations/{id}', [App\Http\Controllers\EmployeeMutasiController::class, 'show'])->name('employee.mutations.show');
+    Route::get('/mutations/{id}/print', [App\Http\Controllers\EmployeeMutasiController::class, 'print'])->name('employee.mutations.print');
 
     // Sanksi (Disciplinary Action)
     Route::get('/sanctions', [App\Http\Controllers\SanctionController::class, 'index'])->name('employee.sanctions.index');
