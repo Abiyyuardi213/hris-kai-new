@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\MutasiPegawai;
 use App\Models\Pegawai;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class EmployeeMutasiController extends Controller

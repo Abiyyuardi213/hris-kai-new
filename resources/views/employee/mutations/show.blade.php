@@ -31,6 +31,13 @@
                         Informasi lengkap mengenai perubahan status kepegawaian Anda.
                     </p>
                 </div>
+                <div class="flex-shrink-0">
+                    <a href="{{ route('employee.mutations.print', $mutation->id) }}" target="_blank"
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl border border-white/20 backdrop-blur-sm transition-all text-sm font-semibold">
+                        <i data-lucide="download" class="h-4 w-4"></i>
+                        Download SK
+                    </a>
+                </div>
             </div>
         </div>
 

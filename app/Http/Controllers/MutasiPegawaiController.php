@@ -146,7 +146,7 @@ class MutasiPegawaiController extends Controller
             11 => 'XI',
             12 => 'XII'
         ];
-        $monthRoman = $months[date('n')];
+        $monthRoman = $months[date('n', strtotime($mutation->mutation_date))];
 
         if ($mutation->mutation_code) {
             $parts = explode('/', $mutation->mutation_code);
@@ -155,86 +155,69 @@ class MutasiPegawaiController extends Controller
             $sequence = str_pad($mutation->id, 3, '0', STR_PAD_LEFT);
         }
 
+        $targetOffice = $mutation->toOffice ?? $mutation->fromOffice;
+        $officeName = $targetOffice->office_name ?? '';
+
         $officeCode = 'KP';
         $signerCode = 'DZ';
 
-        $admin = auth()->user();
+        $officeNameLower = strtolower($officeName);
 
-        $officeName = '';
-        if ($admin->role) {
-            $roleName = $admin->role->role_name;
-        }
-
-        $officeName = '';
-        if ($admin->office) {
-            $officeName = $admin->office->office_name;
-        } elseif ($admin->employee && $admin->employee->kantor) {
-            $officeName = $admin->employee->kantor->office_name;
-        }
-
-        if (in_array($roleName, ['Admin', 'Super Admin'])) {
-            $officeCode = 'KP';
-            $signerCode = 'DZ';
-        } elseif ($roleName === 'Admin Daop') {
-            $officeNameLower = strtolower($officeName);
-
-            if ($officeNameLower) {
-                if (str_contains($officeNameLower, 'daop 1')) {
-                    $officeCode = 'D1';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 2')) {
-                    $officeCode = 'D2';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 3')) {
-                    $officeCode = 'D3';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 4')) {
-                    $officeCode = 'D4';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 5')) {
-                    $officeCode = 'D5';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 6')) {
-                    $officeCode = 'D6';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 7')) {
-                    $officeCode = 'D7';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 8')) {
-                    $officeCode = 'D8';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'daop 9')) {
-                    $officeCode = 'D9';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'divre iii')) {
-                    $officeCode = 'DV3';
-                    $signerCode = 'DV';
-                } elseif (str_contains($officeNameLower, 'divre ii')) {
-                    $officeCode = 'DV2';
-                    $signerCode = 'DV';
-                } elseif (str_contains($officeNameLower, 'divre iv')) {
-                    $officeCode = 'DV4';
-                    $signerCode = 'DV';
-                } elseif (str_contains($officeNameLower, 'divre i')) {
-                    $officeCode = 'DV1';
-                    $signerCode = 'DV';
-                } elseif (str_contains($officeNameLower, 'lrt')) {
-                    $officeCode = 'LRT';
-                    $signerCode = 'VP';
-                } elseif (str_contains($officeNameLower, 'pusat')) {
-                    $officeCode = 'KP';
-                    $signerCode = 'DZ';
-                }
+        if ($officeNameLower) {
+            if (str_contains($officeNameLower, 'daop 1')) {
+                $officeCode = 'D1';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 2')) {
+                $officeCode = 'D2';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 3')) {
+                $officeCode = 'D3';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 4')) {
+                $officeCode = 'D4';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 5')) {
+                $officeCode = 'D5';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 6')) {
+                $officeCode = 'D6';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 7')) {
+                $officeCode = 'D7';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 8')) {
+                $officeCode = 'D8';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'daop 9')) {
+                $officeCode = 'D9';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'divre iii')) {
+                $officeCode = 'DV3';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'divre ii')) {
+                $officeCode = 'DV2';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'divre iv')) {
+                $officeCode = 'DV4';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'divre i')) {
+                $officeCode = 'DV1';
+                $signerCode = 'DV';
+            } elseif (str_contains($officeNameLower, 'lrt')) {
+                $officeCode = 'LRT';
+                $signerCode = 'VP';
+            } elseif (str_contains($officeNameLower, 'pusat')) {
+                $officeCode = 'KP';
+                $signerCode = 'DZ';
             }
         }
 
         $vp = null;
-        $officeId = $admin->kantor_id ?? ($admin->employee->kantor_id ?? null);
-
-        if (($signerCode == 'VP' || $signerCode == 'DV') && $officeId) {
-            $vp = Pegawai::where('kantor_id', $officeId)
+        if (($signerCode == 'VP' || $signerCode == 'DV') && $targetOffice) {
+            $vp = Pegawai::where('kantor_id', $targetOffice->id)
                 ->whereHas('jabatan', function ($query) {
-                    $query->where('name', 'like', '%Vice President%');
+                    $query->where('name', 'like', '%Vice President%')
+                        ->orWhere('name', 'like', '%Kepala Divisi Regional%');
                 })
                 ->first();
         }

@@ -58,8 +58,8 @@
                                         <div class="flex items-center gap-3">
                                             <a href="{{ route('employee.mutations.print', $mutation->id) }}" target="_blank"
                                                 class="inline-flex items-center gap-2 text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors bg-zinc-50 hover:bg-zinc-100 px-3 py-1.5 rounded-lg border border-zinc-200">
-                                                <i data-lucide="printer" class="h-4 w-4"></i>
-                                                Cetak SK
+                                                <i data-lucide="download" class="h-4 w-4"></i>
+                                                Download SK
                                             </a>
                                             <a href="{{ route('employee.mutations.show', $mutation->id) }}"
                                                 class="inline-flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
