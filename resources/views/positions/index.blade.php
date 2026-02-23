@@ -105,7 +105,7 @@
                                                 title="Detail">
                                                 <i data-lucide="eye" class="h-4 w-4"></i>
                                             </button>
-                                            <a href="{{ route('positions.edit', $position->id) }}"
+                                            <a href="{{ route('positions.edit', ['position' => $position->id] + request()->only('page', 'sort', 'search')) }}"
                                                 class="p-2 text-zinc-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit">
                                                 <i data-lucide="edit-2" class="h-4 w-4"></i>
@@ -256,7 +256,7 @@
 
         function confirmDelete(id, name) {
             document.getElementById('deleteName').textContent = name;
-            document.getElementById('deleteForm').action = "{{ url('admin/positions') }}/" + id;
+            document.getElementById('deleteForm').action = "{{ url('admin/positions') }}/" + id + window.location.search;
             openModal('deleteModal');
         }
 
@@ -273,6 +273,23 @@
             if (event.key === "Escape") {
                 closeModal('deleteModal');
                 closeModal('detailsModal');
+            }
+        });
+
+        // Preserve scroll position on delete
+        const deleteForm = document.getElementById('deleteForm');
+        if (deleteForm) {
+            deleteForm.addEventListener('submit', function() {
+                sessionStorage.setItem('positions_scroll_pos', window.scrollY);
+            });
+        }
+
+        // Restore scroll position if set
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedScrollPos = sessionStorage.getItem('positions_scroll_pos');
+            if (savedScrollPos) {
+                window.scrollTo(0, parseInt(savedScrollPos));
+                sessionStorage.removeItem('positions_scroll_pos');
             }
         });
     </script>

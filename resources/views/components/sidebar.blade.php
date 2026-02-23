@@ -202,6 +202,12 @@
                         class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
                         Lainnya</div>
 
+                    <a href="{{ route('admin.events.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/events*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="calendar-days" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Kalender & Agenda</span>
+                    </a>
+
                     <a href="{{ route('holidays.index') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/holidays*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                         <i data-lucide="calendar" class="h-4 w-4"></i>

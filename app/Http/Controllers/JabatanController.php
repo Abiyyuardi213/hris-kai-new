@@ -55,9 +55,27 @@ class JabatanController extends Controller
             'tunjangan' => 'required|numeric|min:0',
         ]);
 
-        Jabatan::create($validated);
+        $position = Jabatan::create($validated);
 
-        return redirect()->route('positions.index')->with('success', 'Jabatan berhasil ditambahkan');
+        // Calculate redirect page based on sort
+        $sort = $request->get('sort', 'latest');
+        $perPage = 10;
+        $page = 1;
+
+        if ($sort === 'latest') {
+            $page = 1;
+        } elseif ($sort === 'name_asc') {
+            $count = Jabatan::where('name', '<', $position->name)->count();
+            $page = floor($count / $perPage) + 1;
+        } elseif ($sort === 'name_desc') {
+            $count = Jabatan::where('name', '>', $position->name)->count();
+            $page = floor($count / $perPage) + 1;
+        }
+
+        return redirect()->route('positions.index', [
+            'page' => $page,
+            'sort' => $sort,
+        ])->with('success', 'Jabatan berhasil ditambahkan');
     }
 
     public function edit(Jabatan $position)
@@ -77,12 +95,43 @@ class JabatanController extends Controller
 
         $position->update($validated);
 
-        return redirect()->route('positions.index')->with('success', 'Jabatan berhasil diperbarui');
+        return redirect()->route('positions.index', [
+            'page' => $request->page,
+            'sort' => $request->sort,
+            'search' => $request->search
+        ])->with('success', 'Jabatan berhasil diperbarui');
     }
 
     public function destroy(Jabatan $position)
     {
         $position->delete();
-        return redirect()->route('positions.index')->with('success', 'Jabatan berhasil dihapus');
+
+        // Check if the current page is empty after deletion
+        $page = request()->get('page', 1);
+        $sort = request()->get('sort', 'latest');
+        $search = request()->get('search');
+
+        // If we are deep in pages, check if we need to go back one page
+        if ($page > 1) {
+            $query = Jabatan::query();
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%");
+                });
+            }
+            $remaining = $query->count();
+            $totalPages = ceil($remaining / 10); // 10 is perPage
+
+            if ($page > $totalPages && $totalPages > 0) {
+                $page = $totalPages;
+            }
+        }
+
+        return redirect()->route('positions.index', [
+            'page' => $page,
+            'sort' => $sort,
+            'search' => $search
+        ])->with('success', 'Jabatan berhasil dihapus');
     }
 }

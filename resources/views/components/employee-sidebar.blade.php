@@ -86,6 +86,11 @@
                 <i data-lucide="megaphone" class="h-5 w-5"></i>
                 <span class="font-bold">Pusat Informasi</span>
             </a>
+            <a href="{{ route('employee.events.index') }}"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('events*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900' }}">
+                <i data-lucide="calendar-days" class="h-5 w-5"></i>
+                <span class="font-bold">Kalender & Agenda</span>
+            </a>
         </div>
 
         <!-- Personal Section -->

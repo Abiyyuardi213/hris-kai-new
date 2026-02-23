@@ -74,6 +74,10 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/sanctions', [App\Http\Controllers\SanctionController::class, 'index'])->name('employee.sanctions.index');
     Route::get('/sanctions/{id}', [App\Http\Controllers\SanctionController::class, 'show'])->name('employee.sanctions.show');
     Route::get('/sanctions/{id}/print', [App\Http\Controllers\SanctionController::class, 'print'])->name('employee.sanctions.print');
+
+    // Events (Calendar)
+    Route::get('/events', [App\Http\Controllers\EventController::class, 'index'])->name('employee.events.index');
+    Route::get('/events/{id}', [App\Http\Controllers\EventController::class, 'show'])->name('employee.events.show');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -169,4 +173,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Announcements
     Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->names('admin.announcements');
+
+    // Events (Calendar)
+    Route::resource('events', App\Http\Controllers\Admin\EventController::class)->names('admin.events');
 });
