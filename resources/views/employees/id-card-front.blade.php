@@ -31,9 +31,9 @@
         <div class="flex flex-row items-center justify-between w-full px-4 mb-8">
             <div class="relative w-[220px] h-[280px]">
                 @if ($employee->foto)
-                    <img src="{{ asset('storage/' . $employee->foto) }}"
-                        class="w-full h-full object-cover rounded-lg shadow-sm border border-gray-200"
-                        crossorigin="anonymous">
+                    <div class="w-full h-full rounded-lg shadow-sm border border-gray-200"
+                        style="background-image: url('{{ asset('storage/' . $employee->foto) }}'); background-size: cover; background-position: center;">
+                    </div>
                 @else
                     <div class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
                         <span class="text-sm">No Photo</span>
