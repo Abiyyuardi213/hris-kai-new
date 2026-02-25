@@ -76,6 +76,11 @@
                 <i data-lucide="briefcase" class="h-5 w-5"></i>
                 <span class="font-bold">Perjalanan Dinas</span>
             </a>
+            <a href="{{ route('employee.reimbursements.index') }}"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('reimbursement*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900' }}">
+                <i data-lucide="receipt" class="h-5 w-5"></i>
+                <span class="font-bold">Reimbursement</span>
+            </a>
             <a href="{{ route('employee.performance.index') }}"
                 class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('performance*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900' }}">
                 <i data-lucide="award" class="h-5 w-5"></i>

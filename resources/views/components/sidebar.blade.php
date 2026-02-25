@@ -180,6 +180,12 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Perjalanan Dinas</span>
                     </a>
 
+                    <a href="{{ route('admin.reimbursements.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/reimbursement*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="receipt" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Reimbursement</span>
+                    </a>
+
                     <a href="{{ route('admin.performance.index') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/performance*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                         <i data-lucide="star" class="h-4 w-4"></i>

@@ -78,6 +78,12 @@ Route::middleware(['auth:employee'])->group(function () {
     // Events (Calendar)
     Route::get('/events', [App\Http\Controllers\EventController::class, 'index'])->name('employee.events.index');
     Route::get('/events/{id}', [App\Http\Controllers\EventController::class, 'show'])->name('employee.events.show');
+
+    // Reimbursement
+    Route::get('/reimbursements', [App\Http\Controllers\EmployeeReimbursementController::class, 'index'])->name('employee.reimbursements.index');
+    Route::get('/reimbursements/create', [App\Http\Controllers\EmployeeReimbursementController::class, 'create'])->name('employee.reimbursements.create');
+    Route::post('/reimbursements', [App\Http\Controllers\EmployeeReimbursementController::class, 'store'])->name('employee.reimbursements.store');
+    Route::get('/reimbursements/{id}', [App\Http\Controllers\EmployeeReimbursementController::class, 'show'])->name('employee.reimbursements.show');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -176,4 +182,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Events (Calendar)
     Route::resource('events', App\Http\Controllers\Admin\EventController::class)->names('admin.events');
+
+    // Reimbursements
+    Route::get('/reimbursements', [App\Http\Controllers\Admin\ReimbursementController::class, 'index'])->name('admin.reimbursements.index');
+    Route::get('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'show'])->name('admin.reimbursements.show');
+    Route::patch('/reimbursements/{id}/status', [App\Http\Controllers\Admin\ReimbursementController::class, 'updateStatus'])->name('admin.reimbursements.update-status');
+    Route::delete('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'destroy'])->name('admin.reimbursements.destroy');
 });
