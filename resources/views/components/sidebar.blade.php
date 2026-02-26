@@ -231,6 +231,12 @@
                             <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Aset</span>
                         </a>
                     @endif
+
+                    <a href="{{ route('admin.offboardings.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-red-600 {{ Request::is('admin/offboarding*') ? 'bg-red-100 text-red-700 font-bold' : 'text-zinc-500' }}">
+                        <i data-lucide="log-out" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Offboarding Pegawai</span>
+                    </a>
                 @endif
             @endif
         </nav>

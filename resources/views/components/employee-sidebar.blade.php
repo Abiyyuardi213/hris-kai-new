@@ -126,6 +126,11 @@
                 <i data-lucide="banknote" class="h-5 w-5"></i>
                 <span class="font-bold">Slip Gaji</span>
             </a>
+            <a href="{{ route('employee.offboardings.index') }}"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('offboarding*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-red-50 hover:text-red-600' }}">
+                <i data-lucide="log-out" class="h-5 w-5"></i>
+                <span class="font-bold">Offboarding / Pensiun</span>
+            </a>
         </div>
     </div>
 

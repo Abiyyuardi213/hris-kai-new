@@ -84,6 +84,12 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/reimbursements/create', [App\Http\Controllers\EmployeeReimbursementController::class, 'create'])->name('employee.reimbursements.create');
     Route::post('/reimbursements', [App\Http\Controllers\EmployeeReimbursementController::class, 'store'])->name('employee.reimbursements.store');
     Route::get('/reimbursements/{id}', [App\Http\Controllers\EmployeeReimbursementController::class, 'show'])->name('employee.reimbursements.show');
+
+    // Offboarding
+    Route::get('/offboarding', [App\Http\Controllers\EmployeeOffboardingController::class, 'index'])->name('employee.offboardings.index');
+    Route::get('/offboarding/create', [App\Http\Controllers\EmployeeOffboardingController::class, 'create'])->name('employee.offboardings.create');
+    Route::post('/offboarding', [App\Http\Controllers\EmployeeOffboardingController::class, 'store'])->name('employee.offboardings.store');
+    Route::get('/offboarding/{id}', [App\Http\Controllers\EmployeeOffboardingController::class, 'show'])->name('employee.offboardings.show');
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -188,4 +194,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'show'])->name('admin.reimbursements.show');
     Route::patch('/reimbursements/{id}/status', [App\Http\Controllers\Admin\ReimbursementController::class, 'updateStatus'])->name('admin.reimbursements.update-status');
     Route::delete('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'destroy'])->name('admin.reimbursements.destroy');
+
+    // Offboarding
+    Route::get('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'index'])->name('admin.offboardings.index');
+    Route::get('/offboarding/create', [App\Http\Controllers\Admin\OffboardingController::class, 'create'])->name('admin.offboardings.create');
+    Route::post('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'store'])->name('admin.offboardings.store');
+    Route::get('/offboarding/{id}', [App\Http\Controllers\Admin\OffboardingController::class, 'show'])->name('admin.offboardings.show');
+    Route::patch('/offboarding/{id}/process', [App\Http\Controllers\Admin\OffboardingController::class, 'updateProcess'])->name('admin.offboardings.update-process');
+    Route::delete('/offboarding/{id}', [App\Http\Controllers\Admin\OffboardingController::class, 'destroy'])->name('admin.offboardings.destroy');
 });
