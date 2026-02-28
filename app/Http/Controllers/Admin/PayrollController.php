@@ -54,8 +54,8 @@ class PayrollController extends Controller
             'year' => 'required|integer|min:2020',
         ]);
 
-        $month = $request->month;
-        $year = $request->year;
+        $month = (int) $request->month;
+        $year = (int) $request->year;
 
         $employees = Pegawai::with('jabatan')->get();
         $countGenerated = 0;
@@ -80,19 +80,34 @@ class PayrollController extends Controller
 
             $gajiHarian = $employee->jabatan->gaji_per_hari;
             $tunjanganJabatan = $employee->jabatan->tunjangan;
-            $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan;
+            $thrDays = 0;
+            $thr = 0;
+            $bonus = 0;
+            $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan + $thr + $bonus;
 
-            Payroll::create([
+            $payroll = Payroll::create([
                 'pegawai_id' => $employee->id,
                 'month' => $month,
                 'year' => $year,
                 'jumlah_hadir' => $jumlahHadir,
                 'gaji_harian' => $gajiHarian,
                 'tunjangan_jabatan' => $tunjanganJabatan,
+                'thr_days' => $thrDays,
+                'thr' => $thr,
+                'bonus' => $bonus,
                 'total_gaji' => $totalGaji,
                 'status' => 'pending',
                 'generated_by' => Auth::id(),
             ]);
+
+            // Notify Employee
+            $employee->notify(new \App\Notifications\SystemNotification([
+                'title' => 'Payroll Baru',
+                'message' => 'Slip gaji Anda untuk periode ' . Carbon::createFromDate($year, $month, 1)->translatedFormat('F') . ' ' . $year . ' telah tersedia.',
+                'url' => route('employee.payroll.index'),
+                'type' => 'success',
+                'icon' => 'banknote'
+            ]));
 
             $countGenerated++;
         }
@@ -113,6 +128,77 @@ class PayrollController extends Controller
         ]);
 
         return back()->with('success', 'Status pembayaran berhasil diperbarui.');
+    }
+
+    public function edit(Payroll $payroll)
+    {
+        return view('admin.payroll.edit', compact('payroll'));
+    }
+
+    public function update(Request $request, Payroll $payroll)
+    {
+        $request->validate([
+            'thr_days' => 'required|integer|min:0',
+            'bonus' => 'required|numeric|min:0',
+            'keterangan_bonus' => 'nullable|string|max:255',
+        ]);
+
+        $thr = $payroll->gaji_harian * $request->thr_days;
+
+        $totalGaji = ($payroll->gaji_harian * $payroll->jumlah_hadir) +
+            $payroll->tunjangan_jabatan +
+            $thr +
+            $request->bonus;
+
+        $payroll->update([
+            'thr_days' => $request->thr_days,
+            'thr' => $thr,
+            'bonus' => $request->bonus,
+            'keterangan_bonus' => $request->keterangan_bonus,
+            'total_gaji' => $totalGaji,
+        ]);
+
+        return redirect()->route('admin.payroll.index', ['month' => $payroll->month, 'year' => $payroll->year])
+            ->with('success', 'Data payroll berhasil diperbarui.');
+    }
+
+    public function bulkUpdate(Request $request)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2020',
+            'thr_days' => 'required|integer|min:0',
+            'bonus' => 'required|numeric|min:0',
+            'keterangan_bonus' => 'nullable|string|max:255',
+        ]);
+
+        $month = (int) $request->month;
+        $year = (int) $request->year;
+
+        $payrolls = Payroll::where('month', $month)
+            ->where('year', $year)
+            ->get();
+
+        $count = 0;
+        foreach ($payrolls as $payroll) {
+            $thr = $payroll->gaji_harian * $request->thr_days;
+            $totalGaji = ($payroll->gaji_harian * $payroll->jumlah_hadir) +
+                $payroll->tunjangan_jabatan +
+                $thr +
+                $request->bonus;
+
+            $payroll->update([
+                'thr_days' => $request->thr_days,
+                'thr' => $thr,
+                'bonus' => $request->bonus,
+                'keterangan_bonus' => $request->keterangan_bonus,
+                'total_gaji' => $totalGaji,
+            ]);
+            $count++;
+        }
+
+        return redirect()->route('admin.payroll.index', ['month' => $request->month, 'year' => $request->year])
+            ->with('success', "Berhasil memperbarui $count data payroll secara massal.");
     }
 
     public function destroy(Payroll $payroll)

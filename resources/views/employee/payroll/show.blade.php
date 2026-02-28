@@ -97,6 +97,29 @@
                         <span class="font-bold text-zinc-900">Rp
                             {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</span>
                     </div>
+
+                    @if ($payroll->thr > 0)
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-amber-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-amber-700">Tunjangan Hari Raya (THR)</span>
+                                <span class="text-[10px] text-amber-600 font-medium">Tunjangan Khusus Hari Raya</span>
+                            </div>
+                            <span class="font-bold text-amber-700">Rp
+                                {{ number_format($payroll->thr, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
+
+                    @if ($payroll->bonus > 0)
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-emerald-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-emerald-700">Bonus & Insentif</span>
+                                <span
+                                    class="text-[10px] text-emerald-600 font-medium">{{ $payroll->keterangan_bonus ?? 'Bonus Tambahan' }}</span>
+                            </div>
+                            <span class="font-bold text-emerald-700">Rp
+                                {{ number_format($payroll->bonus, 0, ',', '.') }}</span>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Summary Total -->

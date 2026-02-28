@@ -7,6 +7,11 @@
         <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold tracking-tight">Manajemen Payroll</h2>
             <div class="flex gap-2">
+                <button type="button" onclick="openModal('bulkModal')"
+                    class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 transition-colors shadow-sm">
+                    <i data-lucide="calculator" class="h-4 w-4"></i>
+                    Bulk THR/Bonus
+                </button>
                 <a href="{{ route('admin.payroll.generate') }}"
                     class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
                     <i data-lucide="refresh-cw" class="h-4 w-4"></i>
@@ -83,6 +88,7 @@
                             <th class="px-6 py-4 font-medium">Hadir</th>
                             <th class="px-6 py-4 font-medium text-right">Gaji/Hari</th>
                             <th class="px-6 py-4 font-medium text-right">Tunjangan</th>
+                            <th class="px-6 py-4 font-medium text-right text-amber-600">THR & Bonus</th>
                             <th class="px-6 py-4 font-bold text-right text-zinc-900">Total Gaji</th>
                             <th class="px-6 py-4 font-medium">Status</th>
                             <th class="px-6 py-4 font-medium text-right">Aksi</th>
@@ -111,6 +117,19 @@
                                 <td class="px-6 py-4 text-right">
                                     <div class="text-xs text-zinc-600">Rp
                                         {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    @if ($payroll->thr > 0 || $payroll->bonus > 0)
+                                        <div class="text-[10px] font-bold text-amber-600">
+                                            +Rp {{ number_format($payroll->thr + $payroll->bonus, 0, ',', '.') }}
+                                        </div>
+                                        @if ($payroll->keterangan_bonus)
+                                            <div class="text-[9px] text-zinc-400 italic">{{ $payroll->keterangan_bonus }}
+                                            </div>
+                                        @endif
+                                    @else
+                                        <div class="text-xs text-zinc-400">Rp 0</div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-right font-bold text-emerald-600">
                                     Rp {{ number_format($payroll->total_gaji, 0, ',', '.') }}
@@ -158,6 +177,11 @@
                                                 </button>
                                             </form>
                                         @endif
+                                        <a href="{{ route('admin.payroll.edit', $payroll->id) }}"
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-400 hover:text-blue-600 hover:border-blue-200 transition-colors"
+                                            title="Edit Payroll">
+                                            <i data-lucide="edit-3" class="h-4 w-4"></i>
+                                        </a>
                                         <button onclick="confirmDelete('{{ $payroll->id }}')"
                                             class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-400 hover:text-red-600 hover:border-red-200 transition-colors"
                                             title="Hapus">
@@ -188,6 +212,97 @@
                     {{ $payrolls->links() }}
                 </div>
             @endif
+        </div>
+    </div>
+
+    <!-- Bulk Update Modal -->
+    <div id="bulkModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('bulkModal')">
+        </div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <form action="{{ route('admin.payroll.bulk-update') }}" method="POST">
+                        @csrf
+                        <div class="bg-white px-6 pb-6 pt-5">
+                            <div class="sm:flex sm:items-start">
+                                <div
+                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <i data-lucide="calculator" class="h-5 w-5 text-amber-600"></i>
+                                </div>
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                    <h3 class="text-lg font-bold text-zinc-900">Input THR/Bonus Massal</h3>
+                                    <p class="mt-1 text-xs text-zinc-500">Perubahan akan diterapkan pada SELURUH pegawai di
+                                        periode terpilih.</p>
+
+                                    <div class="mt-4 space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="space-y-1">
+                                                <label class="text-[10px] font-bold text-zinc-400 uppercase">Bulan</label>
+                                                <select name="month" required
+                                                    class="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                                    @for ($i = 1; $i <= 12; $i++)
+                                                        <option value="{{ $i }}"
+                                                            {{ request('month', date('n')) == $i ? 'selected' : '' }}>
+                                                            {{ Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                                                        </option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <label class="text-[10px] font-bold text-zinc-400 uppercase">Tahun</label>
+                                                <select name="year" required
+                                                    class="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                                    @for ($i = date('Y'); $i >= 2020; $i--)
+                                                        <option value="{{ $i }}"
+                                                            {{ request('year', date('Y')) == $i ? 'selected' : '' }}>
+                                                            {{ $i }}
+                                                        </option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-bold text-zinc-400 uppercase">Jumlah Hari
+                                                THR</label>
+                                            <input type="number" name="thr_days" value="0" required
+                                                class="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                        </div>
+
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-bold text-zinc-400 uppercase">Nominal
+                                                Bonus</label>
+                                            <div class="relative">
+                                                <span
+                                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">Rp</span>
+                                                <input type="number" name="bonus" value="0" required
+                                                    class="h-10 w-full rounded-lg border border-zinc-200 pl-8 pr-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-bold text-zinc-400 uppercase">Keterangan</label>
+                                            <input type="text" name="keterangan_bonus"
+                                                placeholder="Contoh: THR Lebaran 2026"
+                                                class="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-zinc-50 px-6 py-4 sm:flex sm:flex-row-reverse">
+                            <button type="submit"
+                                class="inline-flex w-full justify-center rounded-lg bg-amber-600 px-6 py-2 text-sm font-bold text-white shadow-sm hover:bg-amber-700 sm:ml-3 sm:w-auto transition-all">Terapkan
+                                Massal</button>
+                            <button type="button" onclick="closeModal('bulkModal')"
+                                class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-6 py-2 text-sm font-bold text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50 sm:mt-0 sm:w-auto transition-all">Batal</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -228,6 +343,7 @@
             </div>
         </div>
     </div>
+
 
     <script>
         function openModal(id) {

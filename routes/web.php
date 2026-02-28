@@ -157,7 +157,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/payroll', [App\Http\Controllers\Admin\PayrollController::class, 'index'])->name('admin.payroll.index');
     Route::get('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'generate'])->name('admin.payroll.generate');
     Route::post('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'processGenerate'])->name('admin.payroll.process-generate');
-    // Route::get('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'show'])->name('admin.payroll.show');
+    Route::post('/payroll/bulk-update', [App\Http\Controllers\Admin\PayrollController::class, 'bulkUpdate'])->name('admin.payroll.bulk-update');
+    Route::get('/payroll/{payroll}/edit', [App\Http\Controllers\Admin\PayrollController::class, 'edit'])->name('admin.payroll.edit');
+    Route::put('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'update'])->name('admin.payroll.update');
     Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
     Route::delete('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'destroy'])->name('admin.payroll.destroy');
 
