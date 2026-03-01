@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\IzinPegawai;
+use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -39,6 +40,16 @@ class IzinController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png,webp|max:2048',
         ]);
 
+        if ($request->type === 'cuti') {
+            $start = \Carbon\Carbon::parse($request->start_date);
+            $end = \Carbon\Carbon::parse($request->end_date);
+            $days = $start->diffInDays($end) + 1;
+
+            if ($employee->sisa_cuti < $days) {
+                return back()->with('error', 'Sisa cuti Anda tidak mencukupi (Sisa: ' . $employee->sisa_cuti . ', Pengajuan: ' . $days . ')')->withInput();
+            }
+        }
+
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('izin_attachments', 'public');
             $validated['attachment'] = $path;
@@ -74,5 +85,32 @@ class IzinController extends Controller
         }
 
         return view('employee.izin.show', compact('izin'));
+    }
+
+    public function print($id)
+    {
+        /** @var \App\Models\Pegawai $employee */
+        $employee = Auth::guard('employee')->user();
+
+        $izin = IzinPegawai::with(['pegawai.jabatan', 'pegawai.divisi'])->where('pegawai_id', $employee->id)->findOrFail($id);
+
+        if ($izin->status !== 'approved') {
+            return back()->with('error', 'Surat izin hanya dapat dicetak setelah disetujui.');
+        }
+
+        $mdFinance = \App\Models\Pegawai::whereHas('jabatan', function ($query) {
+            $query->where('name', 'Managing Director of Finance');
+        })->first();
+
+        // Fallback
+        if (!$mdFinance) {
+            $mdFinance = (object)[
+                'nama_lengkap' => 'INDARTO PAMOENGKAS',
+                'nip' => '654324'
+            ];
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.izin.pdf', compact('izin', 'mdFinance'));
+        return $pdf->stream('surat-izin-' . $izin->pegawai->nip . '.pdf');
     }
 }

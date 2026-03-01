@@ -11,7 +11,14 @@
             </a>
             <div>
                 <h2 class="text-2xl font-bold tracking-tight text-zinc-900">Form Pengajuan</h2>
-                <p class="text-sm text-zinc-500">Lengkapi data untuk mengajukan izin, sakit, atau cuti.</p>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <p class="text-sm text-zinc-500">Lengkapi data untuk mengajukan izin, sakit, atau cuti.</p>
+                    <span class="h-1 w-1 rounded-full bg-zinc-300"></span>
+                    <span
+                        class="text-[10px] font-bold text-orange-600 uppercase tracking-tight bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100/50">
+                        Sisa Cuti: {{ Auth::guard('employee')->user()->sisa_cuti }} Hari
+                    </span>
+                </div>
             </div>
         </div>
 

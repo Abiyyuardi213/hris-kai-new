@@ -17,11 +17,18 @@
                     </p>
                 </div>
             </div>
-            <button onclick="window.print()"
-                class="hidden md:flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95">
-                <i data-lucide="printer" class="h-4 w-4"></i>
-                Cetak Slip
-            </button>
+            <div class="flex gap-2">
+                <a href="{{ route('employee.payroll.print', $payroll->id) }}" target="_blank"
+                    class="hidden md:flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-orange-700 transition-all shadow-lg active:scale-95 shadow-orange-600/20">
+                    <i data-lucide="file-text" class="h-4 w-4"></i>
+                    Unduh PDF
+                </a>
+                <button onclick="window.print()"
+                    class="hidden md:flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-zinc-800 transition-all shadow-lg active:scale-95">
+                    <i data-lucide="printer" class="h-4 w-4"></i>
+                    Cetak Slip
+                </button>
+            </div>
         </div>
 
         <!-- Slip content -->

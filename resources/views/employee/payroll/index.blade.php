@@ -65,7 +65,11 @@
                                         {{ $payroll->status === 'paid' ? 'Dibayarkan' : 'Menunggu' }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
+                                    <a href="{{ route('employee.payroll.print', $payroll->id) }}" target="_blank"
+                                        class="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-bold text-orange-600 hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-all shadow-sm active:scale-95">
+                                        <i data-lucide="file-text" class="h-3.5 w-3.5"></i>
+                                    </a>
                                     <a href="{{ route('employee.payroll.show', $payroll->id) }}"
                                         class="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-bold text-zinc-700 hover:bg-zinc-900 hover:text-white hover:border-zinc-900 transition-all shadow-sm active:scale-95">
                                         <i data-lucide="eye" class="h-3.5 w-3.5"></i>

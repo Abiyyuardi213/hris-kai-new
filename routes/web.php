@@ -41,6 +41,7 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/izin/create', [App\Http\Controllers\IzinController::class, 'create'])->name('employee.izin.create');
     Route::post('/izin', [App\Http\Controllers\IzinController::class, 'store'])->name('employee.izin.store');
     Route::get('/izin/{izin}', [App\Http\Controllers\IzinController::class, 'show'])->name('employee.izin.show');
+    Route::get('/izin/{id}/print', [App\Http\Controllers\IzinController::class, 'print'])->name('employee.izin.print');
 
     // Lembur
     Route::get('/overtime', [App\Http\Controllers\OvertimeController::class, 'index'])->name('employee.overtime.index');
@@ -50,6 +51,7 @@ Route::middleware(['auth:employee'])->group(function () {
     // Payroll
     Route::get('/payroll', [App\Http\Controllers\EmployeePayrollController::class, 'index'])->name('employee.payroll.index');
     Route::get('/payroll/{payroll}', [App\Http\Controllers\EmployeePayrollController::class, 'show'])->name('employee.payroll.show');
+    Route::get('/payroll/{id}/print', [App\Http\Controllers\EmployeePayrollController::class, 'print'])->name('employee.payroll.print');
 
     // Perjalanan Dinas
     Route::get('/perjalanan-dinas', [App\Http\Controllers\PerjalananDinasController::class, 'index'])->name('employee.perjalanan_dinas.index');
@@ -145,6 +147,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'index'])->name('admin.izin.index');
     Route::post('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'store'])->name('admin.izin.store');
     Route::patch('/izin/{izin}/status', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'updateStatus'])->name('admin.izin.update-status');
+    Route::get('/izin/{id}/print', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'print'])->name('admin.izin.print');
     Route::delete('/izin/{izin}', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'destroy'])->name('admin.izin.destroy');
 
     // Manajemen Lembur

@@ -80,7 +80,14 @@
                                         {{ $izin->status }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
+                                    @if ($izin->status === 'approved')
+                                        <a href="{{ route('employee.izin.print', $izin->id) }}" target="_blank"
+                                            class="p-2 hover:bg-zinc-100 rounded-xl transition-all text-zinc-400 hover:text-zinc-900"
+                                            title="Download PDF">
+                                            <i data-lucide="printer" class="h-4 w-4"></i>
+                                        </a>
+                                    @endif
                                     <button onclick="showDetail('{{ json_encode($izin) }}')"
                                         class="p-2 hover:bg-zinc-100 rounded-xl transition-all text-zinc-400 hover:text-zinc-900">
                                         <i data-lucide="chevron-right" class="h-5 w-5"></i>
@@ -183,21 +190,28 @@
                 </div>
 
                 ${izin.attachment ? `
-                    <div class="bg-zinc-50/50 p-4 rounded-2xl">
-                        <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Lampiran</label>
-                        <a href="/storage/${izin.attachment}" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 pt-1">
-                            <i data-lucide="file-text" class="h-4 w-4"></i>
-                            Lihat Dokumen Pendukung
-                        </a>
-                    </div>
-                    ` : ''}
+                        <div class="bg-zinc-50/50 p-4 rounded-2xl">
+                            <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest block mb-1">Lampiran</label>
+                            <a href="/storage/${izin.attachment}" target="_blank" class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 pt-1">
+                                <i data-lucide="file-text" class="h-4 w-4"></i>
+                                Lihat Dokumen Pendukung
+                            </a>
+                        </div>
+                        ` : ''}
 
                 ${izin.admin_note ? `
-                    <div class="bg-zinc-900 p-4 rounded-2xl shadow-xl shadow-zinc-200">
-                        <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Catatan Admin</label>
-                        <p class="text-sm font-medium text-white leading-relaxed">${izin.admin_note}</p>
-                    </div>
-                    ` : ''}
+                        <div class="bg-zinc-900 p-4 rounded-2xl shadow-xl shadow-zinc-200">
+                            <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Catatan Admin</label>
+                            <p class="text-sm font-medium text-white leading-relaxed">${izin.admin_note}</p>
+                        </div>
+                        ` : ''}
+
+                ${izin.status === 'approved' ? `
+                        <a href="/izin/${izin.id}/print" target="_blank" class="flex items-center justify-center gap-2 w-full bg-zinc-900 text-white rounded-2xl py-4 font-bold hover:bg-zinc-800 transition-all active:scale-95">
+                            <i data-lucide="printer" class="h-4 w-4"></i>
+                            Cetak Surat Izin (A4)
+                        </a>
+                        ` : ''}
             `;
 
             openModal('detailModal');

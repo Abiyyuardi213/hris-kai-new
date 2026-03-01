@@ -90,14 +90,8 @@ class GenerateMonthlyPayroll extends Command
                 'generated_by' => $systemUser->id,
             ]);
 
-            // Notify Employee
-            $employee->notify(new \App\Notifications\SystemNotification([
-                'title' => 'Payroll Baru',
-                'message' => 'Slip gaji Anda untuk periode ' . $targetDate->format('F Y') . ' telah tersedia.',
-                'url' => route('employee.payroll.index'),
-                'type' => 'success',
-                'icon' => 'banknote'
-            ]));
+            // Notify Employee (Database & Email with PDF)
+            $employee->notify(new \App\Notifications\PayrollGeneratedNotification($payroll));
 
             $countGenerated++;
         }

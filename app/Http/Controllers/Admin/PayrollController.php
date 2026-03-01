@@ -100,14 +100,8 @@ class PayrollController extends Controller
                 'generated_by' => Auth::id(),
             ]);
 
-            // Notify Employee
-            $employee->notify(new \App\Notifications\SystemNotification([
-                'title' => 'Payroll Baru',
-                'message' => 'Slip gaji Anda untuk periode ' . Carbon::createFromDate($year, $month, 1)->translatedFormat('F') . ' ' . $year . ' telah tersedia.',
-                'url' => route('employee.payroll.index'),
-                'type' => 'success',
-                'icon' => 'banknote'
-            ]));
+            // Notify Employee (Database & Email with PDF)
+            $employee->notify(new \App\Notifications\PayrollGeneratedNotification($payroll));
 
             $countGenerated++;
         }

@@ -131,6 +131,13 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-1">
+                                        @if ($izin->status === 'approved')
+                                            <a href="{{ route('admin.izin.print', $izin->id) }}" target="_blank"
+                                                class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-400 hover:text-zinc-900 transition-colors"
+                                                title="Cetak Surat Izin">
+                                                <i data-lucide="printer" class="h-4 w-4"></i>
+                                            </a>
+                                        @endif
                                         @if ($izin->status === 'pending')
                                             <button onclick="openApprovalModal('{{ $izin->id }}')"
                                                 class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-400 hover:text-emerald-600 hover:border-emerald-200 transition-colors"
@@ -172,8 +179,10 @@
     </div>
 
     <!-- Modal Add Izin (Admin filing for Employee) -->
-    <div id="addIzinModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('addIzinModal')">
+    <div id="addIzinModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm"
+            onclick="closeModal('addIzinModal')">
         </div>
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
