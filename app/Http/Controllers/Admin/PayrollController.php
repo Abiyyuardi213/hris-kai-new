@@ -242,7 +242,8 @@ class PayrollController extends Controller
                 $countUpdated++;
             } else {
                 // Create new record with 0 attendance (independent THR)
-                $totalGaji = $tunjanganJabatan + $thr + $request->bonus;
+                // Tunjangan jabatan is NOT included here, it will be added when payroll is generated later
+                $totalGaji = $thr + $request->bonus;
                 
                 $payroll = Payroll::create([
                     'pegawai_id' => $employee->id,
@@ -250,7 +251,7 @@ class PayrollController extends Controller
                     'year' => $year,
                     'jumlah_hadir' => 0,
                     'gaji_harian' => $gajiHarian,
-                    'tunjangan_jabatan' => $tunjanganJabatan,
+                    'tunjangan_jabatan' => 0, // Set to 0 for now
                     'thr_days' => $request->thr_days,
                     'thr' => $thr,
                     'bonus' => $request->bonus,
