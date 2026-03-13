@@ -25,7 +25,7 @@
             width: 100%;
             border-bottom: 2px solid #002060;
             padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .header-title {
@@ -49,7 +49,7 @@
 
         .info-table {
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-collapse: collapse;
         }
 
@@ -77,7 +77,7 @@
             border-bottom: 1px solid #eee;
             padding-bottom: 5px;
             margin-bottom: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
             text-transform: uppercase;
         }
 
@@ -88,7 +88,7 @@
         }
 
         .data-table td {
-            padding: 8px 12px;
+            padding: 5px 12px;
             border-bottom: 1px solid #f9f9f9;
         }
 
@@ -137,14 +137,16 @@
         }
 
         .signature-section {
-            margin-top: 40px;
+            margin-top: 20px;
             width: 100%;
+            page-break-inside: avoid;
         }
 
         .signature-box {
             width: 220px;
             float: right;
             text-align: center;
+            page-break-inside: avoid;
         }
 
         .signature-title {
