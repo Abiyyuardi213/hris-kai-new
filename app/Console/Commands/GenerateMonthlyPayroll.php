@@ -35,7 +35,9 @@ class GenerateMonthlyPayroll extends Command
         $this->info("Target Period: " . $targetDate->format('F Y'));
 
         $employees = \App\Models\Pegawai::with('jabatan')->get();
-        $systemUser = \App\Models\User::where('role', 'admin')->first() ?? \App\Models\User::first();
+        $systemUser = \App\Models\User::whereHas('role', function($q) {
+            $q->where('role_name', 'Admin');
+        })->first() ?? \App\Models\User::first();
 
         if (!$systemUser) {
             $this->error('No admin user found to associate with payroll generation.');

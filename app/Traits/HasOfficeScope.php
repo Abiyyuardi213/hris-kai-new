@@ -26,7 +26,7 @@ trait HasOfficeScope
 
             // 0. BYPASS: Jika role adalah 'Super Admin', 'Administrator', atau 'Admin',
             // ATAU jika user tidak memiliki assigned kantor (kantor_id null), anggap sebagai admin pusat.
-            if ($user->role && in_array($user->role->role_name, ['Super Admin', 'Administrator', 'Admin'])) {
+            if ($user->role && in_array(strtolower($user->role->role_name), ['super admin', 'administrator', 'admin'])) {
                 return;
             }
 
