@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Jabatan;
 use App\Models\Divisi;
+use App\Models\Payroll;
 use Illuminate\Http\Request;
 
 class JabatanController extends Controller
@@ -95,11 +96,33 @@ class JabatanController extends Controller
 
         $position->update($validated);
 
+        $payrolls = Payroll::whereIn('pegawai_id', $position->employees()->pluck('id'))
+            ->where('status', 'pending')
+            ->get();
+
+        foreach ($payrolls as $payroll) {
+            $gajiHarian = $position->gaji_per_hari;
+            $tunjanganJabatan = $position->tunjangan;
+            $thr = ($gajiHarian + ($tunjanganJabatan / 30)) * $payroll->thr_days;
+
+            $totalGaji = ($gajiHarian * $payroll->jumlah_hadir) +
+                $tunjanganJabatan +
+                $thr +
+                $payroll->bonus;
+
+            $payroll->update([
+                'gaji_harian' => $gajiHarian,
+                'tunjangan_jabatan' => $tunjanganJabatan,
+                'thr' => $thr,
+                'total_gaji' => $totalGaji,
+            ]);
+        }
+
         return redirect()->route('positions.index', [
             'page' => $request->page,
             'sort' => $request->sort,
             'search' => $request->search
-        ])->with('success', 'Jabatan berhasil diperbarui');
+        ])->with('success', 'Jabatan berhasil diperbarui dan payroll pending telah disesuaikan');
     }
 
     public function destroy(Jabatan $position)

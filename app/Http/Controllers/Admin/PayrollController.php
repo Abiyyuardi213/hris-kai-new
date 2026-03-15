@@ -96,12 +96,14 @@ class PayrollController extends Controller
                 }
 
                 // Update existing record (might have been created by Bulk THR)
-                $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan + $payroll->thr + $payroll->bonus;
-                
+                $thr = ($gajiHarian + ($tunjanganJabatan / 30)) * $payroll->thr_days;
+                $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan + $thr + $payroll->bonus;
+
                 $payroll->update([
                     'jumlah_hadir' => $jumlahHadir,
                     'gaji_harian' => $gajiHarian,
                     'tunjangan_jabatan' => $tunjanganJabatan,
+                    'thr' => $thr,
                     'total_gaji' => $totalGaji,
                 ]);
                 $countUpdated++;
@@ -175,7 +177,7 @@ class PayrollController extends Controller
             'keterangan_bonus' => 'nullable|string|max:255',
         ]);
 
-        $thr = $payroll->gaji_harian * $request->thr_days;
+        $thr = ($payroll->gaji_harian + ($payroll->tunjangan_jabatan / 30)) * $request->thr_days;
 
         $totalGaji = ($payroll->gaji_harian * $payroll->jumlah_hadir) +
             $payroll->tunjangan_jabatan +
@@ -222,13 +224,13 @@ class PayrollController extends Controller
 
             $gajiHarian = $employee->jabatan->gaji_per_hari;
             $tunjanganJabatan = $employee->jabatan->tunjangan;
-            $thr = $gajiHarian * $request->thr_days;
+            $thr = ($gajiHarian + ($tunjanganJabatan / 30)) * $request->thr_days;
 
             if ($payroll) {
                 if ($payroll->status === 'paid') continue;
 
-                $totalGaji = ($payroll->gaji_harian * $payroll->jumlah_hadir) +
-                    $payroll->tunjangan_jabatan +
+                $totalGaji = ($gajiHarian * $payroll->jumlah_hadir) +
+                    $tunjanganJabatan +
                     $thr +
                     $request->bonus;
 
@@ -241,17 +243,15 @@ class PayrollController extends Controller
                 ]);
                 $countUpdated++;
             } else {
-                // Create new record with 0 attendance (independent THR)
-                // Tunjangan jabatan is NOT included here, it will be added when payroll is generated later
                 $totalGaji = $thr + $request->bonus;
-                
+
                 $payroll = Payroll::create([
                     'pegawai_id' => $employee->id,
                     'month' => $month,
                     'year' => $year,
                     'jumlah_hadir' => 0,
                     'gaji_harian' => $gajiHarian,
-                    'tunjangan_jabatan' => 0, // Set to 0 for now
+                    'tunjangan_jabatan' => 0,
                     'thr_days' => $request->thr_days,
                     'thr' => $thr,
                     'bonus' => $request->bonus,
@@ -261,7 +261,6 @@ class PayrollController extends Controller
                     'generated_by' => Auth::id(),
                 ]);
 
-                // Notify Employee
                 $employee->notify(new \App\Notifications\PayrollGeneratedNotification($payroll));
                 $countCreated++;
             }
