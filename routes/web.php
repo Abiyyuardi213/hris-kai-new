@@ -94,6 +94,19 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/offboarding/{id}', [App\Http\Controllers\EmployeeOffboardingController::class, 'show'])->name('employee.offboardings.show');
 });
 
+// Candidate Recruitment Auth
+Route::prefix('rekrutmen')->group(function () {
+    Route::get('/register', [App\Http\Controllers\CandidateAuthController::class, 'showRegistrationForm'])->name('candidate.register');
+    Route::post('/register', [App\Http\Controllers\CandidateAuthController::class, 'register'])->name('candidate.register.submit');
+    Route::get('/login', [App\Http\Controllers\CandidateAuthController::class, 'showLoginForm'])->name('candidate.login');
+    Route::post('/login', [App\Http\Controllers\CandidateAuthController::class, 'login'])->name('candidate.login.submit');
+    Route::post('/logout', [App\Http\Controllers\CandidateAuthController::class, 'logout'])->name('candidate.logout');
+
+    Route::middleware(['auth:candidate'])->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\CandidateAuthController::class, 'dashboard'])->name('candidate.dashboard');
+    });
+});
+
 Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
@@ -199,6 +212,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'show'])->name('admin.reimbursements.show');
     Route::patch('/reimbursements/{id}/status', [App\Http\Controllers\Admin\ReimbursementController::class, 'updateStatus'])->name('admin.reimbursements.update-status');
     Route::delete('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'destroy'])->name('admin.reimbursements.destroy');
+
+    // Recruitment Module
+    Route::get('/recruitment/applications', [App\Http\Controllers\Admin\RecruitmentController::class, 'applications'])->name('admin.recruitment.applications');
+    Route::patch('/recruitment/applications/{application}/status', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateApplicationStatus'])->name('admin.recruitment.applications.status');
+    Route::resource('recruitment', App\Http\Controllers\Admin\RecruitmentController::class)->names('admin.recruitment');
 
     // Offboarding
     Route::get('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'index'])->name('admin.offboardings.index');

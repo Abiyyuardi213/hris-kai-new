@@ -198,10 +198,14 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Kedisiplinan (SP)</span>
                     </a>
 
-                    <a href="{{ route('admin.announcements.index') }}"
-                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/announcements*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
-                        <i data-lucide="megaphone" class="h-4 w-4"></i>
-                        <span class="sidebar-text group-[.collapsed]:hidden">Pengumuman & Broadcast</span>
+                    <div
+                        class="mt-4 mb-2 px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider sidebar-text group-[.collapsed]:hidden">
+                        Pengadaan</div>
+
+                    <a href="{{ route('admin.recruitment.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/recruitment*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="user-plus" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Rekrutmen</span>
                     </a>
 
                     <div
@@ -244,7 +248,13 @@
     <div class="mt-auto border-t p-4 sidebar-footer transition-all duration-300">
         <div class="flex items-center gap-3">
             @php
-                $user = Auth::user();
+                if (Auth::guard('candidate')->check()) {
+                    $user = Auth::guard('candidate')->user();
+                    $roleName = 'Candidate';
+                } else {
+                    $user = Auth::user();
+                    $roleName = $user && $user->role ? $user->role->role_name : 'Administrator';
+                }
             @endphp
 
             @if ($user && $user->foto)
@@ -259,7 +269,7 @@
                 <div class="font-medium text-zinc-900">
                     {{ $user->name ?? 'Admin' }}</div>
                 <div class="text-zinc-500">
-                    {{ $user && $user->role ? $user->role->role_name : 'Administrator' }}
+                    {{ $roleName }}
                 </div>
             </div>
         </div>

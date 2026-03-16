@@ -44,6 +44,10 @@ return [
             'driver' => 'session',
             'provider' => 'employees',
         ],
+        'candidate' => [
+            'driver' => 'session',
+            'provider' => 'candidates',
+        ],
     ],
 
     /*
@@ -72,6 +76,11 @@ return [
         'employees' => [
             'driver' => 'eloquent',
             'model' => App\Models\Pegawai::class,
+        ],
+
+        'candidates' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Candidate::class,
         ],
     ],
 

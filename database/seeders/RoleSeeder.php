@@ -28,5 +28,13 @@ class RoleSeeder extends Seeder
                 'role_status' => true
             ]
         );
+
+        Peran::firstOrCreate(
+            ['role_name' => 'Candidate'],
+            [
+                'role_description' => 'Recruitment candidate',
+                'role_status' => true
+            ]
+        );
     }
 }
