@@ -24,7 +24,25 @@ class Candidate extends Authenticatable
         'place_of_birth',
         'religion',
         'gender',
+        'marital_status',
+        'nationality',
+        'npwp',
+        'social_media',
+        'province',
+        'city',
+        'district',
+        'village',
         'role_id',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'social_media' => 'array',
+        'password' => 'hashed',
     ];
 
     protected $hidden = [
@@ -32,13 +50,14 @@ class Candidate extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'password' => 'hashed',
-    ];
-
     public function role()
     {
         return $this->belongsTo(Peran::class, 'role_id');
+    }
+
+    public function educations()
+    {
+        return $this->hasMany(CandidateEducation::class);
     }
 
     public function applications()

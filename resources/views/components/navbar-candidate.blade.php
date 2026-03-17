@@ -1,8 +1,10 @@
-<header class="w-full h-20 bg-white border-b flex items-center justify-between px-10">
+<header class="sticky top-0 z-50 w-full h-20 bg-white border-b flex items-center justify-between px-10 shadow-sm">
     <!-- Left: Title and Date -->
     <div class="flex items-center gap-8">
         <div class="flex items-center gap-4">
-            <h1 class="text-[19px] font-bold text-zinc-900 tracking-tight">e-Recruitment PT. Kereta Api Indonesia</h1>
+            <img src="{{ asset('image/logo-kai.png') }}" alt="Logo KAI" class="h-8 w-auto">
+            <div class="h-8 w-[1.5px] bg-zinc-200"></div>
+            <h1 class="text-[20px] font-bold text-zinc-900 tracking-tight">e-Recruitment</h1>
             <div class="h-8 w-[1.5px] bg-zinc-200"></div>
         </div>
         <div class="text-[14px] font-medium text-zinc-400 italic" id="liveClock">

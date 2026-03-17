@@ -13,6 +13,13 @@ class KotaController extends Controller
     {
         $query = Kota::query();
 
+        if ($request->ajax() || $request->wantsJson()) {
+            $cities = Kota::where('name', 'like', '%' . $request->q . '%')
+                ->limit(20)
+                ->get();
+            return response()->json($cities);
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {

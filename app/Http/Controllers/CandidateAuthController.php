@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class CandidateAuthController extends Controller
 {
@@ -77,6 +78,53 @@ class CandidateAuthController extends Controller
         return back()->withErrors([
             'email' => 'Email atau kata sandi salah.',
         ])->onlyInput('email');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        /** @var \App\Models\Candidate $candidate */
+        $candidate = Auth::guard('candidate')->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:candidates,email,' . $candidate->id,
+            'phone' => 'required|string|max:20',
+            'place_of_birth' => 'nullable|string|max:100',
+            'date_of_birth' => 'nullable|date',
+            'religion' => 'nullable|string|max:50',
+            'gender' => 'nullable|in:Lelaki,Perempuan',
+            'marital_status' => 'nullable|string|max:50',
+            'nationality' => 'nullable|string|max:100',
+            'npwp' => 'nullable|string|max:50',
+            'province' => 'nullable|string|max:100',
+            'city' => 'nullable|string|max:100',
+            'district' => 'nullable|string|max:100',
+            'village' => 'nullable|string|max:100',
+            'address' => 'nullable|string',
+            'photo' => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->except(['photo', 'identity_number', '_token']);
+
+        \Log::info('Profile Update Request:', $request->all());
+
+        if ($request->hasFile('photo')) {
+            \Log::info('Photo file detected in request.');
+            $path = $request->file('photo')->store('photos/candidates', 'public');
+            $data['photo'] = $path;
+            \Log::info('Photo stored at: ' . $path);
+        } else {
+            \Log::info('No photo file detected in request.');
+        }
+
+        // Handle social media JSON
+        if ($request->has('social_media')) {
+            $data['social_media'] = $request->input('social_media');
+        }
+
+        $candidate->update($data);
+
+        return redirect()->back()->with('success', 'Biodata Anda telah berhasil diperbarui.');
     }
 
     public function logout(Request $request)

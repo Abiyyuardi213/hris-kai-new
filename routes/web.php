@@ -104,6 +104,13 @@ Route::prefix('rekrutmen')->group(function () {
 
     Route::middleware(['auth:candidate'])->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\CandidateAuthController::class, 'dashboard'])->name('candidate.dashboard');
+        Route::post('/profile', [App\Http\Controllers\CandidateAuthController::class, 'updateProfile'])->name('candidate.profile.update');
+        Route::get('/cities/search', [\App\Http\Controllers\KotaController::class, 'index'])->name('cities.search');
+
+        // Education Routes
+        Route::get('/education', [App\Http\Controllers\CandidateEducationController::class, 'index'])->name('candidate.education');
+        Route::post('/education', [App\Http\Controllers\CandidateEducationController::class, 'store'])->name('candidate.education.store');
+        Route::delete('/education/{education}', [App\Http\Controllers\CandidateEducationController::class, 'destroy'])->name('candidate.education.destroy');
     });
 });
 
