@@ -37,6 +37,9 @@
         </div>
     </div>
 
+    <!-- Logout Modal -->
+    <x-logout-modal-candidate />
+
     <!-- Toast Notification -->
     @if(session('success') || session('error'))
     <div id="toast-container" class="fixed top-6 right-6 z-[9999] animate-in fade-in slide-in-from-right-8 duration-500">

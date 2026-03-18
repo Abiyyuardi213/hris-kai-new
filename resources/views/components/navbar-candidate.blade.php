@@ -23,14 +23,11 @@
         </div>
 
         <!-- Logout Button -->
-        <form action="{{ route('candidate.logout') }}" method="POST">
-            @csrf
-            <button type="submit"
-                class="bg-[#5570F1] hover:bg-[#4459c7] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-sm">
-                <i data-lucide="power" class="h-4 w-4"></i>
-                <span class="text-[13px] font-bold uppercase tracking-wider">Logout</span>
-            </button>
-        </form>
+        <button type="button" onclick="document.getElementById('logoutModalCandidate').classList.remove('hidden')"
+            class="bg-[#5570F1] hover:bg-[#4459c7] text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-sm">
+            <i data-lucide="power" class="h-4 w-4"></i>
+            <span class="text-[13px] font-bold uppercase tracking-wider">Logout</span>
+        </button>
     </div>
 </header>
 

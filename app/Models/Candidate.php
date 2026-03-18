@@ -64,4 +64,9 @@ class Candidate extends Authenticatable
     {
         return $this->hasMany(Application::class);
     }
+
+    public function documents()
+    {
+        return $this->hasMany(CandidateDocument::class);
+    }
 }

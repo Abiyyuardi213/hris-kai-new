@@ -74,9 +74,9 @@
             </a>
 
             <!-- File Dokumen -->
-            <a href="#"
-                class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all group text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900">
-                <i data-lucide="file-text" class="h-5 w-5 text-zinc-400 group-hover:text-zinc-900"></i>
+            <a href="{{ route('candidate.documents') }}"
+                class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('candidate.documents') ? 'bg-zinc-100 text-zinc-900 shadow-sm shadow-zinc-100' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900' }}">
+                <i data-lucide="file-text" class="h-5 w-5 {{ request()->routeIs('candidate.documents') ? 'text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-900' }}"></i>
                 <span class="text-[15px] font-bold">File Dokumen</span>
             </a>
 

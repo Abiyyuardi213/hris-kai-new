@@ -111,6 +111,11 @@ Route::prefix('rekrutmen')->group(function () {
         Route::get('/education', [App\Http\Controllers\CandidateEducationController::class, 'index'])->name('candidate.education');
         Route::post('/education', [App\Http\Controllers\CandidateEducationController::class, 'store'])->name('candidate.education.store');
         Route::delete('/education/{education}', [App\Http\Controllers\CandidateEducationController::class, 'destroy'])->name('candidate.education.destroy');
+
+        // Document Routes
+        Route::get('/documents', [App\Http\Controllers\CandidateDocumentController::class, 'index'])->name('candidate.documents');
+        Route::post('/documents', [App\Http\Controllers\CandidateDocumentController::class, 'store'])->name('candidate.documents.store');
+        Route::delete('/documents/{document}', [App\Http\Controllers\CandidateDocumentController::class, 'destroy'])->name('candidate.documents.destroy');
     });
 });
 
