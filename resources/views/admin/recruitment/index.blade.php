@@ -29,10 +29,9 @@
                 <table class="w-full text-sm text-left">
                     <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                         <tr>
-                            <th class="px-6 py-4 font-medium">Lowongan / Posisi</th>
+                            <th class="px-6 py-4 font-medium">Lowongan / Periode</th>
                             <th class="px-6 py-4 font-medium">Status</th>
                             <th class="px-6 py-4 font-medium text-center">Pelamar</th>
-                            <th class="px-6 py-4 font-medium">Deadline</th>
                             <th class="px-6 py-4 font-medium text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -40,12 +39,13 @@
                         @forelse ($vacancies as $item)
                             <tr class="group hover:bg-zinc-50/50 transition-colors">
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-zinc-900">{{ $item->title }}</div>
-                                    <div class="text-[10px] text-zinc-500 uppercase tracking-wider">
-                                        {{ $item->position->name ?? 'Posisi Tidak Ditemukan' }}
+                                    <div class="font-bold text-zinc-900 leading-tight">{{ $item->judul_lowongan }}</div>
+                                    <div class="flex items-center gap-2 mt-1 text-[10px] text-zinc-500 font-bold uppercase tracking-wider">
+                                        <i data-lucide="calendar" class="h-3 w-3"></i>
+                                        {{ \Carbon\Carbon::parse($item->start_date)->format('d M Y') }} - {{ \Carbon\Carbon::parse($item->end_date)->format('d M Y') }}
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 text-zinc-600">
                                     @php
                                         $statuses = [
                                             'draft' => 'bg-zinc-100 text-zinc-600 ring-zinc-500/20',
@@ -62,9 +62,6 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                         {{ $item->applications_count }} Orang
                                     </span>
-                                </td>
-                                <td class="px-6 py-4 text-zinc-600">
-                                    {{ $item->deadline ? \Carbon\Carbon::parse($item->deadline)->format('d M Y') : '-' }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex justify-end gap-1">

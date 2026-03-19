@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Buat Lowongan Baru')
+@section('title', 'Edit Lowongan')
 
 @section('content')
     <div class="max-w-4xl mx-auto space-y-6">
@@ -9,13 +9,14 @@
                 <i data-lucide="arrow-left" class="h-4 w-4"></i>
             </a>
             <div>
-                <h2 class="text-2xl font-bold tracking-tight text-zinc-900">Buat Lowongan Baru</h2>
-                <p class="text-zinc-500 text-sm">Lengkapi detail lowongan pekerjaan untuk dipublikasikan.</p>
+                <h2 class="text-2xl font-bold tracking-tight text-zinc-900">Edit Lowongan</h2>
+                <p class="text-zinc-500 text-sm">Perbarui detail lowongan pekerjaan.</p>
             </div>
         </div>
 
-        <form action="{{ route('admin.recruitment.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.recruitment.update', $recruitment->id) }}" method="POST" class="space-y-6">
             @csrf
+            @method('PUT')
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Main Content -->
@@ -23,7 +24,7 @@
                     <div class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm space-y-6">
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-zinc-900">Judul Lowongan</label>
-                            <input type="text" name="judul_lowongan" required placeholder="Contoh: REKRUTMEN EKSTERNAL PPI MADIUN 2024"
+                            <input type="text" name="judul_lowongan" value="{{ old('judul_lowongan', $recruitment->judul_lowongan) }}" required
                                 class="h-10 w-full rounded-md border border-zinc-200 px-3 text-sm focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
                         </div>
 
@@ -31,7 +32,9 @@
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-zinc-900">Deskripsi Pekerjaan</label>
                                 <div id="description_editor_wrapper" class="rounded-md border border-zinc-200 overflow-hidden focus-within:ring-2 focus-within:ring-zinc-900 transition-all">
-                                    <div id="description_editor" class="min-h-[200px]"></div>
+                                    <div id="description_editor" class="min-h-[200px]">
+                                        {!! $recruitment->detail->description ?? '' !!}
+                                    </div>
                                 </div>
                                 <input type="hidden" name="description" id="description">
                             </div>
@@ -39,7 +42,9 @@
                             <div class="space-y-2">
                                 <label class="text-sm font-medium text-zinc-900">Persyaratan</label>
                                 <div id="requirements_editor_wrapper" class="rounded-md border border-zinc-200 overflow-hidden focus-within:ring-2 focus-within:ring-zinc-900 transition-all">
-                                    <div id="requirements_editor" class="min-h-[200px]"></div>
+                                    <div id="requirements_editor" class="min-h-[200px]">
+                                        {!! $recruitment->detail->requirements ?? '' !!}
+                                    </div>
                                 </div>
                                 <input type="hidden" name="requirements" id="requirements">
                             </div>
@@ -57,13 +62,13 @@
                         
                         <div class="space-y-2">
                             <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Tanggal Mulai</label>
-                            <input type="date" name="start_date" required
+                            <input type="date" name="start_date" value="{{ old('start_date', $recruitment->start_date) }}" required
                                 class="h-9 w-full rounded-md border border-zinc-200 px-3 text-sm focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
                         </div>
 
                         <div class="space-y-2">
                             <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Tanggal Berakhir</label>
-                            <input type="date" name="end_date" required
+                            <input type="date" name="end_date" value="{{ old('end_date', $recruitment->end_date) }}" required
                                 class="h-9 w-full rounded-md border border-zinc-200 px-3 text-sm focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
                         </div>
 
@@ -71,8 +76,8 @@
                             <label class="text-xs font-medium text-zinc-500 uppercase tracking-wider">Status</label>
                             <select name="status" required
                                 class="h-9 w-full rounded-md border border-zinc-200 px-3 text-sm focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
-                                <option value="open">Published</option>
-                                <option value="closed">Closed</option>
+                                <option value="open" {{ old('status', $recruitment->status) == 'open' ? 'selected' : '' }}>Published</option>
+                                <option value="closed" {{ old('status', $recruitment->status) == 'closed' ? 'selected' : '' }}>Closed</option>
                             </select>
                         </div>
 
@@ -80,7 +85,7 @@
                             <button type="submit" onclick="syncQuillToInput()"
                                 class="w-full h-10 bg-zinc-900 text-white text-sm font-medium rounded-md hover:bg-zinc-800 transition-all active:scale-95 flex items-center justify-center gap-2">
                                 <i data-lucide="save" class="h-4 w-4"></i>
-                                Simpan Lowongan
+                                Perbarui
                             </button>
                             <a href="{{ route('admin.recruitment.index') }}"
                                 class="w-full mt-2 h-9 flex items-center justify-center text-sm text-zinc-500 hover:text-zinc-900 transition-colors font-medium">

@@ -7,6 +7,7 @@ use App\Models\JobVacancy;
 use App\Models\Candidate;
 use App\Models\Application;
 use App\Models\Jabatan;
+use App\Models\JobFormation;
 use Illuminate\Http\Request;
 
 class RecruitmentController extends Controller
@@ -19,52 +20,62 @@ class RecruitmentController extends Controller
 
     public function create()
     {
-        $positions = Jabatan::all();
-        return view('admin.recruitment.create', compact('positions'));
+        return view('admin.recruitment.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'position_id' => 'required|exists:positions,id',
-            'title' => 'required|string|max:255',
+            'judul_lowongan' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:open,closed',
             'description' => 'required',
             'requirements' => 'required',
-            'quantity' => 'required|integer|min:1',
-            'status' => 'required|in:draft,open,closed',
-            'deadline' => 'nullable|date',
         ]);
 
-        JobVacancy::create($request->all());
+        $vacancy = JobVacancy::create($request->only(['judul_lowongan', 'start_date', 'end_date', 'status']));
+        
+        $vacancy->detail()->create([
+            'description' => $request->description,
+            'requirements' => $request->requirements,
+        ]);
 
         return redirect()->route('admin.recruitment.index')->with('success', 'Lowongan pekerjaan berhasil dibuat.');
     }
 
     public function show(JobVacancy $recruitment)
     {
-        $recruitment->load('applications.candidate');
+        $recruitment->load(['detail', 'formations', 'applications.candidate']);
         return view('admin.recruitment.show', compact('recruitment'));
     }
 
     public function edit(JobVacancy $recruitment)
     {
-        $positions = Jabatan::all();
-        return view('admin.recruitment.edit', compact('recruitment', 'positions'));
+        $recruitment->load('detail');
+        return view('admin.recruitment.edit', compact('recruitment'));
     }
 
     public function update(Request $request, JobVacancy $recruitment)
     {
         $request->validate([
-            'position_id' => 'required|exists:positions,id',
-            'title' => 'required|string|max:255',
+            'judul_lowongan' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'status' => 'required|in:open,closed',
             'description' => 'required',
             'requirements' => 'required',
-            'quantity' => 'required|integer|min:1',
-            'status' => 'required|in:draft,open,closed',
-            'deadline' => 'nullable|date',
         ]);
 
-        $recruitment->update($request->all());
+        $recruitment->update($request->only(['judul_lowongan', 'start_date', 'end_date', 'status']));
+        
+        $recruitment->detail()->updateOrCreate(
+            ['job_vacancy_id' => $recruitment->id],
+            [
+                'description' => $request->description,
+                'requirements' => $request->requirements,
+            ]
+        );
 
         return redirect()->route('admin.recruitment.index')->with('success', 'Lowongan pekerjaan berhasil diperbarui.');
     }
@@ -91,5 +102,27 @@ class RecruitmentController extends Controller
         $application->update($request->only(['status', 'admin_notes']));
 
         return back()->with('success', 'Status lamaran berhasil diperbarui.');
+    }
+
+    public function addFormation(Request $request, JobVacancy $recruitment)
+    {
+        $request->validate([
+            'formation_name' => 'required|string',
+            'education' => 'required|string',
+            'major' => 'required|string',
+            'gender' => 'required|string',
+            'document_requirements' => 'nullable|string',
+        ]);
+
+        $recruitment->formations()->create($request->all());
+
+        return back()->with('success', 'Formasi berhasil ditambahkan.');
+    }
+
+    public function deleteFormation(JobFormation $formation)
+    {
+        $vacancy_id = $formation->job_vacancy_id;
+        $formation->delete();
+        return back()->with('success', 'Formasi berhasil dihapus.');
     }
 }

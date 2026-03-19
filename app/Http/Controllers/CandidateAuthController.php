@@ -14,6 +14,9 @@ class CandidateAuthController extends Controller
 {
     public function showRegistrationForm()
     {
+        if (Auth::guard('candidate')->check()) {
+            return redirect()->route('candidate.dashboard');
+        }
         $captcha = strtoupper(substr(str_shuffle('ABCDEFGHJKLMNPQRSTUVWXYZ23456789'), 0, 6));
         Session::put('captcha_code', $captcha);
         return view('recruitment.register', compact('captcha'));
@@ -60,6 +63,9 @@ class CandidateAuthController extends Controller
 
     public function showLoginForm()
     {
+        if (Auth::guard('candidate')->check()) {
+            return redirect()->route('candidate.dashboard');
+        }
         return view('recruitment.login');
     }
 
@@ -72,7 +78,7 @@ class CandidateAuthController extends Controller
 
         if (Auth::guard('candidate')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('candidate.dashboard'));
+            return redirect()->intended(route('candidate.dashboard'))->with('success', 'Berhasil login!');
         }
 
         return back()->withErrors([
@@ -106,15 +112,15 @@ class CandidateAuthController extends Controller
 
         $data = $request->except(['photo', 'identity_number', '_token']);
 
-        \Log::info('Profile Update Request:', $request->all());
+        Log::info('Profile Update Request:', $request->all());
 
         if ($request->hasFile('photo')) {
-            \Log::info('Photo file detected in request.');
+            Log::info('Photo file detected in request.');
             $path = $request->file('photo')->store('photos/candidates', 'public');
             $data['photo'] = $path;
-            \Log::info('Photo stored at: ' . $path);
+            Log::info('Photo stored at: ' . $path);
         } else {
-            \Log::info('No photo file detected in request.');
+            Log::info('No photo file detected in request.');
         }
 
         // Handle social media JSON
@@ -132,7 +138,7 @@ class CandidateAuthController extends Controller
         Auth::guard('candidate')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/rekrutmen/login');
+        return redirect('/rekrutmen/login')->with('success', 'Berhasil logout!');
     }
 
     public function dashboard()

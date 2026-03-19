@@ -116,6 +116,10 @@ Route::prefix('rekrutmen')->group(function () {
         Route::get('/documents', [App\Http\Controllers\CandidateDocumentController::class, 'index'])->name('candidate.documents');
         Route::post('/documents', [App\Http\Controllers\CandidateDocumentController::class, 'store'])->name('candidate.documents.store');
         Route::delete('/documents/{document}', [App\Http\Controllers\CandidateDocumentController::class, 'destroy'])->name('candidate.documents.destroy');
+
+        // Vacancy Routes
+        Route::get('/vacancies', [App\Http\Controllers\CandidateVacancyController::class, 'index'])->name('candidate.vacancies');
+        Route::get('/vacancies/{vacancy}', [App\Http\Controllers\CandidateVacancyController::class, 'show'])->name('candidate.vacancies.show');
     });
 });
 
@@ -229,6 +233,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/recruitment/applications', [App\Http\Controllers\Admin\RecruitmentController::class, 'applications'])->name('admin.recruitment.applications');
     Route::patch('/recruitment/applications/{application}/status', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateApplicationStatus'])->name('admin.recruitment.applications.status');
     Route::resource('recruitment', App\Http\Controllers\Admin\RecruitmentController::class)->names('admin.recruitment');
+    Route::post('/recruitment/{recruitment}/formations', [App\Http\Controllers\Admin\RecruitmentController::class, 'addFormation'])->name('admin.recruitment.formations.add');
+    Route::delete('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'deleteFormation'])->name('admin.recruitment.formations.delete');
 
     // Offboarding
     Route::get('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'index'])->name('admin.offboardings.index');

@@ -3,95 +3,237 @@
 
 @section('content')
     <div class="flex flex-col space-y-6">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('admin.recruitment.index') }}" class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-400 hover:text-zinc-900 transition-colors">
-                <i data-lucide="arrow-left" class="h-5 w-5"></i>
-            </a>
-            <h2 class="text-3xl font-bold tracking-tight">Detail Lowongan</h2>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Info Card -->
-            <div class="lg:col-span-1 space-y-6">
-                <div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm space-y-4">
-                    <div class="pb-4 border-b">
-                        <h3 class="font-bold text-lg text-zinc-900">{{ $recruitment->title }}</h3>
-                        <p class="text-xs text-zinc-500 uppercase tracking-wider">{{ $recruitment->position->name ?? '-' }}</p>
-                    </div>
-                    
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-zinc-500">Status</span>
-                            <span class="font-bold uppercase text-[10px]">{{ $recruitment->status }}</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-zinc-500">Kuota</span>
-                            <span class="font-bold">{{ $recruitment->quantity }} Orang</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-zinc-500">Deadline</span>
-                            <span class="font-bold">{{ $recruitment->deadline ? \Carbon\Carbon::parse($recruitment->deadline)->format('d M Y') : '-' }}</span>
-                        </div>
-                    </div>
-
-                    <div class="pt-4 flex gap-2">
-                        <a href="{{ route('admin.recruitment.edit', $recruitment->id) }}" class="flex-1 h-10 flex items-center justify-center rounded-lg bg-zinc-900 text-xs font-bold text-white hover:bg-zinc-800 transition-all">Edit</a>
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.recruitment.index') }}" class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-400 hover:text-zinc-900 transition-colors">
+                    <i data-lucide="arrow-left" class="h-5 w-5"></i>
+                </a>
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight text-zinc-900">{{ $recruitment->judul_lowongan }}</h2>
+                    <div class="flex items-center gap-3 mt-1 text-xs text-zinc-500 font-bold uppercase tracking-wider">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="h-3 w-3"></i> {{ \Carbon\Carbon::parse($recruitment->start_date)->format('d M Y') }} - {{ \Carbon\Carbon::parse($recruitment->end_date)->format('d M Y') }}</span>
+                        <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
+                        <span class="px-2 py-0.5 rounded bg-zinc-100 {{ $recruitment->status == 'open' ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50' }}">{{ $recruitment->status }}</span>
                     </div>
                 </div>
+            </div>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.recruitment.edit', $recruitment->id) }}" class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm">
+                    <i data-lucide="edit-3" class="h-4 w-4"></i>
+                    Edit Lowongan
+                </a>
+            </div>
+        </div>
 
-                <div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-                    <h4 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Persyaratan</h4>
-                    <div class="text-sm text-zinc-600 whitespace-pre-line leading-relaxed">
-                        {{ $recruitment->requirements }}
+        <!-- Tab Navigation -->
+        <div class="flex items-center gap-2 border-b border-zinc-200" x-data="{ activeTab: 'description' }">
+            <button @click="activeTab = 'description'" :class="activeTab === 'description' ? 'border-zinc-900 text-zinc-900' : 'border-transparent text-zinc-400 hover:text-zinc-600'" class="px-4 py-3 text-xs font-black uppercase tracking-widest border-b-2 transition-all">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="h-4 w-4"></i>
+                    Deskripsi
+                </div>
+            </button>
+            <button @click="activeTab = 'requirements'" :class="activeTab === 'requirements' ? 'border-zinc-900 text-zinc-900' : 'border-transparent text-zinc-400 hover:text-zinc-600'" class="px-4 py-3 text-xs font-black uppercase tracking-widest border-b-2 transition-all">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-square" class="h-4 w-4"></i>
+                    Persyaratan
+                </div>
+            </button>
+            <button @click="activeTab = 'formations'" :class="activeTab === 'formations' ? 'border-zinc-900 text-zinc-900' : 'border-transparent text-zinc-400 hover:text-zinc-600'" class="px-4 py-3 text-xs font-black uppercase tracking-widest border-b-2 transition-all">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="layout-grid" class="h-4 w-4"></i>
+                    Formasi
+                </div>
+            </button>
+            <button @click="activeTab = 'applicants'" :class="activeTab === 'applicants' ? 'border-zinc-900 text-zinc-900' : 'border-transparent text-zinc-400 hover:text-zinc-600'" class="px-4 py-3 text-xs font-black uppercase tracking-widest border-b-2 transition-all">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="users" class="h-4 w-4"></i>
+                    Pelamar ({{ $recruitment->applications->count() }})
+                </div>
+            </button>
+
+            <!-- Tab Contents -->
+            <div class="w-full mt-6" x-show="activeTab === 'description'">
+                <div class="rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
+                    <h3 class="text-sm font-black uppercase tracking-[0.2em] text-zinc-400 border-b pb-4 mb-6 italic">Informasi Deskripsi Lowongan</h3>
+                    <div class="prose prose-sm max-w-none text-zinc-600 leading-relaxed ql-editor border-none p-0">
+                        {!! $recruitment->detail->description ?? 'Deskripsi belum diatur.' !!}
                     </div>
                 </div>
             </div>
 
-            <!-- Applicants Table -->
-            <div class="lg:col-span-2 space-y-6">
+            <div class="w-full mt-6" x-show="activeTab === 'requirements'" style="display: none;">
+                <div class="rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
+                    <h3 class="text-sm font-black uppercase tracking-[0.2em] text-zinc-400 border-b pb-4 mb-6 italic">Persyaratan Umum Pelamar</h3>
+                    <div class="prose prose-sm max-w-none text-zinc-600 leading-relaxed ql-editor border-none p-0">
+                        {!! $recruitment->detail->requirements ?? 'Persyaratan belum diatur.' !!}
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full mt-6" x-show="activeTab === 'formations'" style="display: none;">
+                <div class="flex flex-col space-y-6">
+                    <!-- Formasi Table -->
+                    <div class="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
+                        <div class="p-4 border-b bg-zinc-50 flex items-center justify-between">
+                            <h4 class="font-bold text-zinc-900 uppercase text-xs tracking-widest">Daftar Formasi Tersedia</h4>
+                            <button onclick="document.getElementById('addFormationModal').classList.remove('hidden')" class="px-3 py-1.5 bg-zinc-900 text-white text-[10px] font-bold rounded uppercase tracking-wider hover:bg-zinc-800 transition-all flex items-center gap-2">
+                                <i data-lucide="plus" class="h-3 w-3"></i> Tambah Formasi
+                            </button>
+                        </div>
+                        <div class="w-full overflow-x-auto">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-zinc-900 text-white uppercase tracking-tighter">
+                                    <tr>
+                                        <th class="px-6 py-3 font-bold">Formasi</th>
+                                        <th class="px-6 py-3 font-bold">Pendidikan</th>
+                                        <th class="px-6 py-3 font-bold">Jurusan</th>
+                                        <th class="px-6 py-3 font-bold">Kelamin</th>
+                                        <th class="px-6 py-3 font-bold">Syarat Dokumen</th>
+                                        <th class="px-6 py-3 font-bold text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-100">
+                                    @forelse ($recruitment->formations as $formation)
+                                        <tr class="hover:bg-zinc-50 transition-colors">
+                                            <td class="px-6 py-4 font-bold text-zinc-900">{{ $formation->formation_name }}</td>
+                                            <td class="px-6 py-4 text-zinc-600 uppercase font-bold">{{ $formation->education }}</td>
+                                            <td class="px-6 py-4 text-zinc-500">
+                                                <ul class="list-disc ml-4 space-y-0.5">
+                                                    @foreach(explode("\n", $formation->major) as $m)
+                                                        <li>{{ $m }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                            <td class="px-6 py-4 text-zinc-600 font-bold uppercase">{{ $formation->gender }}</td>
+                                            <td class="px-6 py-4 text-zinc-500">
+                                                <ul class="list-disc ml-4 space-y-0.5">
+                                                    @foreach(explode("\n", $formation->document_requirements) as $doc)
+                                                        <li>{{ $doc }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <button onclick="confirmDeleteFormation({{ $formation->id }})" class="text-red-400 hover:text-red-600 transition-colors">
+                                                    <i data-lucide="trash-2" class="h-4 w-4 ml-auto"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="px-6 py-12 text-center text-zinc-400 italic font-medium uppercase tracking-[0.2em]">Belum ada formasi yang ditambahkan</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full mt-6" x-show="activeTab === 'applicants'" style="display: none;">
                 <div class="rounded-xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-                    <div class="p-6 border-b bg-zinc-50/50">
-                        <h3 class="font-bold text-zinc-900">Daftar Pelamar ({{ $recruitment->applications->count() }})</h3>
+                    <div class="p-6 border-b bg-zinc-50/50 flex items-center justify-between">
+                        <h3 class="font-bold text-zinc-900 uppercase text-xs tracking-widest italic">Daftar Pelamar Lowongan ({{ $recruitment->applications->count() }})</h3>
                     </div>
                     <div class="w-full overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-zinc-50/50 text-zinc-500 border-b">
+                            <thead class="bg-zinc-50/50 text-zinc-500 border-b uppercase text-[10px] font-black tracking-widest">
                                 <tr>
-                                    <th class="px-6 py-4 font-medium">Pelamar</th>
-                                    <th class="px-6 py-4 font-medium">Status</th>
+                                    <th class="px-6 py-4 font-medium">Data Pelamar</th>
+                                    <th class="px-6 py-4 font-medium">Status Saat Ini</th>
                                     <th class="px-6 py-4 font-medium">Tanggal Lamar</th>
                                     <th class="px-6 py-4 font-medium text-right">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-zinc-100">
+                            <tbody class="divide-y divide-zinc-100 italic">
                                 @forelse ($recruitment->applications as $app)
-                                    <tr class="hover:bg-zinc-50/50">
+                                    <tr class="hover:bg-zinc-50/50 transition-colors group">
                                         <td class="px-6 py-4">
-                                            <div class="font-bold text-zinc-900">{{ $app->candidate->name }}</div>
-                                            <div class="text-[10px] text-zinc-500">{{ $app->candidate->email }}</div>
+                                            <div class="font-bold text-zinc-900 group-hover:text-blue-600 transition-colors uppercase">{{ $app->candidate->name }}</div>
+                                            <div class="text-[10px] text-zinc-400 font-bold tracking-tighter">{{ $app->candidate->email }}</div>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-0.5 text-[10px] font-bold uppercase text-zinc-600">
+                                            @php
+                                                $appStatuses = [
+                                                    'pending' => 'bg-zinc-100 text-zinc-600',
+                                                    'reviewing' => 'bg-blue-100 text-blue-700',
+                                                    'interview' => 'bg-amber-100 text-amber-700',
+                                                    'test' => 'bg-purple-100 text-purple-700',
+                                                    'hired' => 'bg-emerald-100 text-emerald-700',
+                                                    'rejected' => 'bg-red-100 text-red-700',
+                                                ];
+                                            @endphp
+                                            <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[9px] font-black uppercase {{ $appStatuses[$app->status] ?? 'bg-zinc-100 text-zinc-600' }}">
                                                 {{ $app->status }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 text-zinc-600">
-                                            {{ $app->created_at->format('d/m/Y') }}
+                                        <td class="px-6 py-4 text-xs font-bold text-zinc-500">
+                                            {{ $app->created_at->format('d F Y') }}
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <button onclick="openStatusModal({{ $app->id }}, '{{ $app->status }}', '{{ $app->admin_notes }}')" class="text-zinc-400 hover:text-zinc-900">
+                                            <button onclick="openStatusModal({{ $app->id }}, '{{ $app->status }}', '{{ $app->admin_notes }}')" class="p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-300 transition-all">
                                                 <i data-lucide="more-vertical" class="h-4 w-4"></i>
                                             </button>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-6 py-12 text-center text-zinc-500 italic">Belum ada pelamar untuk lowongan ini.</td>
+                                        <td colspan="4" class="px-6 py-16 text-center text-zinc-400 italic uppercase tracking-widest text-xs font-bold">Belum ada pelamar yang mendaftar ke lowongan ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Formation Modal -->
+    <div id="addFormationModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                    <form action="{{ route('admin.recruitment.formations.add', $recruitment->id) }}" method="POST">
+                        @csrf
+                        <div class="bg-white px-8 py-8">
+                            <h3 class="text-lg font-black text-zinc-900 uppercase tracking-widest italic mb-6 border-b pb-4">Tambah Formasi Pekerjaan Baru</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="md:col-span-2 space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Nama Formasi</label>
+                                    <input type="text" name="formation_name" required placeholder="Contoh: D3 - OPERASIONAL DAN PEMELIHARAAN SARANA PRASARANA" class="h-11 w-full rounded-lg border border-zinc-300 px-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Tingkat Pendidikan</label>
+                                    <input type="text" name="education" required placeholder="Contoh: D3" class="h-11 w-full rounded-lg border border-zinc-300 px-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Jenis Kelamin</label>
+                                    <select name="gender" required class="h-11 w-full rounded-lg border border-zinc-300 px-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none">
+                                        <option value="PRIA & WANITA">PRIA & WANITA</option>
+                                        <option value="PRIA ONLY">PRIA ONLY</option>
+                                        <option value="WANITA ONLY">WANITA ONLY</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2 space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Jurusan (Pisahkan dengan baris baru)</label>
+                                    <textarea name="major" rows="3" required placeholder="Contoh: Teknologi Bangunan dan Jalur Perkeretaapian\nTeknologi Elektro Perkeretaapian" class="w-full rounded-lg border border-zinc-300 p-4 text-sm font-medium focus:ring-2 focus:ring-zinc-900 outline-none"></textarea>
+                                </div>
+                                <div class="md:col-span-2 space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Syarat Dokumen (Pisahkan dengan baris baru)</label>
+                                    <textarea name="document_requirements" rows="3" required placeholder="Contoh: CV\nIJAZAH D3\nIJAZAH SLTA" class="w-full rounded-lg border border-zinc-300 p-4 text-sm font-medium focus:ring-2 focus:ring-zinc-900 outline-none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-zinc-50 px-8 py-5 flex justify-end gap-3 rounded-b-xl border-t">
+                            <button type="button" onclick="this.closest('#addFormationModal').classList.add('hidden')" class="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-600">Batal</button>
+                            <button type="submit" class="px-8 py-2.5 bg-zinc-900 text-white text-xs font-black uppercase tracking-widest rounded shadow-xl hover:bg-zinc-800 transition-all">Simpan Formasi</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -106,29 +248,29 @@
                     <form id="statusForm" method="POST">
                         @csrf
                         @method('PATCH')
-                        <div class="bg-white px-6 py-6">
-                            <h3 class="text-lg font-bold text-zinc-900 mb-4">Update Status Pelamar</h3>
-                            <div class="space-y-4">
-                                <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-zinc-400 uppercase">Status Seleksi</label>
-                                    <select name="status" id="modalStatusInput" class="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm focus:ring-2 focus:ring-zinc-900 outline-none">
-                                        <option value="pending">Pending</option>
-                                        <option value="reviewing">Reviewing</option>
-                                        <option value="interview">Interview</option>
-                                        <option value="test">Test / Technical</option>
-                                        <option value="hired">Hired (Diterima)</option>
-                                        <option value="rejected">Rejected (Ditolak)</option>
+                        <div class="bg-white px-8 py-8">
+                            <h3 class="text-lg font-black text-zinc-900 uppercase tracking-widest italic mb-6 border-b pb-4">Update Status Seleksi Pelamar</h3>
+                            <div class="space-y-6">
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Status Seleksi</label>
+                                    <select name="status" id="modalStatusInput" class="h-11 w-full rounded-lg border border-zinc-300 px-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none">
+                                        <option value="pending">PENDING</option>
+                                        <option value="reviewing">REVIEWING</option>
+                                        <option value="interview">INTERVIEW</option>
+                                        <option value="test">TEST / TECHNICAL</option>
+                                        <option value="hired">HIRED (DITERIMA)</option>
+                                        <option value="rejected">REJECTED (DITOLAK)</option>
                                     </select>
                                 </div>
-                                <div class="space-y-1">
-                                    <label class="text-[10px] font-bold text-zinc-400 uppercase">Catatan Admin</label>
-                                    <textarea name="admin_notes" id="modalNotesInput" rows="3" class="w-full rounded-lg border border-zinc-200 p-3 text-sm focus:ring-2 focus:ring-zinc-900 outline-none"></textarea>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Catatan Tim Rekrutmen</label>
+                                    <textarea name="admin_notes" id="modalNotesInput" rows="3" placeholder="Masukkan catatan hasil review atau alasan seleksi..." class="w-full rounded-lg border border-zinc-300 p-4 text-sm font-medium focus:ring-2 focus:ring-zinc-900 outline-none"></textarea>
                                 </div>
                             </div>
                         </div>
-                        <div class="bg-zinc-50 px-6 py-4 flex justify-end gap-2">
-                            <button type="button" onclick="closeModal('statusModal')" class="px-4 py-2 text-sm font-bold text-zinc-700 hover:bg-zinc-100 rounded-lg">Batal</button>
-                            <button type="submit" class="px-6 py-2 bg-zinc-900 text-white text-sm font-bold rounded-lg hover:bg-zinc-800 transition-all">Update Status</button>
+                        <div class="bg-zinc-50 px-8 py-5 flex justify-end gap-3 rounded-b-xl border-t">
+                            <button type="button" onclick="closeModal('statusModal')" class="px-6 py-2.5 text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-600">Batal</button>
+                            <button type="submit" class="px-8 py-2.5 bg-zinc-900 text-white text-xs font-black uppercase tracking-widest rounded shadow-xl hover:bg-zinc-800 transition-all">Simpan Status</button>
                         </div>
                     </form>
                 </div>
@@ -136,6 +278,13 @@
         </div>
     </div>
 
+    <!-- Delete Formation Form -->
+    <form id="deleteFormationForm" method="POST" class="hidden">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         function openStatusModal(appId, currentStatus, currentNotes) {
             document.getElementById('statusForm').action = "/admin/recruitment/applications/" + appId + "/status";
@@ -144,5 +293,16 @@
             document.getElementById('statusModal').classList.remove('hidden');
         }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        
+        function confirmDeleteFormation(formationId) {
+            if (confirm('Anda yakin ingin menghapus formasi ini?')) {
+                const form = document.getElementById('deleteFormationForm');
+                form.action = "/admin/recruitment/formations/" + formationId;
+                form.submit();
+            }
+        }
     </script>
+@push('styles')
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+@endpush
 @endsection

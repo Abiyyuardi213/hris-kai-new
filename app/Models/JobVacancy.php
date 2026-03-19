@@ -10,18 +10,20 @@ class JobVacancy extends Model
     use HasFactory;
 
     protected $fillable = [
-        'position_id',
-        'title',
-        'description',
-        'requirements',
-        'quantity',
+        'judul_lowongan',
+        'start_date',
+        'end_date',
         'status',
-        'deadline',
     ];
 
-    public function position()
+    public function detail()
     {
-        return $this->belongsTo(Jabatan::class, 'position_id');
+        return $this->hasOne(JobVacancyDetail::class, 'job_vacancy_id');
+    }
+
+    public function formations()
+    {
+        return $this->hasMany(JobFormation::class, 'job_vacancy_id');
     }
 
     public function applications()
