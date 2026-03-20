@@ -174,6 +174,12 @@
                         <span class="sidebar-text group-[.collapsed]:hidden">Manajemen Payroll</span>
                     </a>
 
+                    <a href="{{ route('admin.project-payroll.index') }}"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/project-payroll*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                        <i data-lucide="piggy-bank" class="h-4 w-4"></i>
+                        <span class="sidebar-text group-[.collapsed]:hidden">Payroll Project</span>
+                    </a>
+
                     <a href="{{ route('admin.perjalanan_dinas.index') }}"
                         class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/perjalanan-dinas*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                         <i data-lucide="briefcase" class="h-4 w-4"></i>

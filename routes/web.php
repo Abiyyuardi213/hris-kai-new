@@ -53,6 +53,11 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/payroll/{payroll}', [App\Http\Controllers\EmployeePayrollController::class, 'show'])->name('employee.payroll.show');
     Route::get('/payroll/{id}/print', [App\Http\Controllers\EmployeePayrollController::class, 'print'])->name('employee.payroll.print');
 
+    // Project Payroll for Employee
+    Route::get('/project-payroll', [App\Http\Controllers\EmployeeProjectPayrollController::class, 'index'])->name('employee.project-payroll.index');
+    Route::get('/project-payroll/{projectPayroll}', [App\Http\Controllers\EmployeeProjectPayrollController::class, 'show'])->name('employee.project-payroll.show');
+    Route::get('/project-payroll/{id}/print', [App\Http\Controllers\EmployeeProjectPayrollController::class, 'print'])->name('employee.project-payroll.print');
+
     // Perjalanan Dinas
     Route::get('/perjalanan-dinas', [App\Http\Controllers\PerjalananDinasController::class, 'index'])->name('employee.perjalanan_dinas.index');
     Route::get('/perjalanan-dinas/create', [App\Http\Controllers\PerjalananDinasController::class, 'create'])->name('employee.perjalanan_dinas.create');
@@ -195,6 +200,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::put('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'update'])->name('admin.payroll.update');
     Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
     Route::delete('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'destroy'])->name('admin.payroll.destroy');
+
+    // Manajemen Payroll Project
+    Route::get('/project-payroll', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'index'])->name('admin.project-payroll.index');
+    Route::get('/project-payroll/create', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'create'])->name('admin.project-payroll.create');
+    Route::post('/project-payroll', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'store'])->name('admin.project-payroll.store');
+    Route::get('/project-payroll/{projectPayroll}/edit', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'edit'])->name('admin.project-payroll.edit');
+    Route::put('/project-payroll/{projectPayroll}', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'update'])->name('admin.project-payroll.update');
+    Route::patch('/project-payroll/{projectPayroll}/status', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'updateStatus'])->name('admin.project-payroll.update-status');
+    Route::delete('/project-payroll/{projectPayroll}', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'destroy'])->name('admin.project-payroll.destroy');
 
     // Perjalanan Dinas
     Route::get('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'index'])->name('admin.perjalanan_dinas.index');
