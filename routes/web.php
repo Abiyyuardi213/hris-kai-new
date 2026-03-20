@@ -235,6 +235,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/recruitment/{recruitment}/applicants', [App\Http\Controllers\Admin\RecruitmentController::class, 'showApplicants'])->name('admin.recruitment.applicants.show'); // Add this
     Route::patch('/recruitment/applications/{application}/status', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateApplicationStatus'])->name('admin.recruitment.applications.status');
     Route::resource('recruitment', App\Http\Controllers\Admin\RecruitmentController::class)->names('admin.recruitment');
+    Route::resource('candidates', App\Http\Controllers\Admin\CandidateController::class)->names('admin.candidates')->only(['index', 'show', 'destroy']);
     Route::post('/recruitment/{recruitment}/formations', [App\Http\Controllers\Admin\RecruitmentController::class, 'addFormation'])->name('admin.recruitment.formations.add');
     Route::patch('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateFormation'])->name('admin.recruitment.formations.update');
     Route::delete('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'deleteFormation'])->name('admin.recruitment.formations.delete');
