@@ -86,10 +86,25 @@ class RecruitmentController extends Controller
         return redirect()->route('admin.recruitment.index')->with('success', 'Lowongan pekerjaan berhasil dihapus.');
     }
 
-    public function applications()
+    public function applications(Request $request)
     {
-        $applications = Application::with(['jobVacancy', 'candidate'])->latest()->paginate(10);
+        $query = Application::with(['jobVacancy', 'candidate']);
+        
+        if ($request->has('vacancy_id')) {
+            $query->where('job_vacancy_id', $request->vacancy_id);
+        }
+
+        $applications = $query->latest()->paginate(10);
         return view('admin.recruitment.applications', compact('applications'));
+    }
+
+    public function showApplicants(JobVacancy $recruitment)
+    {
+        $applications = Application::with('candidate')
+            ->where('job_vacancy_id', $recruitment->id)
+            ->latest()
+            ->paginate(15);
+        return view('admin.recruitment.applicants_list', compact('recruitment', 'applications'));
     }
 
     public function updateApplicationStatus(Request $request, Application $application)
@@ -117,6 +132,21 @@ class RecruitmentController extends Controller
         $recruitment->formations()->create($request->all());
 
         return back()->with('success', 'Formasi berhasil ditambahkan.');
+    }
+
+    public function updateFormation(Request $request, JobFormation $formation)
+    {
+        $request->validate([
+            'formation_name' => 'required|string',
+            'education' => 'required|string',
+            'major' => 'required|string',
+            'gender' => 'required|string',
+            'document_requirements' => 'nullable|string',
+        ]);
+
+        $formation->update($request->all());
+
+        return back()->with('success', 'Formasi berhasil diperbarui.');
     }
 
     public function deleteFormation(JobFormation $formation)

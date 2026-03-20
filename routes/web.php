@@ -104,6 +104,7 @@ Route::prefix('rekrutmen')->group(function () {
 
     Route::middleware(['auth:candidate'])->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\CandidateAuthController::class, 'dashboard'])->name('candidate.dashboard');
+        Route::get('/profil', [App\Http\Controllers\CandidateAuthController::class, 'profile'])->name('candidate.profile');
         Route::post('/profile', [App\Http\Controllers\CandidateAuthController::class, 'updateProfile'])->name('candidate.profile.update');
         Route::get('/cities/search', [\App\Http\Controllers\KotaController::class, 'index'])->name('cities.search');
 
@@ -231,9 +232,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Recruitment Module
     Route::get('/recruitment/applications', [App\Http\Controllers\Admin\RecruitmentController::class, 'applications'])->name('admin.recruitment.applications');
+    Route::get('/recruitment/{recruitment}/applicants', [App\Http\Controllers\Admin\RecruitmentController::class, 'showApplicants'])->name('admin.recruitment.applicants.show'); // Add this
     Route::patch('/recruitment/applications/{application}/status', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateApplicationStatus'])->name('admin.recruitment.applications.status');
     Route::resource('recruitment', App\Http\Controllers\Admin\RecruitmentController::class)->names('admin.recruitment');
     Route::post('/recruitment/{recruitment}/formations', [App\Http\Controllers\Admin\RecruitmentController::class, 'addFormation'])->name('admin.recruitment.formations.add');
+    Route::patch('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateFormation'])->name('admin.recruitment.formations.update');
     Route::delete('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'deleteFormation'])->name('admin.recruitment.formations.delete');
 
     // Offboarding

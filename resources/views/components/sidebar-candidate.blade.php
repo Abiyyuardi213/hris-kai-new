@@ -59,11 +59,18 @@
 
         <!-- Nav Menu -->
         <div class="space-y-1 pt-4">
-            <!-- Biodata -->
+            <!-- Dashboard -->
             <a href="{{ route('candidate.dashboard') }}"
                 class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('candidate.dashboard') ? 'bg-zinc-100 text-zinc-900 shadow-sm shadow-zinc-100' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900' }}">
-                <i data-lucide="user-cog" class="h-5 w-5 {{ request()->routeIs('candidate.dashboard') ? 'text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-900' }}"></i>
-                <span class="text-[15px] font-bold">Biodata</span>
+                <i data-lucide="layout-grid" class="h-5 w-5 {{ request()->routeIs('candidate.dashboard') ? 'text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-900' }}"></i>
+                <span class="text-[15px] font-bold">Dashboard Pelamar</span>
+            </a>
+
+            <!-- Biodata -->
+            <a href="{{ route('candidate.profile') }}"
+                class="flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('candidate.profile') ? 'bg-zinc-100 text-zinc-900 shadow-sm shadow-zinc-100' : 'text-zinc-400 hover:bg-zinc-50 hover:text-zinc-900' }}">
+                <i data-lucide="user-cog" class="h-5 w-5 {{ request()->routeIs('candidate.profile') ? 'text-zinc-900' : 'text-zinc-400 group-hover:text-zinc-900' }}"></i>
+                <span class="text-[15px] font-bold">Informasi Profil</span>
             </a>
 
             <!-- Pendidikan -->

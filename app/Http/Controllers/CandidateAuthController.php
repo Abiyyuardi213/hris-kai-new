@@ -143,6 +143,15 @@ class CandidateAuthController extends Controller
 
     public function dashboard()
     {
-        return view('recruitment.dashboard');
+        /** @var \App\Models\Candidate $candidate */
+        $candidate = Auth::guard('candidate')->user();
+        $applications = $candidate->applications()->with(['jobVacancy', 'jobVacancy.detail'])->latest()->get();
+        
+        return view('recruitment.dashboard', compact('candidate', 'applications'));
+    }
+
+    public function profile()
+    {
+        return view('recruitment.profile');
     }
 }
