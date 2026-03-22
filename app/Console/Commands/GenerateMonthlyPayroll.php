@@ -67,23 +67,43 @@ class GenerateMonthlyPayroll extends Command
                 ->whereNotNull('jam_masuk')
                 ->count();
 
-            $gajiHarian = $employee->jabatan->gaji_per_hari;
+            $gajiPokok = $employee->jabatan->gaji_pokok;
             $tunjanganJabatan = $employee->jabatan->tunjangan;
+            $tunjanganPerumahan = $employee->jabatan->tunjangan_perumahan;
+            $tunjanganPajak = $employee->jabatan->tunjangan_pajak;
+
+            // Formulas
+            $tunjanganAdminBank = 10000;
+            $tunjanganJpk = $gajiPokok * 0.04;
+            $erJKK = $gajiPokok * 0.0024;
+            $erJHT = $gajiPokok * 0.037;
+            $erJKM = $gajiPokok * 0.003;
+            $tunjanganJpkPensiun = $gajiPokok * 0.02;
+            $tunjanganJpBpjs = $gajiPokok * 0.02;
 
             // For auto-generate, THR and Bonus are 0 by default
             $thrDays = 0;
             $thr = 0;
             $bonus = 0;
 
-            $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan + $thr + $bonus;
+            $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $bonus;
 
             $payroll = \App\Models\Payroll::create([
                 'pegawai_id' => $employee->id,
                 'month' => $month,
                 'year' => $year,
                 'jumlah_hadir' => $jumlahHadir,
-                'gaji_harian' => $gajiHarian,
+                'gaji_pokok' => $gajiPokok,
                 'tunjangan_jabatan' => $tunjanganJabatan,
+                'tunjangan_perumahan' => $tunjanganPerumahan,
+                'tunjangan_admin_bank' => $tunjanganAdminBank,
+                'tunjangan_jpk' => $tunjanganJpk,
+                'tunjangan_pajak' => $tunjanganPajak,
+                'er_jamsostek_jkk' => $erJKK,
+                'er_jamsostek_jht' => $erJHT,
+                'er_jamsostek_jkm' => $erJKM,
+                'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
+                'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
                 'thr_days' => $thrDays,
                 'thr' => $thr,
                 'bonus' => $bonus,

@@ -20,24 +20,55 @@
 
         <div class="bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-zinc-200/50 overflow-hidden">
             <div class="p-8 border-b border-zinc-50 bg-zinc-50/30">
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Gaji Harian</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->gaji_harian, 0, ',', '.') }}</p>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Gaji Pokok</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</p>
                     </div>
                     <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Jumlah Hadir</p>
-                        <p class="font-bold text-zinc-900">{{ $payroll->jumlah_hadir }} Hari</p>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Jabatan</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</p>
                     </div>
                     <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunjangan Jabatan</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}
-                        </p>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Perumahan</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_perumahan, 0, ',', '.') }}</p>
                     </div>
                     <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Subtotal Gaji</p>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Admin Bank</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_admin_bank, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. JPK (4%)</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jpk, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Pajak</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_pajak, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">ER JKK (0.24%)</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->er_jamsostek_jkk, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">ER JHT (3.7%)</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->er_jamsostek_jht, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">ER JKM (0.3%)</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->er_jamsostek_jkm, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">JPK Pensiun (2%)</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jpk_pensiun, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">JP BPJS (2%)</p>
+                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jp_bpjs, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-emerald-600">Total Earnings</p>
                         <p class="font-bold text-emerald-600">Rp
-                            {{ number_format($payroll->gaji_harian * $payroll->jumlah_hadir + $payroll->tunjangan_jabatan, 0, ',', '.') }}
+                            {{ number_format($payroll->total_gaji - $payroll->thr - $payroll->bonus, 0, ',', '.') }}
                         </p>
                     </div>
                 </div>
@@ -60,8 +91,8 @@
                                     class="block w-full rounded-2xl border border-zinc-100 bg-zinc-50/50 pl-11 pr-4 py-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
                             </div>
                             <p class="text-[10px] text-zinc-400 mt-1 ml-1" id="thr_preview">
-                                Estimasi: Rp {{ number_format($payroll->gaji_harian * $payroll->thr_days, 0, ',', '.') }}
-                                (Gaji Harian x <span id="days_val">{{ $payroll->thr_days }}</span> Hari)
+                                Estimasi: Rp {{ number_format((($payroll->gaji_pokok / 30) + ($payroll->tunjangan_jabatan / 30)) * $payroll->thr_days, 0, ',', '.') }}
+                                ((Gaji Pokok + Tunjangan)/30 x <span id="days_val">{{ $payroll->thr_days }}</span> Hari)
                             </p>
                         </div>
 
@@ -98,14 +129,15 @@
                             const thrDaysInput = document.getElementById('thr_days');
                             const thrPreview = document.getElementById('thr_preview');
                             const daysVal = document.getElementById('days_val');
-                            const gajiHarian = {{ $payroll->gaji_harian }};
+                            const gajiPokok = {{ $payroll->gaji_pokok }};
+                            const tunjangan = {{ $payroll->tunjangan_jabatan }};
 
                             thrDaysInput.addEventListener('input', function() {
                                 const days = parseInt(this.value) || 0;
-                                const estimate = days * gajiHarian;
+                                const estimate = days * ((gajiPokok / 30) + (tunjangan / 30));
                                 daysVal.textContent = days;
                                 thrPreview.innerHTML =
-                                    `Estimasi: Rp ${new Intl.NumberFormat('id-ID').format(estimate)} (Gaji Harian x ${days} Hari)`;
+                                    `Estimasi: Rp ${new Intl.NumberFormat('id-ID').format(estimate)} ((Gaji Pokok + Tunjangan)/30 x ${days} Hari)`;
                             });
                         });
                     </script>

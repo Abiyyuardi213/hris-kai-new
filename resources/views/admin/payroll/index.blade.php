@@ -86,8 +86,8 @@
                             <th class="px-6 py-4 font-medium">Pegawai</th>
                             <th class="px-6 py-4 font-medium">Jabatan</th>
                             <th class="px-6 py-4 font-medium">Hadir</th>
-                            <th class="px-6 py-4 font-medium text-right">Gaji/Hari</th>
-                            <th class="px-6 py-4 font-medium text-right">Tunjangan</th>
+                            <th class="px-6 py-4 font-medium text-right">Gaji Pokok</th>
+                            <th class="px-6 py-4 font-medium text-right">Tunj. & Fasilitas</th>
                             <th class="px-6 py-4 font-medium text-right text-amber-600">THR & Bonus</th>
                             <th class="px-6 py-4 font-bold text-right text-zinc-900">Total Gaji</th>
                             <th class="px-6 py-4 font-medium">Status</th>
@@ -112,11 +112,26 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="text-xs text-zinc-600">Rp
-                                        {{ number_format($payroll->gaji_harian, 0, ',', '.') }}</div>
+                                        {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="text-xs text-zinc-600">Rp
-                                        {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</div>
+                                        {{ number_format(
+                                            $payroll->tunjangan_jabatan +
+                                                $payroll->tunjangan_perumahan +
+                                                $payroll->tunjangan_admin_bank +
+                                                $payroll->tunjangan_jpk +
+                                                $payroll->tunjangan_pajak +
+                                                $payroll->er_jamsostek_jkk +
+                                                $payroll->er_jamsostek_jht +
+                                                $payroll->er_jamsostek_jkm +
+                                                $payroll->tunjangan_jpk_pensiun +
+                                                $payroll->tunjangan_jp_bpjs,
+                                            0,
+                                            ',',
+                                            '.',
+                                        ) }}
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     @if ($payroll->thr > 0 || $payroll->bonus > 0)

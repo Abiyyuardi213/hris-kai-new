@@ -167,20 +167,37 @@
 
                     <!-- Modal Body -->
                     <div class="bg-white px-6 py-6 space-y-6">
-                        <div class="grid grid-cols-1 gap-4">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider text-right">Kode
-                                    Jabatan</label>
-                                <p id="detailCode"
-                                    class="mt-1 text-sm font-medium text-zinc-900 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-100">
-                                </p>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Kode Jabatan</label>
+                                <p id="detailCode" class="mt-1 text-sm font-medium text-zinc-900 bg-zinc-50 px-3 py-2 rounded-lg border border-zinc-100"></p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Nama Jabatan</label>
+                                <p id="detailName" class="mt-1 text-sm font-semibold text-zinc-900"></p>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Nama
-                                Jabatan</label>
-                            <p id="detailName" class="mt-1 text-base font-semibold text-zinc-900"></p>
+                        <div class="grid grid-cols-2 gap-4 border-t border-zinc-50 pt-4">
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Gaji Pokok (Bulanan)</label>
+                                <p id="detailGaji" class="mt-1 text-sm font-bold text-zinc-900"></p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Tunjangan Jabatan</label>
+                                <p id="detailTunjanganJabatan" class="mt-1 text-sm font-bold text-zinc-900"></p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 border-t border-zinc-50 pt-4">
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Tunjangan Perumahan</label>
+                                <p id="detailTunjanganPerumahan" class="mt-1 text-sm font-bold text-zinc-900"></p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Tunjangan Pajak (PPh 21)</label>
+                                <p id="detailTunjanganPajak" class="mt-1 text-sm font-bold text-zinc-900"></p>
+                            </div>
                         </div>
 
                         <div>
@@ -264,6 +281,18 @@
             document.getElementById('detailCode').textContent = position.code;
             document.getElementById('detailName').textContent = position.name;
             document.getElementById('detailDescription').textContent = position.description || 'Tidak ada deskripsi.';
+
+            // Format as currency
+            const formatter = new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            });
+
+            document.getElementById('detailGaji').textContent = formatter.format(position.gaji_pokok);
+            document.getElementById('detailTunjanganJabatan').textContent = formatter.format(position.tunjangan);
+            document.getElementById('detailTunjanganPerumahan').textContent = formatter.format(position.tunjangan_perumahan);
+            document.getElementById('detailTunjanganPajak').textContent = formatter.format(position.tunjangan_pajak);
 
             openModal('detailsModal');
         }

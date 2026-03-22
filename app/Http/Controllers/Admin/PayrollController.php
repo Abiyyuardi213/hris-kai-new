@@ -86,8 +86,19 @@ class PayrollController extends Controller
                 ->whereNotNull('jam_masuk')
                 ->count();
 
-            $gajiHarian = $employee->jabatan->gaji_per_hari;
+            $gajiPokok = $employee->jabatan->gaji_pokok;
             $tunjanganJabatan = $employee->jabatan->tunjangan;
+            $tunjanganPerumahan = $employee->jabatan->tunjangan_perumahan;
+            $tunjanganPajak = $employee->jabatan->tunjangan_pajak;
+
+            // Image Formulas
+            $tunjanganAdminBank = 10000;
+            $tunjanganJpk = $gajiPokok * 0.04;
+            $erJKK = $gajiPokok * 0.0024;
+            $erJHT = $gajiPokok * 0.037;
+            $erJKM = $gajiPokok * 0.003;
+            $tunjanganJpkPensiun = $gajiPokok * 0.02;
+            $tunjanganJpBpjs = $gajiPokok * 0.02;
 
             if ($payroll) {
                 if ($payroll->status === 'paid') {
@@ -96,13 +107,22 @@ class PayrollController extends Controller
                 }
 
                 // Update existing record (might have been created by Bulk THR)
-                $thr = ($gajiHarian + ($tunjanganJabatan / 30)) * $payroll->thr_days;
-                $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan + $thr + $payroll->bonus;
+                $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $payroll->thr_days;
+                $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $payroll->bonus;
 
                 $payroll->update([
                     'jumlah_hadir' => $jumlahHadir,
-                    'gaji_harian' => $gajiHarian,
+                    'gaji_pokok' => $gajiPokok,
                     'tunjangan_jabatan' => $tunjanganJabatan,
+                    'tunjangan_perumahan' => $tunjanganPerumahan,
+                    'tunjangan_admin_bank' => $tunjanganAdminBank,
+                    'tunjangan_jpk' => $tunjanganJpk,
+                    'tunjangan_pajak' => $tunjanganPajak,
+                    'er_jamsostek_jkk' => $erJKK,
+                    'er_jamsostek_jht' => $erJHT,
+                    'er_jamsostek_jkm' => $erJKM,
+                    'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
+                    'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
                     'thr' => $thr,
                     'total_gaji' => $totalGaji,
                 ]);
@@ -112,15 +132,24 @@ class PayrollController extends Controller
                 $thrDays = 0;
                 $thr = 0;
                 $bonus = 0;
-                $totalGaji = ($gajiHarian * $jumlahHadir) + $tunjanganJabatan + $thr + $bonus;
+                $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $bonus;
 
                 $payroll = Payroll::create([
                     'pegawai_id' => $employee->id,
                     'month' => $month,
                     'year' => $year,
                     'jumlah_hadir' => $jumlahHadir,
-                    'gaji_harian' => $gajiHarian,
+                    'gaji_pokok' => $gajiPokok,
                     'tunjangan_jabatan' => $tunjanganJabatan,
+                    'tunjangan_perumahan' => $tunjanganPerumahan,
+                    'tunjangan_admin_bank' => $tunjanganAdminBank,
+                    'tunjangan_jpk' => $tunjanganJpk,
+                    'tunjangan_pajak' => $tunjanganPajak,
+                    'er_jamsostek_jkk' => $erJKK,
+                    'er_jamsostek_jht' => $erJHT,
+                    'er_jamsostek_jkm' => $erJKM,
+                    'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
+                    'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
                     'thr_days' => $thrDays,
                     'thr' => $thr,
                     'bonus' => $bonus,
@@ -177,10 +206,19 @@ class PayrollController extends Controller
             'keterangan_bonus' => 'nullable|string|max:255',
         ]);
 
-        $thr = ($payroll->gaji_harian + ($payroll->tunjangan_jabatan / 30)) * $request->thr_days;
+        $thr = (($payroll->gaji_pokok / 30) + ($payroll->tunjangan_jabatan / 30)) * $request->thr_days;
 
-        $totalGaji = ($payroll->gaji_harian * $payroll->jumlah_hadir) +
+        $totalGaji = $payroll->gaji_pokok +
             $payroll->tunjangan_jabatan +
+            $payroll->tunjangan_perumahan +
+            $payroll->tunjangan_admin_bank +
+            $payroll->tunjangan_jpk +
+            $payroll->tunjangan_pajak +
+            $payroll->er_jamsostek_jkk +
+            $payroll->er_jamsostek_jht +
+            $payroll->er_jamsostek_jkm +
+            $payroll->tunjangan_jpk_pensiun +
+            $payroll->tunjangan_jp_bpjs +
             $thr +
             $request->bonus;
 
@@ -222,19 +260,37 @@ class PayrollController extends Controller
                 ->where('year', $year)
                 ->first();
 
-            $gajiHarian = $employee->jabatan->gaji_per_hari;
+            $gajiPokok = $employee->jabatan->gaji_pokok;
             $tunjanganJabatan = $employee->jabatan->tunjangan;
-            $thr = ($gajiHarian + ($tunjanganJabatan / 30)) * $request->thr_days;
+            $tunjanganPerumahan = $employee->jabatan->tunjangan_perumahan;
+            $tunjanganPajak = $employee->jabatan->tunjangan_pajak;
+
+            // Formulas
+            $tunjanganAdminBank = 10000;
+            $tunjanganJpk = $gajiPokok * 0.04;
+            $erJKK = $gajiPokok * 0.0024;
+            $erJHT = $gajiPokok * 0.037;
+            $erJKM = $gajiPokok * 0.003;
+            $tunjanganJpkPensiun = $gajiPokok * 0.02;
+            $tunjanganJpBpjs = $gajiPokok * 0.02;
+
+            $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $request->thr_days;
 
             if ($payroll) {
                 if ($payroll->status === 'paid') continue;
 
-                $totalGaji = ($gajiHarian * $payroll->jumlah_hadir) +
-                    $tunjanganJabatan +
-                    $thr +
-                    $request->bonus;
+                $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $request->bonus;
 
                 $payroll->update([
+                    'tunjangan_perumahan' => $tunjanganPerumahan,
+                    'tunjangan_admin_bank' => $tunjanganAdminBank,
+                    'tunjangan_jpk' => $tunjanganJpk,
+                    'tunjangan_pajak' => $tunjanganPajak,
+                    'er_jamsostek_jkk' => $erJKK,
+                    'er_jamsostek_jht' => $erJHT,
+                    'er_jamsostek_jkm' => $erJKM,
+                    'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
+                    'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
                     'thr_days' => $request->thr_days,
                     'thr' => $thr,
                     'bonus' => $request->bonus,
@@ -243,15 +299,24 @@ class PayrollController extends Controller
                 ]);
                 $countUpdated++;
             } else {
-                $totalGaji = $thr + $request->bonus;
+                $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $request->bonus;
 
                 $payroll = Payroll::create([
                     'pegawai_id' => $employee->id,
                     'month' => $month,
                     'year' => $year,
                     'jumlah_hadir' => 0,
-                    'gaji_harian' => $gajiHarian,
-                    'tunjangan_jabatan' => 0,
+                    'gaji_pokok' => $gajiPokok,
+                    'tunjangan_jabatan' => $tunjanganJabatan,
+                    'tunjangan_perumahan' => $tunjanganPerumahan,
+                    'tunjangan_admin_bank' => $tunjanganAdminBank,
+                    'tunjangan_jpk' => $tunjanganJpk,
+                    'tunjangan_pajak' => $tunjanganPajak,
+                    'er_jamsostek_jkk' => $erJKK,
+                    'er_jamsostek_jht' => $erJHT,
+                    'er_jamsostek_jkm' => $erJKM,
+                    'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
+                    'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
                     'thr_days' => $request->thr_days,
                     'thr' => $thr,
                     'bonus' => $request->bonus,

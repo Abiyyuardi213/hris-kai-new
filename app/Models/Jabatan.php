@@ -16,7 +16,7 @@ class Jabatan extends Model
     public $officeScopeType = 'has_many_relation';
     public $officeScopeRelation = 'employees';
 
-    protected $fillable = ['code', 'name', 'description', 'gaji_per_hari', 'tunjangan'];
+    protected $fillable = ['code', 'name', 'description', 'gaji_pokok', 'tunjangan', 'tunjangan_perumahan', 'tunjangan_pajak'];
 
     // public function division() relationship removed
 

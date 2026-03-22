@@ -58,23 +58,23 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="gaji_per_hari" class="block text-sm font-medium text-zinc-900">Gaji Per Hari</label>
+                            <label for="gaji_pokok" class="block text-sm font-medium text-zinc-900">Gaji Pokok (Bulanan)</label>
                             <div class="relative mt-1">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
                                 </div>
-                                <input type="number" id="gaji_per_hari" name="gaji_per_hari"
-                                    value="{{ old('gaji_per_hari', 0) }}" required
-                                    class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('gaji_per_hari') border-red-500 @enderror"
+                                <input type="number" id="gaji_pokok" name="gaji_pokok"
+                                    value="{{ old('gaji_pokok', 0) }}" required
+                                    class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('gaji_pokok') border-red-500 @enderror"
                                     placeholder="0">
                             </div>
-                            @error('gaji_per_hari')
+                            @error('gaji_pokok')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="tunjangan" class="block text-sm font-medium text-zinc-900">Tunjangan Tetap</label>
+                            <label for="tunjangan" class="block text-sm font-medium text-zinc-900">Tunjangan Jabatan</label>
                             <div class="relative mt-1">
                                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                     <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
@@ -85,6 +85,40 @@
                                     placeholder="0">
                             </div>
                             @error('tunjangan')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="tunjangan_perumahan" class="block text-sm font-medium text-zinc-900">Tunjangan Perumahan</label>
+                            <div class="relative mt-1">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
+                                </div>
+                                <input type="number" id="tunjangan_perumahan" name="tunjangan_perumahan"
+                                    value="{{ old('tunjangan_perumahan', 0) }}" required
+                                    class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('tunjangan_perumahan') border-red-500 @enderror"
+                                    placeholder="0">
+                            </div>
+                            @error('tunjangan_perumahan')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="tunjangan_pajak" class="block text-sm font-medium text-zinc-900">Tunjangan Pajak (PPh 21)</label>
+                            <div class="relative mt-1">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
+                                </div>
+                                <input type="number" id="tunjangan_pajak" name="tunjangan_pajak"
+                                    value="{{ old('tunjangan_pajak', 0) }}" required
+                                    class="block w-full rounded-lg border border-zinc-300 pl-10 pr-3 py-2 text-sm focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 @error('tunjangan_pajak') border-red-500 @enderror"
+                                    placeholder="0">
+                            </div>
+                            @error('tunjangan_pajak')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
