@@ -79,7 +79,6 @@ class PayrollController extends Controller
                 ->where('year', $year)
                 ->first();
 
-            // Count attendances
             $jumlahHadir = Presensi::where('pegawai_id', $employee->id)
                 ->whereMonth('tanggal', $month)
                 ->whereYear('tanggal', $year)
@@ -91,7 +90,6 @@ class PayrollController extends Controller
             $tunjanganPerumahan = $employee->jabatan->tunjangan_perumahan;
             $tunjanganPajak = $employee->jabatan->tunjangan_pajak;
 
-            // Image Formulas
             $tunjanganAdminBank = 10000;
             $tunjanganJpk = $gajiPokok * 0.04;
             $erJKK = $gajiPokok * 0.0024;
@@ -106,7 +104,6 @@ class PayrollController extends Controller
                     continue;
                 }
 
-                // Update existing record (might have been created by Bulk THR)
                 $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $payroll->thr_days;
                 $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $payroll->bonus;
 
@@ -128,7 +125,6 @@ class PayrollController extends Controller
                 ]);
                 $countUpdated++;
             } else {
-                // Create new
                 $thrDays = 0;
                 $thr = 0;
                 $bonus = 0;
@@ -158,7 +154,6 @@ class PayrollController extends Controller
                     'generated_by' => Auth::id(),
                 ]);
 
-                // Notify Employee
                 $employee->notify(new \App\Notifications\PayrollGeneratedNotification($payroll));
                 $countGenerated++;
             }

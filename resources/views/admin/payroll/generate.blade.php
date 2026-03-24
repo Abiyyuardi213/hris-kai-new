@@ -11,7 +11,7 @@
             </a>
             <div>
                 <h2 class="text-2xl font-bold tracking-tight text-zinc-900">Generate Payroll Bulanan</h2>
-                <p class="text-sm text-zinc-500">Sistem akan menghitung gaji berdasarkan kehadiran di bulan yang dipilih.</p>
+                <p class="text-sm text-zinc-500">Sistem akan menghitung gaji berdasarkan upah pokok tetap dan komponen tunjangan bulanan.</p>
             </div>
         </div>
 
@@ -23,8 +23,7 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-zinc-900">Kalkulasi Gaji Otomatis</h4>
-                        <p class="text-xs text-zinc-500 font-medium">Total Gaji = (Gaji/Hari * Jumlah Kehadiran) + Tunjangan
-                            Tetap</p>
+                        <p class="text-xs text-zinc-500 font-medium">Total Gaji = Upah Pokok + Tunjangan (Perumahan, JHT, JKK, JKM, BPJS, PPh21) + Bonus & THR</p>
                     </div>
                 </div>
             </div>
@@ -70,7 +69,7 @@
                     <p class="text-xs text-amber-800 leading-relaxed font-medium">
                         Sistem hanya akan men-generate data untuk pegawai yang <strong>memiliki Jabatan</strong> dan
                         <strong>belum memiliki record payroll</strong> di bulan/tahun tersebut. Pastikan data jabatan (gaji
-                        harian & tunjangan) sudah benar sebelum memproses.
+                        pokok & tunjangan) sudah benar sebelum memproses.
                     </p>
                 </div>
 

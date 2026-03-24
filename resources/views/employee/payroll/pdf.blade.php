@@ -9,13 +9,13 @@
     <style>
         @page {
             size: A5;
-            margin: 0.8cm 1cm;
+            margin: 0.5cm 0.8cm;
         }
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 9pt;
-            line-height: 1.4;
+            font-size: 8.5pt;
+            line-height: 1.3;
             color: #333;
             padding: 0;
             margin: 0;
@@ -24,8 +24,8 @@
         .header-table {
             width: 100%;
             border-bottom: 2px solid #002060;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .header-title {
@@ -44,12 +44,12 @@
         }
 
         .logo {
-            width: 60px;
+            width: 50px;
         }
 
         .info-table {
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 8px;
             border-collapse: collapse;
         }
 
@@ -59,46 +59,48 @@
         }
 
         .info-label {
-            width: 100px;
+            width: 90px;
             color: #666;
-            font-size: 8pt;
+            font-size: 7.5pt;
             text-transform: uppercase;
         }
 
         .info-value {
             font-weight: bold;
             color: #000;
+            font-size: 8.5pt;
         }
 
         .section-title {
-            font-size: 11pt;
+            font-size: 9.5pt;
             font-weight: bold;
             color: #002060;
             border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            margin-bottom: 10px;
-            margin-top: 10px;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            margin-top: 5px;
             text-transform: uppercase;
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .data-table td {
-            padding: 5px 12px;
+            padding: 3px 8px;
             border-bottom: 1px solid #f9f9f9;
         }
 
         .data-table .label {
             font-weight: bold;
             color: #333;
+            font-size: 8pt;
         }
 
         .data-table .sub-label {
-            font-size: 8pt;
+            font-size: 7pt;
             color: #888;
             display: block;
         }
@@ -106,44 +108,45 @@
         .data-table .amount {
             text-align: right;
             font-weight: bold;
+            font-size: 8.5pt;
             font-family: 'Courier New', Courier, monospace;
         }
 
         .total-section {
             background-color: #f8fafc;
-            padding: 15px;
+            padding: 6px 10px;
             border-radius: 8px;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .total-label {
-            font-size: 9pt;
+            font-size: 8pt;
             color: #64748b;
             text-transform: uppercase;
             font-weight: bold;
         }
 
         .total-amount {
-            font-size: 16pt;
+            font-size: 12.5pt;
             font-weight: 800;
             color: #0f172a;
-            margin: 3px 0;
+            margin: 1px 0;
         }
 
         .terbilang {
             font-style: italic;
-            font-size: 9pt;
+            font-size: 8pt;
             color: #64748b;
         }
 
         .signature-section {
-            margin-top: 20px;
+            margin-top: 5px;
             width: 100%;
             page-break-inside: avoid;
         }
 
         .signature-box {
-            width: 220px;
+            width: 180px;
             float: right;
             text-align: center;
             page-break-inside: avoid;
@@ -156,7 +159,7 @@
         }
 
         .qr-code {
-            margin: 10px 0;
+            margin: 5px 0;
         }
 
         .signer-name {
@@ -250,11 +253,10 @@
     <table class="data-table">
         <tr>
             <td>
-                <span class="label">Gaji Pokok (Harian)</span>
-                <span class="sub-label">Rp {{ number_format($payroll->gaji_harian, 0, ',', '.') }} x
-                    {{ $payroll->jumlah_hadir }} Hari Hadir</span>
+                <span class="label">Upah Pokok</span>
+                <span class="sub-label">Upah Bulanan Tetap</span>
             </td>
-            <td class="amount">Rp {{ number_format($payroll->gaji_harian * $payroll->jumlah_hadir, 0, ',', '.') }}</td>
+            <td class="amount">Rp {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</td>
         </tr>
         <tr>
             <td>
@@ -263,11 +265,53 @@
             </td>
             <td class="amount">Rp {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</td>
         </tr>
+        <tr>
+            <td>
+                <span class="label">Tunjangan Perumahan</span>
+                <span class="sub-label">Fasilitas Tempat Tinggal</span>
+            </td>
+            <td class="amount">Rp {{ number_format($payroll->tunjangan_perumahan, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>
+                <span class="label">Tunjangan Admin Bank</span>
+                <span class="sub-label">Administrasi Payroll</span>
+            </td>
+            <td class="amount">Rp {{ number_format($payroll->tunjangan_admin_bank, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>
+                <span class="label">Tunjangan Iuran JPK</span>
+                <span class="sub-label">BPJS Kesehatan (4%)</span>
+            </td>
+            <td class="amount">Rp {{ number_format($payroll->tunjangan_jpk, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>
+                <span class="label">Tunjangan Pajak</span>
+                <span class="sub-label">PPh 21 Ditanggung Perusahaan</span>
+            </td>
+            <td class="amount">Rp {{ number_format($payroll->tunjangan_pajak, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>
+                <span class="label">ER Jamsostek (JKK, JHT, JKM)</span>
+                <span class="sub-label">0.24% JKK, 3.7% JHT, 0.3% JKM</span>
+            </td>
+            <td class="amount">Rp {{ number_format($payroll->er_jamsostek_jkk + $payroll->er_jamsostek_jht + $payroll->er_jamsostek_jkm, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td>
+                <span class="label">Iuran Pensiun (JPK Pensiun & JP BPJS)</span>
+                <span class="sub-label">2% JPK Pensiun, 2% JP BPJS</span>
+            </td>
+            <td class="amount">Rp {{ number_format($payroll->tunjangan_jpk_pensiun + $payroll->tunjangan_jp_bpjs, 0, ',', '.') }}</td>
+        </tr>
         @if ($payroll->thr > 0)
             <tr>
                 <td>
                     <span class="label">Tunjangan Hari Raya (THR)</span>
-                    <span class="sub-label">Tunjangan Khusus Hari Raya</span>
+                    <span class="sub-label">Tunjangan Tahunan</span>
                 </td>
                 <td class="amount">Rp {{ number_format($payroll->thr, 0, ',', '.') }}</td>
             </tr>
@@ -276,7 +320,7 @@
             <tr>
                 <td>
                     <span class="label">Bonus & Insentif</span>
-                    <span class="sub-label">{{ $payroll->keterangan_bonus ?? 'Bonus Tambahan' }}</span>
+                    <span class="sub-label">{{ $payroll->keterangan_bonus ?? 'Insentif Khusus' }}</span>
                 </td>
                 <td class="amount">Rp {{ number_format($payroll->bonus, 0, ',', '.') }}</td>
             </tr>
@@ -297,7 +341,7 @@
 
             @if ($mdFinance)
                 <div class="qr-code">
-                    <img src="data:image/svg+xml;base64, {{ base64_encode(SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(70)->generate($mdFinance->nip . ';' . $mdFinance->nama_lengkap . ';TTD Elektronik Slip Gaji')) }}"
+                    <img src="data:image/svg+xml;base64, {{ base64_encode(SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')->size(55)->generate($mdFinance->nip . ';' . $mdFinance->nama_lengkap . ';TTD Elektronik Slip Gaji')) }}"
                         alt="QR Code">
                 </div>
                 <div class="signer-name">{{ $mdFinance->nama_lengkap }}</div>

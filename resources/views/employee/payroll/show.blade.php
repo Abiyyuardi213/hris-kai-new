@@ -87,22 +87,88 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-zinc-50/50">
                         <div class="flex flex-col">
-                            <span class="text-sm font-bold text-zinc-900">Gaji Pokok (Harian)</span>
-                            <span class="text-[10px] text-zinc-500 font-medium">Rp
-                                {{ number_format($payroll->gaji_harian, 0, ',', '.') }} x {{ $payroll->jumlah_hadir }}
-                                Hari Hadir</span>
+                            <span class="text-sm font-bold text-zinc-900">Upah Pokok</span>
+                            <span class="text-[10px] text-zinc-500 font-medium">Gaji Bulanan Tetap</span>
                         </div>
-                        <span class="font-bold text-zinc-900">Rp
-                            {{ number_format($payroll->gaji_harian * $payroll->jumlah_hadir, 0, ',', '.') }}</span>
+                        <span class="font-bold text-zinc-900">Rp {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</span>
                     </div>
 
                     <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-zinc-50/50">
                         <div class="flex flex-col">
                             <span class="text-sm font-bold text-zinc-900">Tunjangan Jabatan</span>
-                            <span class="text-[10px] text-zinc-500 font-medium">Tunjangan Tetap Bulanan</span>
+                            <span class="text-[10px] text-zinc-500 font-medium">Tunjangan Sesuai Posisi</span>
                         </div>
-                        <span class="font-bold text-zinc-900">Rp
-                            {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</span>
+                        <span class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-zinc-50/50">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-zinc-900">Tunjangan Perumahan</span>
+                            <span class="text-[10px] text-zinc-500 font-medium">Fasilitas Tempat Tinggal</span>
+                        </div>
+                        <span class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_perumahan, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-zinc-50/50">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-zinc-900">Tunjangan Admin Bank</span>
+                            <span class="text-[10px] text-zinc-500 font-medium">Biaya Administrasi Payroll</span>
+                        </div>
+                        <span class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_admin_bank, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-zinc-50/50">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-zinc-900">Tunjangan Iuran JPK</span>
+                            <span class="text-[10px] text-zinc-500 font-medium">BPJS Kesehatan (4%)</span>
+                        </div>
+                        <span class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jpk, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-zinc-50/50">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-zinc-900">Tunjangan Pajak</span>
+                            <span class="text-[10px] text-zinc-500 font-medium">Pajak PPh 21 Ditanggung Perusahaan</span>
+                        </div>
+                        <span class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_pajak, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-blue-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-blue-800">ER Jamsostek JKK</span>
+                                <span class="text-[9px] text-blue-600 font-medium">Premier JKK (0.24%)</span>
+                            </div>
+                            <span class="font-bold text-blue-800 text-sm">Rp {{ number_format($payroll->er_jamsostek_jkk, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-blue-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-blue-800">ER Jamsostek JHT</span>
+                                <span class="text-[9px] text-blue-600 font-medium">Tabungan Hari Tua (3.7%)</span>
+                            </div>
+                            <span class="font-bold text-blue-800 text-sm">Rp {{ number_format($payroll->er_jamsostek_jht, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-blue-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-blue-800">ER Jamsostek JKM</span>
+                                <span class="text-[9px] text-blue-600 font-medium">Jaminan Kematian (0.3%)</span>
+                            </div>
+                            <span class="font-bold text-blue-800 text-sm">Rp {{ number_format($payroll->er_jamsostek_jkm, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-emerald-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-emerald-800">JPK Pensiun</span>
+                                <span class="text-[9px] text-emerald-600 font-medium">Iuran Pensiun (2%)</span>
+                            </div>
+                            <span class="font-bold text-emerald-800 text-sm">Rp {{ number_format($payroll->tunjangan_jpk_pensiun, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-emerald-50/50">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-emerald-800">JP BPJS</span>
+                                <span class="text-[9px] text-emerald-600 font-medium">Jaminan Pensiun (2%)</span>
+                            </div>
+                            <span class="font-bold text-emerald-800 text-sm">Rp {{ number_format($payroll->tunjangan_jp_bpjs, 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
                     @if ($payroll->thr > 0)
@@ -111,8 +177,7 @@
                                 <span class="text-sm font-bold text-amber-700">Tunjangan Hari Raya (THR)</span>
                                 <span class="text-[10px] text-amber-600 font-medium">Tunjangan Khusus Hari Raya</span>
                             </div>
-                            <span class="font-bold text-amber-700">Rp
-                                {{ number_format($payroll->thr, 0, ',', '.') }}</span>
+                            <span class="font-bold text-amber-700">Rp {{ number_format($payroll->thr, 0, ',', '.') }}</span>
                         </div>
                     @endif
 
@@ -120,11 +185,9 @@
                         <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-emerald-50/50">
                             <div class="flex flex-col">
                                 <span class="text-sm font-bold text-emerald-700">Bonus & Insentif</span>
-                                <span
-                                    class="text-[10px] text-emerald-600 font-medium">{{ $payroll->keterangan_bonus ?? 'Bonus Tambahan' }}</span>
+                                <span class="text-[10px] text-emerald-600 font-medium">{{ $payroll->keterangan_bonus ?? 'Bonus Tambahan' }}</span>
                             </div>
-                            <span class="font-bold text-emerald-700">Rp
-                                {{ number_format($payroll->bonus, 0, ',', '.') }}</span>
+                            <span class="font-bold text-emerald-700">Rp {{ number_format($payroll->bonus, 0, ',', '.') }}</span>
                         </div>
                     @endif
                 </div>
