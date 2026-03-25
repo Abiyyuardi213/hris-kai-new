@@ -57,6 +57,10 @@ class PayrollController extends Controller
         $month = (int) $request->month;
         $year = (int) $request->year;
 
+        // Siklus penggajian: 26 bulan lalu s/d 25 bulan ini
+        $startDate = Carbon::create($year, $month, 26)->subMonth()->startOfDay();
+        $endDate = Carbon::create($year, $month, 25)->endOfDay();
+
         $employees = Pegawai::with('jabatan')->get();
 
         if ($employees->isEmpty()) {
@@ -80,8 +84,7 @@ class PayrollController extends Controller
                 ->first();
 
             $jumlahHadir = Presensi::where('pegawai_id', $employee->id)
-                ->whereMonth('tanggal', $month)
-                ->whereYear('tanggal', $year)
+                ->whereBetween('tanggal', [$startDate, $endDate])
                 ->whereNotNull('jam_masuk')
                 ->count();
 
@@ -243,6 +246,10 @@ class PayrollController extends Controller
         $month = (int) $request->month;
         $year = (int) $request->year;
 
+        // Siklus penggajian: 26 bulan lalu s/d 25 bulan ini
+        $startDate = Carbon::create($year, $month, 26)->subMonth()->startOfDay();
+        $endDate = Carbon::create($year, $month, 25)->endOfDay();
+
         $employees = Pegawai::with('jabatan')->get();
         $count = 0;
         $countCreated = 0;
@@ -301,11 +308,16 @@ class PayrollController extends Controller
             } else {
                 $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $request->bonus;
 
+                $jumlahHadir = Presensi::where('pegawai_id', $employee->id)
+                    ->whereBetween('tanggal', [$startDate, $endDate])
+                    ->whereNotNull('jam_masuk')
+                    ->count();
+
                 $payroll = Payroll::create([
                     'pegawai_id' => $employee->id,
                     'month' => $month,
                     'year' => $year,
-                    'jumlah_hadir' => 0,
+                    'jumlah_hadir' => $jumlahHadir,
                     'gaji_pokok' => $gajiPokok,
                     'tunjangan_jabatan' => $tunjanganJabatan,
                     'tunjangan_perumahan' => $tunjanganPerumahan,
