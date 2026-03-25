@@ -17,6 +17,20 @@
                     <i data-lucide="refresh-cw" class="h-4 w-4"></i>
                     Generate Payroll
                 </a>
+
+                @if ($payrolls->where('status', 'pending')->count() > 0)
+                    <form action="{{ route('admin.payroll.bulk-approve') }}" method="POST" class="inline">
+                        @csrf
+                        <input type="hidden" name="month" value="{{ request('month', date('n')) }}">
+                        <input type="hidden" name="year" value="{{ request('year', date('Y')) }}">
+                        <button type="submit"
+                            onclick="return confirm('Apakah Anda yakin ingin menyetujui SEMUA payroll pada periode ini?')"
+                            class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors shadow-sm">
+                            <i data-lucide="check-check" class="h-4 w-4"></i>
+                            Approve All
+                        </button>
+                    </form>
+                @endif
             </div>
         </div>
 

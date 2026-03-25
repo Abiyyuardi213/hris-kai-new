@@ -328,6 +328,24 @@ class PayrollController extends Controller
             ->with('success', "Berhasil memproses $count data THR/Bonus secara massal ($countCreated baru, $countUpdated diperbarui).");
     }
 
+    public function bulkApprove(Request $request)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2020',
+        ]);
+
+        Payroll::where('month', $request->month)
+            ->where('year', $request->year)
+            ->where('status', 'pending')
+            ->update([
+                'status' => 'paid',
+                'paid_at' => now(),
+            ]);
+
+        return back()->with('success', 'Semua payroll pada periode ini telah berhasil disetujui.');
+    }
+
     public function destroy(Payroll $payroll)
     {
         $payroll->delete();
