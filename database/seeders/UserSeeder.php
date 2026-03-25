@@ -16,39 +16,41 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // ensure roles exist
-        $adminRole = Peran::where('role_name', 'Admin')->first();
-        if (!$adminRole) {
-            $adminRole = Peran::create([
-                'role_name' => 'Admin',
+        $adminRole = Peran::firstOrCreate(
+            ['role_name' => 'Admin'],
+            [
                 'role_description' => 'Administrator with full access',
                 'role_status' => true
-            ]);
-        }
+            ]
+        );
 
-        $pegawaiRole = Peran::where('role_name', 'Pegawai')->first();
-        if (!$pegawaiRole) {
-            $pegawaiRole = Peran::create([
-                'role_name' => 'Pegawai',
+        $pegawaiRole = Peran::firstOrCreate(
+            ['role_name' => 'Pegawai'],
+            [
                 'role_description' => 'Regular employee',
                 'role_status' => true
-            ]);
-        }
+            ]
+        );
 
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
-            'password' => 'password',
-            'role_id' => $adminRole->id,
-            'status' => true,
-            'kantor_id' => 1,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'password' => 'password',
+                'role_id' => $adminRole->id,
+                'status' => true,
+                'kantor_id' => 1,
+            ]
+        );
 
-        User::create([
-            'name' => 'Pegawai User',
-            'email' => 'pegawai@gmail.com',
-            'password' => 'password',
-            'role_id' => $pegawaiRole->id,
-            'status' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'pegawai@gmail.com'],
+            [
+                'name' => 'Pegawai User',
+                'password' => 'password',
+                'role_id' => $pegawaiRole->id,
+                'status' => true,
+            ]
+        );
     }
 }
