@@ -36,5 +36,13 @@ class RoleSeeder extends Seeder
                 'role_status' => true
             ]
         );
+
+        Peran::firstOrCreate(
+            ['role_name' => 'Keuangan'],
+            [
+                'role_description' => 'Staff bagian keuangan dan payroll',
+                'role_status' => true
+            ]
+        );
     }
 }

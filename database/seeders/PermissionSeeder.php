@@ -90,5 +90,21 @@ class PermissionSeeder extends Seeder
             $allPermissions = Permission::all();
             $admin->permissions()->sync($allPermissions->pluck('id'));
         }
+
+        // Auto-assign specific to Keuangan
+        $keuangan = Peran::where('role_name', 'Keuangan')->first();
+        if ($keuangan) {
+            $keuanganPermissions = Permission::whereIn('name', [
+                'view-dashboard',
+                'manage-payroll',
+                'manage-project-payroll',
+                'manage-reimbursements',
+                'view-employees',
+                'view-attendance',
+                'manage-izin',
+                'manage-overtime',
+            ])->get();
+            $keuangan->permissions()->sync($keuanganPermissions->pluck('id'));
+        }
     }
 }
