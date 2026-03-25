@@ -130,7 +130,7 @@ Route::prefix('rekrutmen')->group(function () {
 });
 
 Route::middleware(['auth'])->prefix('admin')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard')->middleware('permission:view-dashboard');
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
@@ -138,8 +138,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::middleware('permission:view-master-data')->group(function () {
         Route::get('/master-data', [App\Http\Controllers\DataMasterController::class, 'index'])->name('master.index');
         Route::get('/master-office', [App\Http\Controllers\DataMasterController::class, 'masterOffice'])->name('master.office');
-        Route::get('/master-employee', [App\Http\Controllers\DataMasterController::class, 'masterEmployee'])->name('master.employee');
     });
+    Route::get('/master-employee', [App\Http\Controllers\DataMasterController::class, 'masterEmployee'])->name('master.employee')->middleware('permission:view-master-data|view-employees');
 
     // Role Management
     Route::middleware('permission:manage-roles')->group(function () {
@@ -164,9 +164,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::resource('assets', App\Http\Controllers\AsetController::class)->middleware('permission:manage-assets');
     Route::resource('employment-statuses', App\Http\Controllers\StatusPegawaiController::class)->middleware('permission:manage-employee-statuses');
-    Route::resource('employees', App\Http\Controllers\PegawaiController::class)->middleware('permission:manage-employees');
-    Route::get('employees/{employee}/id-card', [App\Http\Controllers\PegawaiController::class, 'idCard'])->name('employees.id-card')->middleware('permission:manage-employees');
-    Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back')->middleware('permission:manage-employees');
+    Route::get('employees', [App\Http\Controllers\PegawaiController::class, 'index'])->name('employees.index')->middleware('permission:view-employees|manage-employees');
+    Route::get('employees/{employee}', [App\Http\Controllers\PegawaiController::class, 'show'])->name('employees.show')->middleware('permission:view-employees|manage-employees');
+    Route::resource('employees', App\Http\Controllers\PegawaiController::class)->except(['index', 'show'])->middleware('permission:manage-employees');
+    Route::get('employees/{employee}/id-card', [App\Http\Controllers\PegawaiController::class, 'idCard'])->name('employees.id-card')->middleware('permission:view-employees|manage-employees');
+    Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back')->middleware('permission:view-employees|manage-employees');
 
     Route::resource('mutations', App\Http\Controllers\MutasiPegawaiController::class)->except(['edit', 'update', 'destroy'])->middleware('permission:manage-mutations');
     Route::get('mutations/{mutation}/print', [App\Http\Controllers\MutasiPegawaiController::class, 'print'])->name('mutations.print')->middleware('permission:manage-mutations');
@@ -176,11 +178,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('holidays', App\Http\Controllers\HariLiburController::class)->only(['index', 'store', 'destroy'])->middleware('permission:manage-holidays');
 
     // Monitoring Presensi
-    Route::middleware('permission:manage-attendance')->group(function () {
-        Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index');
-        Route::get('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'show'])->name('admin.presensi.show');
-        Route::put('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'update'])->name('admin.presensi.update');
-    });
+    Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index')->middleware('permission:view-attendance|manage-attendance');
+    Route::get('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'show'])->name('admin.presensi.show')->middleware('permission:view-attendance|manage-attendance');
+    Route::put('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'update'])->name('admin.presensi.update')->middleware('permission:manage-attendance');
 
     // Pengajuan Izin / Sakit
     Route::middleware('permission:manage-izin')->group(function () {
