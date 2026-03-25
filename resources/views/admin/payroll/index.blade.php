@@ -290,10 +290,13 @@
                                         </div>
 
                                         <div class="space-y-1">
-                                            <label class="text-[10px] font-bold text-zinc-400 uppercase">Jumlah Hari
-                                                THR</label>
-                                            <input type="number" name="thr_days" value="0" required
-                                                class="h-10 w-full rounded-lg border border-zinc-200 px-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                            <label class="text-[10px] font-bold text-zinc-400 uppercase">Nominal THR</label>
+                                            <div class="relative">
+                                                <span
+                                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-400">Rp</span>
+                                                <input type="number" name="thr" value="0" required
+                                                    class="h-10 w-full rounded-lg border border-zinc-200 pl-8 pr-3 text-sm outline-none focus:ring-2 focus:ring-amber-500">
+                                            </div>
                                         </div>
 
                                         <div class="space-y-1">

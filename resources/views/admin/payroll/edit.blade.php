@@ -104,26 +104,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-6">
                         <div class="space-y-2">
-                            <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">Jumlah Hari THR</label>
+                            <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">Nominal Tunjangan Hari Raya (THR)</label>
                             <div class="relative group">
-                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-focus-within:text-zinc-900">
-                                    <i data-lucide="calendar-range" class="h-5 w-5"></i>
+                                <div class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-zinc-400 transition-colors group-focus-within:text-zinc-900">
+                                    Rp
                                 </div>
-                                <input type="number" name="thr_days" id="thr_days"
-                                    value="{{ old('thr_days', $payroll->thr_days) }}" required
+                                <input type="number" name="thr" id="thr"
+                                    value="{{ old('thr', $payroll->thr) }}" required
                                     class="block w-full rounded-2xl border-2 border-zinc-100 bg-white pl-12 pr-4 py-4 text-sm font-black focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 outline-none transition-all placeholder:text-zinc-300">
                             </div>
-                            <div class="p-4 rounded-2xl bg-orange-50 border border-orange-100 mt-3 shadow-sm shadow-orange-100/50" id="thr_preview_box">
-                                <p class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-1">Estimasi Nominal THR</p>
-                                <p class="text-sm font-black text-orange-950 italic" id="thr_preview_val">
-                                    Rp {{ number_format($payroll->thr, 0, ',', '.') }}
-                                </p>
-                                <p class="text-[9px] text-orange-700/60 mt-1 font-bold">
-                                    Formula: (Gaji Pokok + Tunjangan)/30 x <span id="days_val">{{ $payroll->thr_days }}</span> Hari
-                                </p>
-                            </div>
                         </div>
-
                         <div class="space-y-2">
                             <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">Nominal Bonus Insentif</label>
                             <div class="relative group">
@@ -155,23 +145,6 @@
                         Batalkan
                     </a>
                 </div>
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const thrDaysInput = document.getElementById('thr_days');
-                        const thrPreviewVal = document.getElementById('thr_preview_val');
-                        const daysVal = document.getElementById('days_val');
-                        const gajiPokok = {{ $payroll->gaji_pokok }};
-                        const tunjangan = {{ $payroll->tunjangan_jabatan }};
-
-                        thrDaysInput.addEventListener('input', function() {
-                            const days = parseInt(this.value) || 0;
-                            const estimate = days * ((gajiPokok / 30) + (tunjangan / 30));
-                            daysVal.textContent = days;
-                            thrPreviewVal.textContent = `Rp ${new Intl.NumberFormat('id-ID').format(Math.round(estimate))}`;
-                        });
-                    });
-                </script>
             </form>
         </div>
     </div>

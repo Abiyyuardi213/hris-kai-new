@@ -205,16 +205,12 @@ class PayrollController extends Controller
     public function update(Request $request, Payroll $payroll)
     {
         $request->validate([
-            'thr_days' => 'required|integer|min:0',
+            'thr' => 'required|numeric|min:0',
             'bonus' => 'required|numeric|min:0',
             'keterangan_bonus' => 'nullable|string|max:255',
         ]);
 
-        // If it's a THR type record, the base salary is fetched from jabatan because its own field is 0
-        $gajiPokok = $payroll->type === 'thr' ? $payroll->pegawai->jabatan->gaji_pokok : $payroll->gaji_pokok;
-        $tunjanganJabatan = $payroll->type === 'thr' ? $payroll->pegawai->jabatan->tunjangan : $payroll->tunjangan_jabatan;
-
-        $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $request->thr_days;
+        $thr = $request->thr;
 
         if ($payroll->type === 'thr') {
             $totalGaji = $thr + $request->bonus;
@@ -235,7 +231,7 @@ class PayrollController extends Controller
         }
 
         $payroll->update([
-            'thr_days' => $request->thr_days,
+            'thr_days' => 0,
             'thr' => $thr,
             'bonus' => $request->bonus,
             'keterangan_bonus' => $request->keterangan_bonus,
@@ -251,7 +247,7 @@ class PayrollController extends Controller
         $request->validate([
             'month' => 'required|integer|between:1,12',
             'year' => 'required|integer|min:2020',
-            'thr_days' => 'required|integer|min:0',
+            'thr' => 'required|numeric|min:0',
             'bonus' => 'required|numeric|min:0',
             'keterangan_bonus' => 'nullable|string|max:255',
         ]);
@@ -277,10 +273,7 @@ class PayrollController extends Controller
                 ->where('type', 'thr')
                 ->first();
 
-            $gajiPokok = $employee->jabatan->gaji_pokok;
-            $tunjanganJabatan = $employee->jabatan->tunjangan;
-
-            $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $request->thr_days;
+            $thr = $request->thr;
             $totalGaji = $thr + $request->bonus;
 
             if ($payroll) {
@@ -289,7 +282,7 @@ class PayrollController extends Controller
                 $payroll->update([
                     'status' => $totalGaji > $totalGajiBefore ? 'pending' : $payroll->status,
                     'paid_at' => $totalGaji > $totalGajiBefore ? null : $payroll->paid_at,
-                    'thr_days' => $request->thr_days,
+                    'thr_days' => 0,
                     'thr' => $thr,
                     'bonus' => $request->bonus,
                     'keterangan_bonus' => $request->keterangan_bonus,
@@ -316,7 +309,7 @@ class PayrollController extends Controller
                     'er_jamsostek_jkm' => 0,
                     'tunjangan_jpk_pensiun' => 0,
                     'tunjangan_jp_bpjs' => 0,
-                    'thr_days' => $request->thr_days,
+                    'thr_days' => 0,
                     'thr' => $thr,
                     'bonus' => $request->bonus,
                     'keterangan_bonus' => $request->keterangan_bonus,
