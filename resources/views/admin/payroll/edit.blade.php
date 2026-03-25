@@ -2,146 +2,178 @@
 @section('title', 'Edit Payroll')
 
 @section('content')
-    <div class="flex flex-col space-y-6 max-w-2xl mx-auto">
+    <div class="flex flex-col space-y-6 max-w-4xl mx-auto pb-12">
         <!-- Header -->
-        <div class="flex items-center gap-4">
-            <a href="{{ route('admin.payroll.index', ['month' => $payroll->month, 'year' => $payroll->year]) }}"
-                class="h-10 w-10 flex items-center justify-center rounded-full bg-white border border-zinc-100 text-zinc-400 hover:text-zinc-900 transition-all shadow-sm">
-                <i data-lucide="arrow-left" class="h-5 w-5"></i>
-            </a>
-            <div>
-                <h2 class="text-2xl font-bold tracking-tight text-zinc-900">Edit Payroll:
-                    {{ $payroll->pegawai->nama_lengkap }}</h2>
-                <p class="text-sm text-zinc-500">Periode:
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.payroll.index', ['month' => $payroll->month, 'year' => $payroll->year]) }}"
+                    class="h-10 w-10 flex items-center justify-center rounded-xl bg-white border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-300 transition-all shadow-sm">
+                    <i data-lucide="arrow-left" class="h-5 w-5"></i>
+                </a>
+                <div>
+                    <h2 class="text-3xl font-black tracking-tight text-zinc-900 uppercase italic">Edit Payroll</h2>
+                    <p class="text-sm text-zinc-500 font-medium">Monitoring & Penyesuaian Komponen Gaji Pegawai</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-bold text-zinc-400 uppercase tracking-widest">Periode</p>
+                <p class="text-lg font-black text-zinc-900">
                     {{ Carbon\Carbon::createFromDate($payroll->year, $payroll->month, 1)->translatedFormat('F') }}
-                    {{ $payroll->year }}</p>
+                    {{ $payroll->year }}
+                </p>
             </div>
         </div>
 
-        <div class="bg-white rounded-3xl border border-zinc-100 shadow-xl shadow-zinc-200/50 overflow-hidden">
-            <div class="p-8 border-b border-zinc-50 bg-zinc-50/30">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Gaji Pokok</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->gaji_pokok, 0, ',', '.') }}</p>
+        <div class="bg-white rounded-[2rem] border border-zinc-200 shadow-2xl shadow-zinc-200/50 overflow-hidden">
+            <!-- Employee Info Header -->
+            <div class="p-8 border-b border-zinc-100 bg-zinc-50/50 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-2xl bg-zinc-900 flex items-center justify-center text-white">
+                        <i data-lucide="user" class="h-6 w-6"></i>
                     </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Jabatan</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jabatan, 0, ',', '.') }}</p>
+                    <div>
+                        <h3 class="font-black text-zinc-900 uppercase italic leading-tight">{{ $payroll->pegawai->nama_lengkap }}</h3>
+                        <p class="text-xs font-bold text-zinc-500 uppercase tracking-widest">{{ $payroll->pegawai->jabatan->name ?? 'Staff' }} • {{ $payroll->pegawai->nip }}</p>
                     </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Perumahan</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_perumahan, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Admin Bank</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_admin_bank, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. JPK (4%)</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jpk, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Tunj. Pajak</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_pajak, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">ER JKK (0.24%)</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->er_jamsostek_jkk, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">ER JHT (3.7%)</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->er_jamsostek_jht, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">ER JKM (0.3%)</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->er_jamsostek_jkm, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">JPK Pensiun (2%)</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jpk_pensiun, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">JP BPJS (2%)</p>
-                        <p class="font-bold text-zinc-900">Rp {{ number_format($payroll->tunjangan_jp_bpjs, 0, ',', '.') }}</p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest text-emerald-600">Total Earnings</p>
-                        <p class="font-bold text-emerald-600">Rp
-                            {{ number_format($payroll->total_gaji - $payroll->thr - $payroll->bonus, 0, ',', '.') }}
-                        </p>
-                    </div>
+                </div>
+                <div class="px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100">
+                    <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Status Payroll</span>
+                    <p class="text-xs font-bold text-emerald-700 uppercase">{{ $payroll->status }}</p>
                 </div>
             </div>
 
-            <form action="{{ route('admin.payroll.update', $payroll->id) }}" method="POST" class="p-8 space-y-6">
+            <div class="p-0">
+                <table class="w-full text-sm border-collapse">
+                    <thead class="bg-zinc-50/50">
+                        <tr>
+                            <th class="px-8 py-4 text-left font-black text-zinc-400 uppercase tracking-widest text-[10px] border-b border-zinc-100">No</th>
+                            <th class="px-8 py-4 text-left font-black text-zinc-400 uppercase tracking-widest text-[10px] border-b border-zinc-100">Komponen Transaksi</th>
+                            <th class="px-8 py-4 text-right font-black text-zinc-400 uppercase tracking-widest text-[10px] border-b border-zinc-100 whitespace-nowrap">Nilai Komponen (IDR)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-100">
+                        @php
+                            $components = [
+                                ['label' => 'Gaji Pokok', 'value' => $payroll->gaji_pokok],
+                                ['label' => 'Tunjangan Jabatan', 'value' => $payroll->tunjangan_jabatan],
+                                ['label' => 'Tunjangan Perumahan', 'value' => $payroll->tunjangan_perumahan],
+                                ['label' => 'Tunjangan Admin Bank', 'value' => $payroll->tunjangan_admin_bank],
+                                ['label' => 'Tunjangan JPK (4%)', 'value' => $payroll->tunjangan_jpk],
+                                ['label' => 'Tunjangan Pajak', 'value' => $payroll->tunjangan_pajak],
+                                ['label' => 'ER Jamsostek JKK (0.24%)', 'value' => $payroll->er_jamsostek_jkk],
+                                ['label' => 'ER Jamsostek JHT (3.7%)', 'value' => $payroll->er_jamsostek_jht],
+                                ['label' => 'ER Jamsostek JKM (0.3%)', 'value' => $payroll->er_jamsostek_jkm],
+                                ['label' => 'Tunjangan JPK Pensiun (2%)', 'value' => $payroll->tunjangan_jpk_pensiun],
+                                ['label' => 'Tunjangan JP BPJS (2%)', 'value' => $payroll->tunjangan_jp_bpjs],
+                            ];
+                        @endphp
+
+                        @foreach($components as $index => $comp)
+                        <tr class="hover:bg-zinc-50/30 transition-colors">
+                            <td class="px-8 py-4 text-zinc-400 font-bold w-16 italic">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
+                            <td class="px-8 py-4 font-bold text-zinc-900 group-hover:pl-10 transition-all">{{ $comp['label'] }}</td>
+                            <td class="px-8 py-4 text-right font-black text-zinc-700">Rp {{ number_format($comp['value'], 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="bg-zinc-900 text-white">
+                        <tr>
+                            <td colspan="2" class="px-8 py-6 text-right">
+                                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 block mb-1">Subtotal Current Earnings</span>
+                                <span class="text-sm font-bold opacity-80 uppercase italic">Gaji & Tunjangan Bulanan</span>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                                <span class="text-2xl font-black italic tracking-tighter">
+                                    Rp {{ number_format($payroll->total_gaji - $payroll->thr - $payroll->bonus, 0, ',', '.') }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <form action="{{ route('admin.payroll.update', $payroll->id) }}" method="POST" class="p-8 bg-zinc-50/30">
                 @csrf
                 @method('PUT')
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="h-1 w-8 bg-orange-500 rounded-full"></div>
+                    <h4 class="text-xs font-black text-zinc-900 uppercase tracking-widest italic">Penyesuaian THR & Bonus</h4>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">Jumlah Hari
-                                THR</label>
-                            <div class="relative">
-                                <i data-lucide="calendar-check"
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 h-4 w-4"></i>
+                            <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">Jumlah Hari THR</label>
+                            <div class="relative group">
+                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors group-focus-within:text-zinc-900">
+                                    <i data-lucide="calendar-range" class="h-5 w-5"></i>
+                                </div>
                                 <input type="number" name="thr_days" id="thr_days"
                                     value="{{ old('thr_days', $payroll->thr_days) }}" required
-                                    class="block w-full rounded-2xl border border-zinc-100 bg-zinc-50/50 pl-11 pr-4 py-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
+                                    class="block w-full rounded-2xl border-2 border-zinc-100 bg-white pl-12 pr-4 py-4 text-sm font-black focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 outline-none transition-all placeholder:text-zinc-300">
                             </div>
-                            <p class="text-[10px] text-zinc-400 mt-1 ml-1" id="thr_preview">
-                                Estimasi: Rp {{ number_format((($payroll->gaji_pokok / 30) + ($payroll->tunjangan_jabatan / 30)) * $payroll->thr_days, 0, ',', '.') }}
-                                ((Gaji Pokok + Tunjangan)/30 x <span id="days_val">{{ $payroll->thr_days }}</span> Hari)
-                            </p>
+                            <div class="p-4 rounded-2xl bg-orange-50 border border-orange-100 mt-3 shadow-sm shadow-orange-100/50" id="thr_preview_box">
+                                <p class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mb-1">Estimasi Nominal THR</p>
+                                <p class="text-sm font-black text-orange-950 italic" id="thr_preview_val">
+                                    Rp {{ number_format($payroll->thr, 0, ',', '.') }}
+                                </p>
+                                <p class="text-[9px] text-orange-700/60 mt-1 font-bold">
+                                    Formula: (Gaji Pokok + Tunjangan)/30 x <span id="days_val">{{ $payroll->thr_days }}</span> Hari
+                                </p>
+                            </div>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">Bonus</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-bold">Rp</span>
+                            <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">Nominal Bonus Insentif</label>
+                            <div class="relative group">
+                                <div class="absolute left-4 top-1/2 -translate-y-1/2 font-black text-zinc-400 transition-colors group-focus-within:text-zinc-900">Rp</div>
                                 <input type="number" name="bonus" value="{{ old('bonus', $payroll->bonus) }}" required
-                                    class="block w-full rounded-2xl border border-zinc-100 bg-zinc-50/50 pl-11 pr-4 py-4 text-sm font-bold focus:ring-2 focus:ring-zinc-900 outline-none transition-all">
+                                    class="block w-full rounded-2xl border-2 border-zinc-100 bg-white pl-12 pr-4 py-4 text-sm font-black focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 outline-none transition-all">
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">Keterangan
-                            Bonus</label>
-                        <textarea name="keterangan_bonus" rows="3"
-                            class="block w-full rounded-2xl border border-zinc-100 bg-zinc-50/50 px-4 py-4 text-sm font-medium focus:ring-2 focus:ring-zinc-900 outline-none transition-all placeholder:text-zinc-400"
-                            placeholder="Contoh: Bonus Kinerja Akhir Tahun atau THR Idul Fitri">{{ old('keterangan_bonus', $payroll->keterangan_bonus) }}</textarea>
+                    <div class="flex flex-col h-full">
+                        <div class="space-y-2 flex-1">
+                            <label class="text-[10px] font-black text-zinc-400 uppercase tracking-[0.2em] ml-1">Keterangan / Memo Bonus</label>
+                            <textarea name="keterangan_bonus" rows="5"
+                                class="block w-full h-[calc(100%-24px)] rounded-2xl border-2 border-zinc-100 bg-white px-4 py-4 text-sm font-bold focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 outline-none transition-all placeholder:text-zinc-300 resize-none"
+                                placeholder="Tuliskan alasan pemberian bonus (misal: Insentif Tahunan, THR Idul Fitri, dll)">{{ old('keterangan_bonus', $payroll->keterangan_bonus) }}</textarea>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="pt-4 flex gap-4">
-                        <button type="submit"
-                            class="flex-[2] px-6 py-4 rounded-2xl bg-zinc-900 text-sm font-bold text-white hover:bg-zinc-800 transition-all active:scale-[0.98] shadow-lg shadow-zinc-200">
-                            Simpan Perubahan
-                        </button>
-                        <a href="{{ route('admin.payroll.index', ['month' => $payroll->month, 'year' => $payroll->year]) }}"
-                            class="flex-1 px-6 py-4 rounded-2xl bg-white border border-zinc-200 text-sm font-bold text-zinc-700 hover:bg-zinc-100 transition-all text-center">
-                            Batal
-                        </a>
-                    </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const thrDaysInput = document.getElementById('thr_days');
-                            const thrPreview = document.getElementById('thr_preview');
-                            const daysVal = document.getElementById('days_val');
-                            const gajiPokok = {{ $payroll->gaji_pokok }};
-                            const tunjangan = {{ $payroll->tunjangan_jabatan }};
+                <div class="mt-12 flex flex-col md:flex-row items-center gap-4">
+                    <button type="submit"
+                        class="w-full md:flex-[2] flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-zinc-900 text-sm font-black text-white hover:bg-zinc-800 transition-all active:scale-[0.98] shadow-2xl shadow-zinc-900/20 group uppercase italic tracking-widest">
+                        <span>Perbarui Data Payroll</span>
+                        <i data-lucide="save" class="h-4 w-4 transition-transform group-hover:rotate-12"></i>
+                    </button>
+                    <a href="{{ route('admin.payroll.index', ['month' => $payroll->month, 'year' => $payroll->year]) }}"
+                        class="w-full md:flex-1 px-8 py-5 rounded-2xl bg-white border-2 border-zinc-100 text-sm font-black text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 transition-all text-center uppercase italic tracking-widest">
+                        Batalkan
+                    </a>
+                </div>
 
-                            thrDaysInput.addEventListener('input', function() {
-                                const days = parseInt(this.value) || 0;
-                                const estimate = days * ((gajiPokok / 30) + (tunjangan / 30));
-                                daysVal.textContent = days;
-                                thrPreview.innerHTML =
-                                    `Estimasi: Rp ${new Intl.NumberFormat('id-ID').format(estimate)} ((Gaji Pokok + Tunjangan)/30 x ${days} Hari)`;
-                            });
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const thrDaysInput = document.getElementById('thr_days');
+                        const thrPreviewVal = document.getElementById('thr_preview_val');
+                        const daysVal = document.getElementById('days_val');
+                        const gajiPokok = {{ $payroll->gaji_pokok }};
+                        const tunjangan = {{ $payroll->tunjangan_jabatan }};
+
+                        thrDaysInput.addEventListener('input', function() {
+                            const days = parseInt(this.value) || 0;
+                            const estimate = days * ((gajiPokok / 30) + (tunjangan / 30));
+                            daysVal.textContent = days;
+                            thrPreviewVal.textContent = `Rp ${new Intl.NumberFormat('id-ID').format(Math.round(estimate))}`;
                         });
-                    </script>
+                    });
+                </script>
             </form>
         </div>
     </div>
 @endsection
+

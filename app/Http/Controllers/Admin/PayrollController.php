@@ -99,15 +99,16 @@ class PayrollController extends Controller
             $tunjanganJpBpjs = $gajiPokok * 0.02;
 
             if ($payroll) {
-                if ($payroll->status === 'paid') {
-                    $countSkippedPaid++;
-                    continue;
-                }
+                // We allow updating even if paid, as some components like salary might be generated after THR
+                $wasPaid = $payroll->status === 'paid';
 
                 $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $payroll->thr_days;
                 $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $payroll->bonus;
 
+                $totalGajiBefore = $payroll->total_gaji;
                 $payroll->update([
+                    'status' => $totalGaji > $totalGajiBefore ? 'pending' : $payroll->status,
+                    'paid_at' => $totalGaji > $totalGajiBefore ? null : $payroll->paid_at,
                     'jumlah_hadir' => $jumlahHadir,
                     'gaji_pokok' => $gajiPokok,
                     'tunjangan_jabatan' => $tunjanganJabatan,
@@ -272,11 +273,15 @@ class PayrollController extends Controller
             $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $request->thr_days;
 
             if ($payroll) {
-                if ($payroll->status === 'paid') continue;
+                // We allow updating even if paid
+                $wasPaid = $payroll->status === 'paid';
 
                 $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $request->bonus;
 
+                $totalGajiBefore = $payroll->total_gaji;
                 $payroll->update([
+                    'status' => $totalGaji > $totalGajiBefore ? 'pending' : $payroll->status,
+                    'paid_at' => $totalGaji > $totalGajiBefore ? null : $payroll->paid_at,
                     'tunjangan_perumahan' => $tunjanganPerumahan,
                     'tunjangan_admin_bank' => $tunjanganAdminBank,
                     'tunjangan_jpk' => $tunjanganJpk,
