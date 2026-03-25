@@ -78,6 +78,7 @@
                             <tr>
                                 <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
                                 <th class="px-6 py-4 font-medium">Nama Jabatan</th>
+                                <th class="px-6 py-4 font-medium text-right">Gaji Pokok</th>
                                 <th class="px-6 py-4 font-medium">Deskripsi</th>
                                 <th class="px-6 py-4 font-medium text-right w-[120px]">Aksi</th>
                             </tr>
@@ -93,6 +94,9 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="font-medium text-zinc-900">{{ $position->name }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right font-medium text-zinc-900 whitespace-nowrap">
+                                        Rp {{ number_format($position->gaji_pokok, 0, ',', '.') }}
                                     </td>
                                     <td class="px-6 py-4 text-zinc-500">
                                         {{ Str::limit($position->description ?? '-', 50) }}
