@@ -99,7 +99,16 @@
                             <tr class="group hover:bg-zinc-50/50 transition-colors">
                                 <td class="px-6 py-4">
                                     <div class="font-bold text-zinc-900">{{ $payroll->pegawai->nama_lengkap }}</div>
-                                    <div class="text-[10px] text-zinc-500">NIP: {{ $payroll->pegawai->nip }}</div>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <span class="text-[10px] text-zinc-500">NIP: {{ $payroll->pegawai->nip }}</span>
+                                        @if ($payroll->type === 'payroll')
+                                            <span
+                                                class="px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[8px] font-bold uppercase tracking-wider">Payroll</span>
+                                        @else
+                                            <span
+                                                class="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[8px] font-bold uppercase tracking-wider">{{ strtoupper($payroll->type) }}</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-xs text-zinc-600">{{ $payroll->pegawai->jabatan->name ?? '-' }}</div>

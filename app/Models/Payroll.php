@@ -17,6 +17,7 @@ class Payroll extends Model
         'pegawai_id',
         'month',
         'year',
+        'type',
         'jumlah_hadir',
         'gaji_pokok',
         'tunjangan_jabatan',
