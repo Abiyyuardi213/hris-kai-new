@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             'password' => 'password',
             'role_id' => $adminRole->id,
             'status' => true,
-            'office_id' => 1,
+            'kantor_id' => 1,
         ]);
 
         User::create([

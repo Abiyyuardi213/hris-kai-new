@@ -31,6 +31,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'manage-positions', 'display_name' => 'Kelola Data Jabatan', 'module' => 'Master Data'],
             ['name' => 'manage-employee-statuses', 'display_name' => 'Kelola Status Pegawai', 'module' => 'Master Data'],
             ['name' => 'manage-cities', 'display_name' => 'Kelola Data Kota', 'module' => 'Master Data'],
+            ['name' => 'view-master-data', 'display_name' => 'Menu Master Data', 'module' => 'Master Data'],
 
             // Employees
             ['name' => 'view-employees', 'display_name' => 'Melihat Daftar Pegawai', 'module' => 'Employees'],
@@ -58,6 +59,25 @@ class PermissionSeeder extends Seeder
 
             // Announcements
             ['name' => 'manage-announcements', 'display_name' => 'Kelola Pengumuman', 'module' => 'Internal'],
+
+            // Payroll
+            ['name' => 'manage-payroll', 'display_name' => 'Kelola Payroll', 'module' => 'Payroll'],
+            ['name' => 'manage-project-payroll', 'display_name' => 'Kelola Payroll Project', 'module' => 'Payroll'],
+            ['name' => 'manage-reimbursements', 'display_name' => 'Kelola Reimbursement', 'module' => 'Payroll'],
+
+            // Performance
+            ['name' => 'manage-performance', 'display_name' => 'Kelola Penilaian Kinerja', 'module' => 'Performance'],
+
+            // Recruitment
+            ['name' => 'manage-recruitment', 'display_name' => 'Kelola Rekrutmen', 'module' => 'Recruitment'],
+
+            // More Employee Features
+            ['name' => 'manage-perjalanan-dinas', 'display_name' => 'Kelola Perjalanan Dinas', 'module' => 'Employees'],
+            ['name' => 'manage-sanctions', 'display_name' => 'Kelola Sanksi Kedisiplinan', 'module' => 'Employees'],
+            ['name' => 'manage-offboardings', 'display_name' => 'Kelola Offboarding', 'module' => 'Employees'],
+
+            // Internal
+            ['name' => 'manage-events', 'display_name' => 'Kelola Agenda/Event', 'module' => 'Internal'],
         ];
 
         foreach ($permissions as $permission) {

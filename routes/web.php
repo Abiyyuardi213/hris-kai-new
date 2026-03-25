@@ -135,9 +135,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 
-    Route::get('/master-data', [App\Http\Controllers\DataMasterController::class, 'index'])->name('master.index');
-    Route::get('/master-office', [App\Http\Controllers\DataMasterController::class, 'masterOffice'])->name('master.office');
-    Route::get('/master-employee', [App\Http\Controllers\DataMasterController::class, 'masterEmployee'])->name('master.employee');
+    Route::middleware('permission:view-master-data')->group(function () {
+        Route::get('/master-data', [App\Http\Controllers\DataMasterController::class, 'index'])->name('master.index');
+        Route::get('/master-office', [App\Http\Controllers\DataMasterController::class, 'masterOffice'])->name('master.office');
+        Route::get('/master-employee', [App\Http\Controllers\DataMasterController::class, 'masterEmployee'])->name('master.employee');
+    });
 
     // Role Management
     Route::middleware('permission:manage-roles')->group(function () {
@@ -174,91 +176,113 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('holidays', App\Http\Controllers\HariLiburController::class)->only(['index', 'store', 'destroy'])->middleware('permission:manage-holidays');
 
     // Monitoring Presensi
-    Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index');
-    Route::get('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'show'])->name('admin.presensi.show');
-    Route::put('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'update'])->name('admin.presensi.update');
+    Route::middleware('permission:manage-attendance')->group(function () {
+        Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index');
+        Route::get('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'show'])->name('admin.presensi.show');
+        Route::put('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'update'])->name('admin.presensi.update');
+    });
 
     // Pengajuan Izin / Sakit
-    Route::get('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'index'])->name('admin.izin.index');
-    Route::post('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'store'])->name('admin.izin.store');
-    Route::patch('/izin/{izin}/status', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'updateStatus'])->name('admin.izin.update-status');
-    Route::get('/izin/{id}/print', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'print'])->name('admin.izin.print');
-    Route::delete('/izin/{izin}', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'destroy'])->name('admin.izin.destroy');
+    Route::middleware('permission:manage-izin')->group(function () {
+        Route::get('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'index'])->name('admin.izin.index');
+        Route::post('/izin', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'store'])->name('admin.izin.store');
+        Route::patch('/izin/{izin}/status', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'updateStatus'])->name('admin.izin.update-status');
+        Route::get('/izin/{id}/print', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'print'])->name('admin.izin.print');
+        Route::delete('/izin/{izin}', [App\Http\Controllers\Admin\IzinPegawaiController::class, 'destroy'])->name('admin.izin.destroy');
+    });
 
     // Manajemen Lembur
-    Route::get('/overtime', [App\Http\Controllers\Admin\OvertimeController::class, 'index'])->name('admin.overtime.index');
-    Route::post('/overtime', [App\Http\Controllers\Admin\OvertimeController::class, 'store'])->name('admin.overtime.store');
-    Route::patch('/overtime/{overtime}/status', [App\Http\Controllers\Admin\OvertimeController::class, 'updateStatus'])->name('admin.overtime.update-status');
-    Route::delete('/overtime/{overtime}', [App\Http\Controllers\Admin\OvertimeController::class, 'destroy'])->name('admin.overtime.destroy');
+    Route::middleware('permission:manage-overtime')->group(function () {
+        Route::get('/overtime', [App\Http\Controllers\Admin\OvertimeController::class, 'index'])->name('admin.overtime.index');
+        Route::post('/overtime', [App\Http\Controllers\Admin\OvertimeController::class, 'store'])->name('admin.overtime.store');
+        Route::patch('/overtime/{overtime}/status', [App\Http\Controllers\Admin\OvertimeController::class, 'updateStatus'])->name('admin.overtime.update-status');
+        Route::delete('/overtime/{overtime}', [App\Http\Controllers\Admin\OvertimeController::class, 'destroy'])->name('admin.overtime.destroy');
+    });
 
     // Manajemen Payroll
-    Route::get('/payroll', [App\Http\Controllers\Admin\PayrollController::class, 'index'])->name('admin.payroll.index');
-    Route::get('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'generate'])->name('admin.payroll.generate');
-    Route::post('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'processGenerate'])->name('admin.payroll.process-generate');
-    Route::post('/payroll/bulk-update', [App\Http\Controllers\Admin\PayrollController::class, 'bulkUpdate'])->name('admin.payroll.bulk-update');
-    Route::get('/payroll/{payroll}/edit', [App\Http\Controllers\Admin\PayrollController::class, 'edit'])->name('admin.payroll.edit');
-    Route::put('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'update'])->name('admin.payroll.update');
-    Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
-    Route::delete('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'destroy'])->name('admin.payroll.destroy');
+    Route::middleware('permission:manage-payroll')->group(function () {
+        Route::get('/payroll', [App\Http\Controllers\Admin\PayrollController::class, 'index'])->name('admin.payroll.index');
+        Route::get('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'generate'])->name('admin.payroll.generate');
+        Route::post('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'processGenerate'])->name('admin.payroll.process-generate');
+        Route::post('/payroll/bulk-update', [App\Http\Controllers\Admin\PayrollController::class, 'bulkUpdate'])->name('admin.payroll.bulk-update');
+        Route::get('/payroll/{payroll}/edit', [App\Http\Controllers\Admin\PayrollController::class, 'edit'])->name('admin.payroll.edit');
+        Route::put('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'update'])->name('admin.payroll.update');
+        Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
+        Route::delete('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'destroy'])->name('admin.payroll.destroy');
+    });
 
     // Manajemen Payroll Project
-    Route::get('/project-payroll', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'index'])->name('admin.project-payroll.index');
-    Route::get('/project-payroll/create', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'create'])->name('admin.project-payroll.create');
-    Route::post('/project-payroll', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'store'])->name('admin.project-payroll.store');
-    Route::get('/project-payroll/{projectPayroll}/edit', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'edit'])->name('admin.project-payroll.edit');
-    Route::put('/project-payroll/{projectPayroll}', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'update'])->name('admin.project-payroll.update');
-    Route::patch('/project-payroll/{projectPayroll}/status', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'updateStatus'])->name('admin.project-payroll.update-status');
-    Route::delete('/project-payroll/{projectPayroll}', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'destroy'])->name('admin.project-payroll.destroy');
+    Route::middleware('permission:manage-project-payroll')->group(function () {
+        Route::get('/project-payroll', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'index'])->name('admin.project-payroll.index');
+        Route::get('/project-payroll/create', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'create'])->name('admin.project-payroll.create');
+        Route::post('/project-payroll', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'store'])->name('admin.project-payroll.store');
+        Route::get('/project-payroll/{projectPayroll}/edit', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'edit'])->name('admin.project-payroll.edit');
+        Route::put('/project-payroll/{projectPayroll}', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'update'])->name('admin.project-payroll.update');
+        Route::patch('/project-payroll/{projectPayroll}/status', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'updateStatus'])->name('admin.project-payroll.update-status');
+        Route::delete('/project-payroll/{projectPayroll}', [App\Http\Controllers\Admin\ProjectPayrollController::class, 'destroy'])->name('admin.project-payroll.destroy');
+    });
 
     // Perjalanan Dinas
-    Route::get('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'index'])->name('admin.perjalanan_dinas.index');
-    Route::get('/perjalanan-dinas/create', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'create'])->name('admin.perjalanan_dinas.create');
-    Route::post('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'store'])->name('admin.perjalanan_dinas.store');
-    Route::get('/perjalanan-dinas/{id}', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'show'])->name('admin.perjalanan_dinas.show');
-    Route::patch('/perjalanan-dinas/{id}/status', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'updateStatus'])->name('admin.perjalanan_dinas.update-status');
-    Route::delete('/perjalanan-dinas/{id}', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'destroy'])->name('admin.perjalanan_dinas.destroy');
+    Route::middleware('permission:manage-perjalanan-dinas')->group(function () {
+        Route::get('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'index'])->name('admin.perjalanan_dinas.index');
+        Route::get('/perjalanan-dinas/create', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'create'])->name('admin.perjalanan_dinas.create');
+        Route::post('/perjalanan-dinas', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'store'])->name('admin.perjalanan_dinas.store');
+        Route::get('/perjalanan-dinas/{id}', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'show'])->name('admin.perjalanan_dinas.show');
+        Route::patch('/perjalanan-dinas/{id}/status', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'updateStatus'])->name('admin.perjalanan_dinas.update-status');
+        Route::delete('/perjalanan-dinas/{id}', [App\Http\Controllers\Admin\PerjalananDinasController::class, 'destroy'])->name('admin.perjalanan_dinas.destroy');
+    });
 
     // Performance Appraisal (KPI)
-    Route::get('/performance', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'index'])->name('admin.performance.index');
-    Route::get('/performance/create', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'create'])->name('admin.performance.create');
-    Route::post('/performance', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'store'])->name('admin.performance.store');
-    Route::get('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'show'])->name('admin.performance.show');
-    Route::get('/performance/{id}/edit', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'edit'])->name('admin.performance.edit');
-    Route::patch('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'update'])->name('admin.performance.update');
-    Route::get('/performance/{id}/print', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'print'])->name('admin.performance.print');
-    Route::delete('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'destroy'])->name('admin.performance.destroy');
+    Route::middleware('permission:manage-performance')->group(function () {
+        Route::get('/performance', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'index'])->name('admin.performance.index');
+        Route::get('/performance/create', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'create'])->name('admin.performance.create');
+        Route::post('/performance', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'store'])->name('admin.performance.store');
+        Route::get('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'show'])->name('admin.performance.show');
+        Route::get('/performance/{id}/edit', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'edit'])->name('admin.performance.edit');
+        Route::patch('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'update'])->name('admin.performance.update');
+        Route::get('/performance/{id}/print', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'print'])->name('admin.performance.print');
+        Route::delete('/performance/{id}', [App\Http\Controllers\Admin\PerformanceAppraisalController::class, 'destroy'])->name('admin.performance.destroy');
+    });
 
     // Disciplinary Sanctions
-    Route::resource('sanctions', App\Http\Controllers\Admin\DisciplinarySanctionController::class)->names('admin.sanctions')->only(['index', 'create', 'store', 'show', 'destroy']);
-    Route::get('sanctions/{sanction}/print', [App\Http\Controllers\Admin\DisciplinarySanctionController::class, 'print'])->name('admin.sanctions.print');
+    Route::middleware('permission:manage-sanctions')->group(function () {
+        Route::resource('sanctions', App\Http\Controllers\Admin\DisciplinarySanctionController::class)->names('admin.sanctions')->only(['index', 'create', 'store', 'show', 'destroy']);
+        Route::get('sanctions/{sanction}/print', [App\Http\Controllers\Admin\DisciplinarySanctionController::class, 'print'])->name('admin.sanctions.print');
+    });
 
     // Announcements
-    Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->names('admin.announcements');
+    Route::resource('announcements', App\Http\Controllers\Admin\AnnouncementController::class)->names('admin.announcements')->middleware('permission:manage-announcements');
 
     // Events (Calendar)
-    Route::resource('events', App\Http\Controllers\Admin\EventController::class)->names('admin.events');
+    Route::resource('events', App\Http\Controllers\Admin\EventController::class)->names('admin.events')->middleware('permission:manage-events');
 
     // Reimbursements
-    Route::get('/reimbursements', [App\Http\Controllers\Admin\ReimbursementController::class, 'index'])->name('admin.reimbursements.index');
-    Route::get('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'show'])->name('admin.reimbursements.show');
-    Route::patch('/reimbursements/{id}/status', [App\Http\Controllers\Admin\ReimbursementController::class, 'updateStatus'])->name('admin.reimbursements.update-status');
-    Route::delete('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'destroy'])->name('admin.reimbursements.destroy');
+    Route::middleware('permission:manage-reimbursements')->group(function () {
+        Route::get('/reimbursements', [App\Http\Controllers\Admin\ReimbursementController::class, 'index'])->name('admin.reimbursements.index');
+        Route::get('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'show'])->name('admin.reimbursements.show');
+        Route::patch('/reimbursements/{id}/status', [App\Http\Controllers\Admin\ReimbursementController::class, 'updateStatus'])->name('admin.reimbursements.update-status');
+        Route::delete('/reimbursements/{id}', [App\Http\Controllers\Admin\ReimbursementController::class, 'destroy'])->name('admin.reimbursements.destroy');
+    });
 
     // Recruitment Module
-    Route::get('/recruitment/applications', [App\Http\Controllers\Admin\RecruitmentController::class, 'applications'])->name('admin.recruitment.applications');
-    Route::get('/recruitment/{recruitment}/applicants', [App\Http\Controllers\Admin\RecruitmentController::class, 'showApplicants'])->name('admin.recruitment.applicants.show'); // Add this
-    Route::patch('/recruitment/applications/{application}/status', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateApplicationStatus'])->name('admin.recruitment.applications.status');
-    Route::resource('recruitment', App\Http\Controllers\Admin\RecruitmentController::class)->names('admin.recruitment');
-    Route::resource('candidates', App\Http\Controllers\Admin\CandidateController::class)->names('admin.candidates')->only(['index', 'show', 'destroy']);
-    Route::post('/recruitment/{recruitment}/formations', [App\Http\Controllers\Admin\RecruitmentController::class, 'addFormation'])->name('admin.recruitment.formations.add');
-    Route::patch('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateFormation'])->name('admin.recruitment.formations.update');
-    Route::delete('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'deleteFormation'])->name('admin.recruitment.formations.delete');
+    Route::middleware('permission:manage-recruitment')->group(function () {
+        Route::get('/recruitment/applications', [App\Http\Controllers\Admin\RecruitmentController::class, 'applications'])->name('admin.recruitment.applications');
+        Route::get('/recruitment/{recruitment}/applicants', [App\Http\Controllers\Admin\RecruitmentController::class, 'showApplicants'])->name('admin.recruitment.applicants.show'); // Add this
+        Route::patch('/recruitment/applications/{application}/status', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateApplicationStatus'])->name('admin.recruitment.applications.status');
+        Route::resource('recruitment', App\Http\Controllers\Admin\RecruitmentController::class)->names('admin.recruitment');
+        Route::resource('candidates', App\Http\Controllers\Admin\CandidateController::class)->names('admin.candidates')->only(['index', 'show', 'destroy']);
+        Route::post('/recruitment/{recruitment}/formations', [App\Http\Controllers\Admin\RecruitmentController::class, 'addFormation'])->name('admin.recruitment.formations.add');
+        Route::patch('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'updateFormation'])->name('admin.recruitment.formations.update');
+        Route::delete('/recruitment/formations/{formation}', [App\Http\Controllers\Admin\RecruitmentController::class, 'deleteFormation'])->name('admin.recruitment.formations.delete');
+    });
 
     // Offboarding
-    Route::get('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'index'])->name('admin.offboardings.index');
-    Route::get('/offboarding/create', [App\Http\Controllers\Admin\OffboardingController::class, 'create'])->name('admin.offboardings.create');
-    Route::post('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'store'])->name('admin.offboardings.store');
-    Route::get('/offboarding/{id}', [App\Http\Controllers\Admin\OffboardingController::class, 'show'])->name('admin.offboardings.show');
-    Route::patch('/offboarding/{id}/process', [App\Http\Controllers\Admin\OffboardingController::class, 'updateProcess'])->name('admin.offboardings.update-process');
-    Route::delete('/offboarding/{id}', [App\Http\Controllers\Admin\OffboardingController::class, 'destroy'])->name('admin.offboardings.destroy');
+    Route::middleware('permission:manage-offboardings')->group(function () {
+        Route::get('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'index'])->name('admin.offboardings.index');
+        Route::get('/offboarding/create', [App\Http\Controllers\Admin\OffboardingController::class, 'create'])->name('admin.offboardings.create');
+        Route::post('/offboarding', [App\Http\Controllers\Admin\OffboardingController::class, 'store'])->name('admin.offboardings.store');
+        Route::get('/offboarding/{id}', [App\Http\Controllers\Admin\OffboardingController::class, 'show'])->name('admin.offboardings.show');
+        Route::patch('/offboarding/{id}/process', [App\Http\Controllers\Admin\OffboardingController::class, 'updateProcess'])->name('admin.offboardings.update-process');
+        Route::delete('/offboarding/{id}', [App\Http\Controllers\Admin\OffboardingController::class, 'destroy'])->name('admin.offboardings.destroy');
+    });
 });
