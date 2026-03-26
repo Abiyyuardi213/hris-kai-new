@@ -22,8 +22,9 @@
         <!-- Header -->
         <div class="flex items-center justify-between">
             <h2 class="text-3xl font-bold tracking-tight">Edit Jabatan</h2>
-            <a href="{{ route('positions.index', request()->only('page', 'sort', 'search')) }}"
+            <a href="{{ route('positions.index', request()->only('page', 'sort', 'search')) . '#position-' . $position->id }}"
                 class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+
                 <i data-lucide="arrow-left" class="h-4 w-4"></i>
                 Kembali
             </a>
@@ -140,7 +141,7 @@
                 </div>
 
                 <div class="flex justify-end gap-2 pt-4 border-t">
-                    <a href="{{ route('positions.index', request()->only('page', 'sort', 'search')) }}"
+                    <a href="{{ route('positions.index', request()->only('page', 'sort', 'search')) . '#position-' . $position->id }}"
                         class="inline-flex items-center justify-center rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2">
                         Batal
                     </a>

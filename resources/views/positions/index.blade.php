@@ -1,5 +1,23 @@
 @extends('layouts.app')
 @section('title', 'Jabatan')
+@push('styles')
+    <style>
+        @keyframes highlight {
+            0% {
+                background-color: #fef08a;
+            }
+
+            100% {
+                background-color: transparent;
+            }
+        }
+
+        tr:target {
+            animation: highlight 4s ease-out forwards;
+        }
+
+    </style>
+@endpush
 
 @section('content')
     <div class="flex flex-col space-y-6">
@@ -85,7 +103,7 @@
                         </thead>
                         <tbody class="divide-y divide-zinc-100">
                             @forelse ($positions as $position)
-                                <tr class="group hover:bg-zinc-50/50 transition-colors">
+                                <tr id="position-{{ $position->id }}" class="group hover:bg-zinc-50/50 transition-colors">
                                     <td class="px-6 py-4">
                                         <span
                                             class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">

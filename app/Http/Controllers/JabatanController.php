@@ -140,11 +140,12 @@ class JabatanController extends Controller
             ]);
         }
 
-        return redirect()->route('positions.index', [
+        return redirect()->to(route('positions.index', [
             'page' => $request->page,
             'sort' => $request->sort,
             'search' => $request->search
-        ])->with('success', 'Jabatan berhasil diperbarui dan payroll pending telah disesuaikan');
+        ]) . "#position-{$position->id}")->with('success', 'Jabatan berhasil diperbarui dan payroll pending telah disesuaikan');
+
     }
 
     public function destroy(Jabatan $position)
