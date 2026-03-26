@@ -25,16 +25,17 @@ class JabatanController extends Controller
         $sort = $request->get('sort', 'latest');
         switch ($sort) {
             case 'name_asc':
-                $query->orderBy('name', 'asc');
+                $query->orderBy('name', 'asc')->orderBy('id', 'asc');
                 break;
             case 'name_desc':
-                $query->orderBy('name', 'desc');
+                $query->orderBy('name', 'desc')->orderBy('id', 'desc');
                 break;
             case 'latest':
             default:
-                $query->latest();
+                $query->latest()->orderBy('id', 'desc');
                 break;
         }
+
 
         $positions = $query->paginate(10)->withQueryString();
         return view('positions.index', compact('positions'));
