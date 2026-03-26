@@ -144,7 +144,28 @@ class PegawaiController extends Controller
         return redirect()->route('employees.index')->with('success', 'Pegawai berhasil ditambahkan');
     }
 
+    public function show(Pegawai $employee)
+
+    {
+        $employee->load([
+            'statusPegawai',
+            'shift',
+            'divisi' => function ($q) {
+                $q->withoutGlobalScope('office_access');
+            },
+            'jabatan' => function ($q) {
+                $q->withoutGlobalScope('office_access');
+            },
+            'kantor' => function ($q) {
+                $q->withoutGlobalScope('office_access');
+            }
+        ]);
+
+        return view('employees.show', compact('employee'));
+    }
+
     public function edit(Pegawai $employee)
+
     {
         $statuses = StatusPegawai::all();
         $shifts = ShiftKerja::all();

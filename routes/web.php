@@ -165,8 +165,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::resource('assets', App\Http\Controllers\AsetController::class)->middleware('permission:manage-assets');
     Route::resource('employment-statuses', App\Http\Controllers\StatusPegawaiController::class)->middleware('permission:manage-employee-statuses');
     Route::get('employees', [App\Http\Controllers\PegawaiController::class, 'index'])->name('employees.index')->middleware('permission:view-employees|manage-employees');
-    Route::get('employees/{employee}', [App\Http\Controllers\PegawaiController::class, 'show'])->name('employees.show')->middleware('permission:view-employees|manage-employees');
     Route::resource('employees', App\Http\Controllers\PegawaiController::class)->except(['index', 'show'])->middleware('permission:manage-employees');
+    Route::get('employees/{employee}', [App\Http\Controllers\PegawaiController::class, 'show'])->name('employees.show')->middleware('permission:view-employees|manage-employees');
+
     Route::get('employees/{employee}/id-card', [App\Http\Controllers\PegawaiController::class, 'idCard'])->name('employees.id-card')->middleware('permission:view-employees|manage-employees');
     Route::get('employees/{employee}/id-card-back', [App\Http\Controllers\PegawaiController::class, 'idCardBack'])->name('employees.id-card-back')->middleware('permission:view-employees|manage-employees');
 
