@@ -401,7 +401,17 @@ class PegawaiController extends Controller
     {
         if (!$value) return null;
         if ($value instanceof \DateTime) return $value->format('Y-m-d');
+        
+        $value = trim($value);
+        if (empty($value) || $value === '-') return null;
+
         try {
+            // Try dd/mm/yyyy format specifically
+            if (preg_match('/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/', $value)) {
+                $separator = str_contains($value, '/') ? '/' : '-';
+                return Carbon::createFromFormat("d{$separator}m{$separator}Y", $value)->format('Y-m-d');
+            }
+            
             return Carbon::parse($value)->format('Y-m-d');
         } catch (\Exception $e) {
             return null;

@@ -12,11 +12,7 @@ trait HasOfficeScope
      */
     public static function bootHasOfficeScope()
     {
-        // Check if user is logged in and not running in console (unless testing)
-        // Check if user is logged in and not running in console (unless testing)
-        // Also ensure we are NOT on the login page/route, as this would prevent finding the user to login.
         if (Auth::check() && !app()->runningInConsole() && !request()->routeIs('login') && !request()->routeIs('employee.login')) {
-            // Prevent applying scope to the User model itself to avoid recursion during Auth checks or relationship loading.
             if ((new static) instanceof \App\Models\User) {
                 return;
             }
@@ -24,16 +20,12 @@ trait HasOfficeScope
             /** @var \App\Models\User $user */
             $user = Auth::user();
 
-            // 0. BYPASS: Jika role adalah 'Super Admin', 'Administrator', atau 'Admin',
-            // ATAU jika user tidak memiliki assigned kantor (kantor_id null), anggap sebagai admin pusat.
-            if ($user->role && in_array(strtolower($user->role->role_name), ['super admin', 'administrator', 'admin'])) {
+            if (($user->role && in_array(strtolower($user->role->role_name), ['super admin', 'administrator', 'admin'])) || $user->kantor_id == 2) {
                 return;
             }
 
-            // Dapatkan office ID dari user langsung atau dari pegawai yang terhubung
             $officeId = $user->kantor_id;
 
-            // Fallback ke data pegawai jika user.kantor_id kosong (untuk backward compatibility)
             if (!$officeId) {
                 $employee = $user->employee()->first();
                 if ($employee && $employee->kantor_id) {
@@ -41,17 +33,13 @@ trait HasOfficeScope
                 }
             }
 
-            // Jika masih null, berarti user ini adalah admin pusat (sesuai request: "tidak memiliki kantor_id berarti dia admin")
-            // Maka jangan batasi query (return early)
             if (!$officeId) {
                 return;
             }
 
-            // Jika ada office ID, terapkan scope
             static::addGlobalScope('office_access', function (Builder $builder) use ($officeId) {
                 $instance = $builder->getModel();
 
-                // 1. Check for custom scope method in the model
                 if (method_exists($instance, 'applyOfficeScope')) {
                     $instance->applyOfficeScope($builder, $officeId);
                     return;
