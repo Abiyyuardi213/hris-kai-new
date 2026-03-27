@@ -18,19 +18,23 @@
                     Generate Payroll
                 </a>
 
-                @if ($payrolls->where('status', 'pending')->count() > 0)
+                @if ($pendingCount > 0)
                     <button type="button" onclick="openModal('approveAllModal')"
                         class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors shadow-sm">
                         <i data-lucide="check-check" class="h-4 w-4"></i>
                         Approve All
                     </button>
-                @endif
 
-                @if($payrolls->where('status', 'paid')->count() > 0)
+                    <button type="button" onclick="openModal('rejectAllModal')"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors shadow-sm">
+                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                        Reject All
+                    </button>
+                @elseif($paidCount > 0)
                     <button type="button" onclick="openModal('rejectAllModal')"
                         class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors shadow-sm">
                         <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
-                        Reject All
+                        Revert All
                     </button>
                 @endif
             </div>

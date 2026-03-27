@@ -36,9 +36,16 @@ class PayrollController extends Controller
             });
         }
 
+        $month = $request->get('month', date('n'));
+        $year = $request->get('year', date('Y'));
+        
+        $periodQuery = Payroll::where('month', $month)->where('year', $year);
+        $pendingCount = (clone $periodQuery)->where('status', 'pending')->count();
+        $paidCount = (clone $periodQuery)->where('status', 'paid')->count();
+
         $payrolls = $query->latest()->paginate(10)->withQueryString();
 
-        return view('admin.payroll.index', compact('payrolls'));
+        return view('admin.payroll.index', compact('payrolls', 'pendingCount', 'paidCount'));
     }
 
     public function generate()
@@ -353,17 +360,32 @@ class PayrollController extends Controller
             'year' => 'required|integer|min:2020',
         ]);
 
-        $query = Payroll::where('month', $request->month)
+        // If there are PENDING ones, "Reject All" means deleting/rejecting the draft
+        $pendingQuery = Payroll::where('month', $request->month)
+            ->where('year', $request->year)
+            ->where('status', 'pending');
+            
+        if ($pendingQuery->count() > 0) {
+            $count = $pendingQuery->count();
+            $pendingQuery->delete();
+            return back()->with('success', "Berhasil menolak dan menghapus $count draft payroll pada periode ini.");
+        }
+
+        // Only if NO pending ones, we revert the PAID ones
+        $paidQuery = Payroll::where('month', $request->month)
             ->where('year', $request->year)
             ->where('status', 'paid');
             
-        $count = $query->count();
-        $query->update([
-            'status' => 'pending',
-            'paid_at' => null,
-        ]);
+        $count = $paidQuery->count();
+        if ($count > 0) {
+            $paidQuery->update([
+                'status' => 'pending',
+                'paid_at' => null,
+            ]);
+            return back()->with('success', "Status $count data payroll pada periode ini telah dikembalikan ke Pending.");
+        }
 
-        return back()->with('success', "Status $count data payroll pada periode ini telah dikembalikan ke Pending.");
+        return back()->with('error', 'Tidak ditemukan data payroll untuk ditolak pada periode ini.');
     }
 
     public function destroy(Payroll $payroll)
