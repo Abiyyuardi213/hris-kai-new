@@ -201,6 +201,10 @@ class PayrollController extends Controller
             'paid_at' => $request->status === 'paid' ? now() : null,
         ]);
 
+        if ($request->status === 'paid') {
+            $payroll->pegawai->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+        }
+
         return back()->with('success', 'Status pembayaran berhasil diperbarui.');
     }
 
@@ -342,15 +346,22 @@ class PayrollController extends Controller
             'year' => 'required|integer|min:2020',
         ]);
 
-        Payroll::where('month', $request->month)
+        $payrolls = Payroll::where('month', $request->month)
             ->where('year', $request->year)
             ->where('status', 'pending')
-            ->update([
+            ->get();
+
+        foreach ($payrolls as $payroll) {
+            $payroll->update([
                 'status' => 'paid',
                 'paid_at' => now(),
             ]);
+            
+            // Notify employee
+            $payroll->pegawai->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+        }
 
-        return back()->with('success', 'Semua payroll pada periode ini telah berhasil disetujui.');
+        return back()->with('success', 'Semua payroll pada periode ini telah berhasil disetujui dan notifikasi telah dikirim ke pegawai.');
     }
     
     public function bulkReject(Request $request)
