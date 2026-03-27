@@ -9,13 +9,26 @@
                 <h2 class="text-3xl font-bold tracking-tight">Manajemen Pegawai</h2>
                 <p class="text-zinc-500 mt-1">Kelola data kepegawaian dan informasi personal.</p>
             </div>
-            <div>
+            <div class="flex items-center gap-2">
+                <button onclick="openModal('importModal')"
+                    class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm">
+                    <i data-lucide="upload" class="h-4 w-4"></i>
+                    Import
+                </button>
+                <a href="{{ route('employees.export') }}"
+                    class="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors shadow-sm">
+                    <i data-lucide="download" class="h-4 w-4"></i>
+                    Export
+                </a>
+
                 <a href="{{ route('employees.create') }}"
                     class="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 transition-colors shadow-sm">
                     <i data-lucide="user-plus" class="h-4 w-4"></i>
                     Tambah Pegawai
                 </a>
             </div>
+
+
         </div>
 
         <!-- Content -->
@@ -403,6 +416,51 @@
                         <button type="button" onclick="closeModal('deleteModal')"
                             class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 sm:mt-0 sm:w-auto">Batal</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="importModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm" onclick="closeModal('importModal')"></div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-zinc-200">
+                    <form action="{{ route('employees.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="bg-white px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-zinc-900">Import Data Pegawai</h3>
+                            <button type="button" onclick="closeModal('importModal')" class="text-zinc-400 hover:text-zinc-600">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div class="p-4 rounded-lg bg-blue-50 border border-blue-100 text-sm text-blue-800">
+                                <p class="font-semibold mb-1 flex items-center justify-between">
+                                    Panduan Format Excel:
+                                    <a href="{{ route('employees.download-template') }}" class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-bold underline decoration-2 underline-offset-4">
+                                        <i data-lucide="download" class="h-3 w-3"></i>
+                                        Unduh Template
+                                    </a>
+                                </p>
+                                <ul class="list-disc list-inside space-y-1 opacity-90 text-xs">
+                                    <li>Gunakan baris pertama sebagai judul kolom (header)</li>
+                                    <li>Kolom wajib: nip, nik, nama_lengkap, no_hp, email, tanggal_masuk</li>
+                                    <li>Kolom relasi (nama): divisi, jabatan, kantor, status_pegawai, shift</li>
+                                    <li>Pastikan format tanggal: YYYY-MM-DD</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-zinc-700 mb-2">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                                <input type="file" name="file" required accept=".xlsx,.xls,.csv" class="block w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-zinc-900 file:text-white hover:file:bg-zinc-800 cursor-pointer">
+                            </div>
+                        </div>
+                        <div class="bg-zinc-50 px-6 py-4 flex justify-end gap-3 border-t border-zinc-100">
+                            <button type="button" onclick="closeModal('importModal')" class="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50">Batal</button>
+                            <button type="submit" class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-800">Upload & Preview</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

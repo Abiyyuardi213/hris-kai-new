@@ -30,6 +30,7 @@
                 <table class="w-full text-sm text-left">
                     <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                         <tr>
+                            <th class="px-6 py-4 font-medium w-[50px]">ID</th>
                             <th class="px-6 py-4 font-medium">Nama Shift</th>
                             <th class="px-6 py-4 font-medium">Jam Masuk</th>
                             <th class="px-6 py-4 font-medium">Jam Pulang</th>
@@ -50,6 +51,13 @@
                                 $minutes = $end->diffInMinutes($start) % 60;
                             @endphp
                             <tr class="group hover:bg-zinc-50/50 transition-colors">
+                                <td class="px-6 py-4 text-zinc-400">
+                                    <button onclick="copyToClipboard('{{ $shift->id }}')"
+                                        class="p-1.5 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors"
+                                        title="Salin ID">
+                                        <i data-lucide="copy" class="h-4 w-4"></i>
+                                    </button>
+                                </td>
                                 <td class="px-6 py-4">
                                     <div class="font-medium text-zinc-900">{{ $shift->name }}</div>
                                 </td>
@@ -88,7 +96,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-16 text-center text-zinc-500">
+                                <td colspan="7" class="px-6 py-16 text-center text-zinc-500">
                                     <div class="flex flex-col items-center justify-center space-y-3">
                                         <i data-lucide="clock" class="h-8 w-8 text-zinc-300"></i>
                                         <div>
@@ -214,6 +222,21 @@
     </div>
 
     <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-zinc-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm transition-opacity duration-300 z-50';
+                toast.textContent = 'ID berhasil disalin: ' + text;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin text: ', err);
+            });
+        }
+
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
         }

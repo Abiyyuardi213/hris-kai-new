@@ -89,6 +89,7 @@
                     <table class="w-full text-sm text-left">
                         <thead class="bg-zinc-50/50 text-zinc-500 border-b border-zinc-200">
                             <tr>
+                                <th class="px-6 py-4 font-medium w-[50px]">ID</th>
                                 <th class="px-6 py-4 font-medium w-[120px]">Kode</th>
                                 <th class="px-6 py-4 font-medium">Direktorat</th>
                                 <th class="px-6 py-4 font-medium">Nama Divisi</th>
@@ -98,6 +99,13 @@
                         <tbody class="divide-y divide-zinc-100">
                             @forelse ($divisions as $division)
                                 <tr class="group hover:bg-zinc-50/50 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <button onclick="copyToClipboard('{{ $division->id }}')"
+                                            class="p-1.5 text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors"
+                                            title="Salin ID">
+                                            <i data-lucide="copy" class="h-4 w-4"></i>
+                                        </button>
+                                    </td>
                                     <td class="px-6 py-4">
                                         <span
                                             class="inline-flex items-center rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-500/10">
@@ -134,7 +142,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-16 text-center text-zinc-500">
+                                    <td colspan="5" class="px-6 py-16 text-center text-zinc-500">
                                         <div class="flex flex-col items-center justify-center space-y-3">
                                             <div class="p-4 rounded-full bg-zinc-50 border border-zinc-100">
                                                 <i data-lucide="layers" class="h-8 w-8 text-zinc-300"></i>
@@ -200,6 +208,21 @@
     </div>
 
     <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-zinc-900 text-white px-4 py-2 rounded-lg shadow-lg text-sm transition-opacity duration-300 z-50';
+                toast.textContent = 'ID berhasil disalin: ' + text;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin text: ', err);
+            });
+        }
+
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
         }
