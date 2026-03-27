@@ -202,7 +202,13 @@ class PayrollController extends Controller
         ]);
 
         if ($request->status === 'paid') {
-            $payroll->pegawai->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+            $pegawai = $payroll->pegawai;
+            $pegawai->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+            
+            // Also notify the linked User if exists, so it shows in the header dropdown
+            if ($pegawai->user) {
+                $pegawai->user->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+            }
         }
 
         return back()->with('success', 'Status pembayaran berhasil diperbarui.');
@@ -358,7 +364,13 @@ class PayrollController extends Controller
             ]);
             
             // Notify employee
-            $payroll->pegawai->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+            $pegawai = $payroll->pegawai;
+            $pegawai->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+
+            // Also notify the linked User if exists, so it shows in the header dropdown
+            if ($pegawai->user) {
+                $pegawai->user->notify(new \App\Notifications\PayrollPaidNotification($payroll));
+            }
         }
 
         return back()->with('success', 'Semua payroll pada periode ini telah berhasil disetujui dan notifikasi telah dikirim ke pegawai.');

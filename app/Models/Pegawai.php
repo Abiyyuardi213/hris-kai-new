@@ -61,4 +61,9 @@ class Pegawai extends Authenticatable
     {
         return $this->belongsTo(Kantor::class, 'kantor_id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }
