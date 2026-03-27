@@ -345,6 +345,26 @@ class PayrollController extends Controller
 
         return back()->with('success', 'Semua payroll pada periode ini telah berhasil disetujui.');
     }
+    
+    public function bulkReject(Request $request)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2020',
+        ]);
+
+        $query = Payroll::where('month', $request->month)
+            ->where('year', $request->year)
+            ->where('status', 'paid');
+            
+        $count = $query->count();
+        $query->update([
+            'status' => 'pending',
+            'paid_at' => null,
+        ]);
+
+        return back()->with('success', "Status $count data payroll pada periode ini telah dikembalikan ke Pending.");
+    }
 
     public function destroy(Payroll $payroll)
     {

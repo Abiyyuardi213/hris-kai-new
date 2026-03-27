@@ -19,17 +19,19 @@
                 </a>
 
                 @if ($payrolls->where('status', 'pending')->count() > 0)
-                    <form action="{{ route('admin.payroll.bulk-approve') }}" method="POST" class="inline">
-                        @csrf
-                        <input type="hidden" name="month" value="{{ request('month', date('n')) }}">
-                        <input type="hidden" name="year" value="{{ request('year', date('Y')) }}">
-                        <button type="submit"
-                            onclick="return confirm('Apakah Anda yakin ingin menyetujui SEMUA payroll pada periode ini?')"
-                            class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors shadow-sm">
-                            <i data-lucide="check-check" class="h-4 w-4"></i>
-                            Approve All
-                        </button>
-                    </form>
+                    <button type="button" onclick="openModal('approveAllModal')"
+                        class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors shadow-sm">
+                        <i data-lucide="check-check" class="h-4 w-4"></i>
+                        Approve All
+                    </button>
+                @endif
+
+                @if($payrolls->where('status', 'paid')->count() > 0)
+                    <button type="button" onclick="openModal('rejectAllModal')"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors shadow-sm">
+                        <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                        Reject All
+                    </button>
                 @endif
             </div>
         </div>
@@ -385,6 +387,82 @@
         </div>
     </div>
 
+
+    <!-- Approve All Modal -->
+    <div id="approveAllModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm"
+            onclick="closeModal('approveAllModal')">
+        </div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div
+                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <i data-lucide="help-circle" class="h-5 w-5 text-emerald-600"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <h3 class="text-lg font-bold text-zinc-900">Persetujuan Massal</h3>
+                                <p class="mt-2 text-sm text-zinc-500">Apakah Anda yakin ingin menyetujui SEMUA payroll pada periode ini?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-zinc-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <form action="{{ route('admin.payroll.bulk-approve') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="month" value="{{ request('month', date('n')) }}">
+                            <input type="hidden" name="year" value="{{ request('year', date('Y')) }}">
+                            <button type="submit"
+                                class="inline-flex w-full justify-center rounded-lg bg-emerald-600 px-6 py-2 text-sm font-bold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto transition-all">Ya, Setujui Semua</button>
+                        </form>
+                        <button type="button" onclick="closeModal('approveAllModal')"
+                            class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-6 py-2 text-sm font-bold text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50 sm:mt-0 sm:w-auto transition-all">Batal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject All Modal -->
+    <div id="rejectAllModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="fixed inset-0 bg-zinc-900/75 transition-opacity backdrop-blur-sm"
+            onclick="closeModal('rejectAllModal')">
+        </div>
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                    <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div
+                                class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <i data-lucide="rotate-ccw" class="h-5 w-5 text-red-600"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <h3 class="text-lg font-bold text-zinc-900">Batal Persetujuan Massal</h3>
+                                <p class="mt-2 text-sm text-zinc-500">Apakah Anda yakin ingin MEMBATALKAN persetujuan semua payroll pada periode ini? Status data akan dikembalikan menjadi Pending.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-zinc-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <form action="{{ route('admin.payroll.bulk-reject') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="month" value="{{ request('month', date('n')) }}">
+                            <input type="hidden" name="year" value="{{ request('year', date('Y')) }}">
+                            <button type="submit"
+                                class="inline-flex w-full justify-center rounded-lg bg-red-600 px-6 py-2 text-sm font-bold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition-all">Ya, Batalkan Semua</button>
+                        </form>
+                        <button type="button" onclick="closeModal('rejectAllModal')"
+                            class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-6 py-2 text-sm font-bold text-zinc-700 shadow-sm ring-1 ring-inset ring-zinc-200 hover:bg-zinc-50 sm:mt-0 sm:w-auto transition-all">Batal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         function openModal(id) {

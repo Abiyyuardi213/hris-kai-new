@@ -211,6 +211,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::post('/payroll/generate', [App\Http\Controllers\Admin\PayrollController::class, 'processGenerate'])->name('admin.payroll.process-generate');
         Route::post('/payroll/bulk-update', [App\Http\Controllers\Admin\PayrollController::class, 'bulkUpdate'])->name('admin.payroll.bulk-update');
         Route::post('/payroll/bulk-approve', [App\Http\Controllers\Admin\PayrollController::class, 'bulkApprove'])->name('admin.payroll.bulk-approve');
+        Route::post('/payroll/bulk-reject', [App\Http\Controllers\Admin\PayrollController::class, 'bulkReject'])->name('admin.payroll.bulk-reject');
         Route::get('/payroll/{payroll}/edit', [App\Http\Controllers\Admin\PayrollController::class, 'edit'])->name('admin.payroll.edit');
         Route::put('/payroll/{payroll}', [App\Http\Controllers\Admin\PayrollController::class, 'update'])->name('admin.payroll.update');
         Route::patch('/payroll/{payroll}/status', [App\Http\Controllers\Admin\PayrollController::class, 'updateStatus'])->name('admin.payroll.update-status');
