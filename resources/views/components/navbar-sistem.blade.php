@@ -1,3 +1,7 @@
+@php
+    $currentUser = Auth::user() ?? Auth::guard('employee')->user() ?? Auth::guard('candidate')->user();
+@endphp
+
 <header
     class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-4 border-b bg-white/80 backdrop-blur-md px-6 lg:h-[60px]">
     <div class="flex-1">
@@ -12,10 +16,10 @@
             <button onclick="toggleNotificationDropdown(event)"
                 class="relative rounded-full bg-zinc-100 p-2 text-zinc-500 hover:text-zinc-900 transition-all active:scale-95">
                 <i data-lucide="bell" class="h-5 w-5"></i>
-                @if (Auth::user()->unreadNotifications->count() > 0)
+                @if ($currentUser && $currentUser->unreadNotifications->count() > 0)
                     <span
                         class="absolute top-0 right-0 h-4 min-w-[1rem] flex items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white px-1">
-                        {{ Auth::user()->unreadNotifications->count() }}
+                        {{ $currentUser->unreadNotifications->count() }}
                     </span>
                 @endif
             </button>
@@ -27,9 +31,9 @@
                     <div>
                         <h3 class="text-sm font-bold">Notifikasi</h3>
                         <p class="text-[10px] text-zinc-400 font-medium">Anda memiliki
-                            {{ Auth::user()->unreadNotifications->count() }} pesan baru</p>
+                            {{ $currentUser ? $currentUser->unreadNotifications->count() : 0 }} pesan baru</p>
                     </div>
-                    @if (Auth::user()->unreadNotifications->count() > 0)
+                    @if ($currentUser && $currentUser->unreadNotifications->count() > 0)
                         <form action="{{ route('notifications.mark-all-read') }}" method="POST">
                             @csrf
                             <button type="submit"
@@ -40,7 +44,7 @@
                     @endif
                 </div>
                 <div class="max-h-96 overflow-y-auto divide-y divide-zinc-50">
-                    @forelse(Auth::user()->unreadNotifications->take(5) as $notif)
+                    @forelse(($currentUser ? $currentUser->unreadNotifications->take(5) : []) as $notif)
                         <a href="{{ route('notifications.read', $notif->id) }}"
                             class="flex items-start gap-4 px-5 py-4 hover:bg-zinc-50 transition-colors">
                             <div
@@ -62,7 +66,7 @@
                         </div>
                     @endforelse
                 </div>
-                @if (Auth::user()->notifications->count() > 0)
+                @if ($currentUser && $currentUser->notifications->count() > 0)
                     <div class="p-2 border-t border-zinc-50 bg-zinc-50/50">
                         <button
                             class="w-full py-2 text-[11px] font-bold text-zinc-500 hover:text-zinc-900 transition-colors text-center">
@@ -76,7 +80,7 @@
         <div class="relative">
             <button onclick="toggleAccountDropdown(event)"
                 class="flex items-center gap-2 rounded-full bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-500 hover:text-zinc-900">
-                <span class="max-w-[100px] truncate">{{ explode(' ', Auth::user()->name)[0] }}</span>
+                <span class="max-w-[100px] truncate">{{ $currentUser ? explode(' ', $currentUser->name ?? $currentUser->nama_lengkap)[0] : 'Guest' }}</span>
                 <i data-lucide="chevron-down" class="h-4 w-4"></i>
             </button>
 

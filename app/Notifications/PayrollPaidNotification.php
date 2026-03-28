@@ -4,12 +4,11 @@ namespace App\Notifications;
 
 use App\Models\Payroll;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Carbon\Carbon;
 
-class PayrollPaidNotification extends Notification implements ShouldQueue
+class PayrollPaidNotification extends Notification
 {
     use Queueable;
 
@@ -49,11 +48,9 @@ class PayrollPaidNotification extends Notification implements ShouldQueue
     }
 
     /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
+     * Get the database representation of the notification.
      */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         $monthName = Carbon::create()->month($this->payroll->month)->translatedFormat('F');
         return [
@@ -63,5 +60,15 @@ class PayrollPaidNotification extends Notification implements ShouldQueue
             'type' => 'success',
             'icon' => 'check-circle',
         ];
+    }
+
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return $this->toDatabase($notifiable);
     }
 }

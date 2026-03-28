@@ -11,7 +11,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Carbon\Carbon;
 
-class PayrollGeneratedNotification extends Notification implements ShouldQueue
+class PayrollGeneratedNotification extends Notification
 {
     use Queueable;
 
