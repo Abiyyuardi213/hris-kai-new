@@ -231,6 +231,11 @@
                             </div>
                         </div>
 
+                        <div class="border-t border-zinc-50 pt-4">
+                            <label class="text-xs font-semibold text-red-500 uppercase tracking-wider">Potongan Mandiri Inhealth</label>
+                            <p id="detailPotonganInhealth" class="mt-1 text-sm font-bold text-red-600 font-mono italic"></p>
+                        </div>
+
                         <div>
                             <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Deskripsi
                                 Pekerjaan</label>
@@ -340,6 +345,7 @@
             document.getElementById('detailTunjanganJabatan').textContent = formatter.format(position.tunjangan);
             document.getElementById('detailTunjanganPerumahan').textContent = formatter.format(position.tunjangan_perumahan);
             document.getElementById('detailTunjanganPajak').textContent = formatter.format(position.tunjangan_pajak);
+            document.getElementById('detailPotonganInhealth').textContent = '-' + formatter.format(position.potongan_mandiri_inhealth);
 
             openModal('detailsModal');
         }

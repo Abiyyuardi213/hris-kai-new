@@ -100,6 +100,7 @@ class PayrollController extends Controller
             $tunjanganJabatan = $employee->jabatan->tunjangan;
             $tunjanganPerumahan = $employee->jabatan->tunjangan_perumahan;
             $tunjanganPajak = $employee->jabatan->tunjangan_pajak;
+            $potonganMandiriInhealth = $employee->jabatan->potongan_mandiri_inhealth;
 
             $tunjanganAdminBank = 10000;
             $tunjanganJpk = $gajiPokok * 0.04;
@@ -115,7 +116,7 @@ class PayrollController extends Controller
 
                 $thr = 0; // Separate record
                 $bonus = 0; // Separate record
-                $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs;
+                $totalGaji = ($gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs) - $potonganMandiriInhealth;
 
                 $totalGajiBefore = $payroll->total_gaji;
                 $payroll->update([
@@ -133,6 +134,7 @@ class PayrollController extends Controller
                     'er_jamsostek_jkm' => $erJKM,
                     'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
                     'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
+                    'potongan_mandiri_inhealth' => $potonganMandiriInhealth,
                     'thr_days' => 0,
                     'thr' => 0,
                     'bonus' => 0,
@@ -143,7 +145,7 @@ class PayrollController extends Controller
                 $thrDays = 0;
                 $thr = 0;
                 $bonus = 0;
-                $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs;
+                $totalGaji = ($gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs) - $potonganMandiriInhealth;
 
                 $payroll = Payroll::create([
                     'pegawai_id' => $employee->id,
@@ -162,6 +164,7 @@ class PayrollController extends Controller
                     'er_jamsostek_jkm' => $erJKM,
                     'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
                     'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
+                    'potongan_mandiri_inhealth' => $potonganMandiriInhealth,
                     'thr_days' => $thrDays,
                     'thr' => $thr,
                     'bonus' => $bonus,
@@ -244,7 +247,8 @@ class PayrollController extends Controller
                 $payroll->tunjangan_jpk_pensiun +
                 $payroll->tunjangan_jp_bpjs +
                 $thr +
-                $request->bonus;
+                $request->bonus -
+                $payroll->potongan_mandiri_inhealth;
         }
 
         $payroll->update([

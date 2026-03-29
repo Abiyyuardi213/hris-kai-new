@@ -65,14 +65,17 @@
                                 ['label' => 'ER Jamsostek JKM (0.3%)', 'value' => $payroll->er_jamsostek_jkm],
                                 ['label' => 'Tunjangan JPK Pensiun (2%)', 'value' => $payroll->tunjangan_jpk_pensiun],
                                 ['label' => 'Tunjangan JP BPJS (2%)', 'value' => $payroll->tunjangan_jp_bpjs],
+                                ['label' => 'Potongan Mandiri Inhealth', 'value' => $payroll->potongan_mandiri_inhealth, 'is_deduction' => true],
                             ];
                         @endphp
 
                         @foreach($components as $index => $comp)
-                        <tr class="hover:bg-zinc-50/30 transition-colors">
+                        <tr class="hover:bg-zinc-50/30 transition-colors {{ isset($comp['is_deduction']) && $comp['is_deduction'] ? 'bg-red-50/30' : '' }}">
                             <td class="px-8 py-4 text-zinc-400 font-bold w-16 italic">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</td>
-                            <td class="px-8 py-4 font-bold text-zinc-900 group-hover:pl-10 transition-all">{{ $comp['label'] }}</td>
-                            <td class="px-8 py-4 text-right font-black text-zinc-700">Rp {{ number_format($comp['value'], 0, ',', '.') }}</td>
+                            <td class="px-8 py-4 font-bold text-zinc-900 group-hover:pl-10 transition-all font-mono">{{ $comp['label'] }}</td>
+                            <td class="px-8 py-4 text-right font-black {{ isset($comp['is_deduction']) && $comp['is_deduction'] ? 'text-red-600' : 'text-zinc-700' }}">
+                                {{ isset($comp['is_deduction']) && $comp['is_deduction'] ? '-' : '' }}Rp {{ number_format($comp['value'], 0, ',', '.') }}
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -57,6 +57,7 @@ class JabatanController extends Controller
             'tunjangan' => 'required|numeric|min:0',
             'tunjangan_perumahan' => 'required|numeric|min:0',
             'tunjangan_pajak' => 'required|numeric|min:0',
+            'potongan_mandiri_inhealth' => 'required|numeric|min:0',
         ]);
 
         $position = Jabatan::create($validated);
@@ -97,6 +98,7 @@ class JabatanController extends Controller
             'tunjangan' => 'required|numeric|min:0',
             'tunjangan_perumahan' => 'required|numeric|min:0',
             'tunjangan_pajak' => 'required|numeric|min:0',
+            'potongan_mandiri_inhealth' => 'required|numeric|min:0',
         ]);
 
         $position->update($validated);
@@ -110,6 +112,7 @@ class JabatanController extends Controller
             $tunjanganJabatan = $position->tunjangan;
             $tunjanganPerumahan = $position->tunjangan_perumahan;
             $tunjanganPajak = $position->tunjangan_pajak;
+            $potonganMandiriInhealth = $position->potongan_mandiri_inhealth;
 
             // Formulas
             $tunjanganAdminBank = 10000;
@@ -122,7 +125,7 @@ class JabatanController extends Controller
 
             $thr = (($gajiPokok / 30) + ($tunjanganJabatan / 30)) * $payroll->thr_days;
 
-            $totalGaji = $gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $payroll->bonus;
+            $totalGaji = ($gajiPokok + $tunjanganJabatan + $tunjanganPerumahan + $tunjanganAdminBank + $tunjanganJpk + $tunjanganPajak + $erJKK + $erJHT + $erJKM + $tunjanganJpkPensiun + $tunjanganJpBpjs + $thr + $payroll->bonus) - $potonganMandiriInhealth;
 
             $payroll->update([
                 'gaji_pokok' => $gajiPokok,
@@ -137,6 +140,7 @@ class JabatanController extends Controller
                 'tunjangan_jpk_pensiun' => $tunjanganJpkPensiun,
                 'tunjangan_jp_bpjs' => $tunjanganJpBpjs,
                 'thr' => $thr,
+                'potongan_mandiri_inhealth' => $potonganMandiriInhealth,
                 'total_gaji' => $totalGaji,
             ]);
         }

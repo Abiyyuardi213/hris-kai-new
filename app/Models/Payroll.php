@@ -30,6 +30,7 @@ class Payroll extends Model
         'er_jamsostek_jkm',
         'tunjangan_jpk_pensiun',
         'tunjangan_jp_bpjs',
+        'potongan_mandiri_inhealth',
         'thr_days',
         'thr',
         'bonus',

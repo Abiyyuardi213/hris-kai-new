@@ -122,6 +122,65 @@
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div>
+                            <label for="potongan_mandiri_inhealth" class="block text-sm font-medium text-red-600">Potongan Mandiri Inhealth</label>
+                            <div class="relative mt-1">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <span class="text-zinc-500 sm:text-sm text-xs font-bold uppercase">Rp</span>
+                                </div>
+                                <input type="number" id="potongan_mandiri_inhealth" name="potongan_mandiri_inhealth"
+                                    value="{{ old('potongan_mandiri_inhealth', 0) }}" required
+                                    class="block w-full rounded-lg border border-red-300 pl-10 pr-3 py-2 text-sm focus:border-red-600 focus:outline-none focus:ring-1 focus:ring-red-600 @error('potongan_mandiri_inhealth') border-red-500 @enderror"
+                                    placeholder="0">
+                            </div>
+                            @error('potongan_mandiri_inhealth')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Simulasi Mandiri Inhealth -->
+                    <div class="rounded-2xl border-2 border-dashed border-blue-100 bg-blue-50/50 p-6 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                                    <i data-lucide="shield-check" class="h-5 w-5"></i>
+                                </div>
+                                <div class="leading-none">
+                                    <h4 class="text-sm font-black text-blue-900 uppercase italic">Simulation: MyCare Ultimate</h4>
+                                    <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Mandiri Inhealth Premium</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[9px] font-black text-blue-400 uppercase tracking-widest block">Premi Per Tahun</span>
+                                <span class="text-lg font-black text-blue-900 italic">Rp 1.593.000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 text-[10px] font-bold uppercase tracking-tight text-blue-600/70 border-t border-blue-100 pt-4">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check" class="h-3 w-3"></i>
+                                <span>Manfaat Utama (Rawat Inap)</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check" class="h-3 w-3"></i>
+                                <span>Hospital Income Rp 500rb</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check" class="h-3 w-3"></i>
+                                <span>Hospital Cash Plan Rp 500rb</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check" class="h-3 w-3"></i>
+                                <span>Ambulans Rp 1jt</span>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="applySimulation(1593000)" 
+                            class="w-full py-3 rounded-xl bg-blue-600 text-xs font-black text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 uppercase italic tracking-widest">
+                            Terapkan Potongan Bulanan (Rp 132.750)
+                        </button>
                     </div>
 
                     <div>
@@ -152,6 +211,18 @@
 
 @push('scripts')
     <script>
+        function applySimulation(yearlyAmount) {
+            const monthlyAmount = Math.ceil(yearlyAmount / 12);
+            document.getElementById('potongan_mandiri_inhealth').value = monthlyAmount;
+            
+            // Highlight effect
+            const input = document.getElementById('potongan_mandiri_inhealth');
+            input.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+            setTimeout(() => {
+                input.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            }, 1000);
+        }
+
         function generateCode() {
             const name = document.getElementById('name').value;
             const nextNumber = {{ $nextNumber }};

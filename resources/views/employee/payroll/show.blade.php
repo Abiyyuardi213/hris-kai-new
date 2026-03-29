@@ -169,6 +169,13 @@
                             </div>
                             <span class="font-bold text-emerald-800 text-sm">Rp {{ number_format($payroll->tunjangan_jp_bpjs, 0, ',', '.') }}</span>
                         </div>
+                        <div class="flex justify-between items-center py-3 px-4 rounded-2xl bg-red-50/50 border border-red-100">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-red-800 uppercase italic">Mandiri Inhealth</span>
+                                <span class="text-[9px] text-red-600 font-medium uppercase tracking-tight">Tagihan Asuransi Kesehatan</span>
+                            </div>
+                            <span class="font-bold text-red-800 text-sm italic">- Rp {{ number_format($payroll->potongan_mandiri_inhealth, 0, ',', '.') }}</span>
+                        </div>
                     </div>
 
                     @if ($payroll->thr > 0)

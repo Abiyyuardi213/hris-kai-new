@@ -131,6 +131,11 @@
                 <i data-lucide="piggy-bank" class="h-5 w-5"></i>
                 <span class="font-bold">Payroll Project</span>
             </a>
+            <a href="{{ route('employee.insurance.index') }}"
+                class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('insurance-certificate*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900' }}">
+                <i data-lucide="shield-check" class="h-5 w-5"></i>
+                <span class="font-bold">Asuransi Inhealth</span>
+            </a>
             <a href="{{ route('employee.offboardings.index') }}"
                 class="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm transition-all {{ Request::is('offboarding*') ? 'bg-zinc-900 text-white shadow-xl shadow-zinc-200' : 'text-zinc-500 hover:bg-red-50 hover:text-red-600' }}">
                 <i data-lucide="log-out" class="h-5 w-5"></i>

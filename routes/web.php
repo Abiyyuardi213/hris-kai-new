@@ -58,6 +58,10 @@ Route::middleware(['auth:employee'])->group(function () {
     Route::get('/project-payroll/{projectPayroll}', [App\Http\Controllers\EmployeeProjectPayrollController::class, 'show'])->name('employee.project-payroll.show');
     Route::get('/project-payroll/{id}/print', [App\Http\Controllers\EmployeeProjectPayrollController::class, 'print'])->name('employee.project-payroll.print');
 
+    // Insurance Certificate
+    Route::get('/insurance-certificate', [App\Http\Controllers\EmployeeInsuranceController::class, 'index'])->name('employee.insurance.index');
+    Route::get('/insurance-certificate/print', [App\Http\Controllers\EmployeeInsuranceController::class, 'print'])->name('employee.insurance.print');
+
     // Perjalanan Dinas
     Route::get('/perjalanan-dinas', [App\Http\Controllers\PerjalananDinasController::class, 'index'])->name('employee.perjalanan_dinas.index');
     Route::get('/perjalanan-dinas/create', [App\Http\Controllers\PerjalananDinasController::class, 'create'])->name('employee.perjalanan_dinas.create');

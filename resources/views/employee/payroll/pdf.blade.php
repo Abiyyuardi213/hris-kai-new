@@ -307,6 +307,13 @@
             </td>
             <td class="amount">Rp {{ number_format($payroll->tunjangan_jpk_pensiun + $payroll->tunjangan_jp_bpjs, 0, ',', '.') }}</td>
         </tr>
+        <tr>
+            <td>
+                <span class="label" style="color: #c00;">Potongan Mandiri Inhealth</span>
+                <span class="sub-label">Tagihan Asuransi Kesehatan Keluarga</span>
+            </td>
+            <td class="amount" style="color: #c00;">- Rp {{ number_format($payroll->potongan_mandiri_inhealth, 0, ',', '.') }}</td>
+        </tr>
         @if ($payroll->thr > 0)
             <tr>
                 <td>

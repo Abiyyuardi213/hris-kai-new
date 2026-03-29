@@ -109,6 +109,7 @@
                             <th class="px-6 py-4 font-medium text-right">Gaji Pokok</th>
                             <th class="px-6 py-4 font-medium text-right">Tunj. & Fasilitas</th>
                             <th class="px-6 py-4 font-medium text-right text-amber-600">THR & Bonus</th>
+                            <th class="px-6 py-4 font-medium text-right text-red-600">Potongan</th>
                             <th class="px-6 py-4 font-bold text-right text-zinc-900">Total Gaji</th>
                             <th class="px-6 py-4 font-medium">Status</th>
                             <th class="px-6 py-4 font-medium text-right">Aksi</th>
@@ -171,6 +172,15 @@
                                             <div class="text-[9px] text-zinc-400 italic">{{ $payroll->keterangan_bonus }}
                                             </div>
                                         @endif
+                                    @else
+                                        <div class="text-xs text-zinc-400">Rp 0</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    @if ($payroll->potongan_mandiri_inhealth > 0)
+                                        <div class="text-[10px] font-bold text-red-600">
+                                            -Rp {{ number_format($payroll->potongan_mandiri_inhealth, 0, ',', '.') }}
+                                        </div>
                                     @else
                                         <div class="text-xs text-zinc-400">Rp 0</div>
                                     @endif
