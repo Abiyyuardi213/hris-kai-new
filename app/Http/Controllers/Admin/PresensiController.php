@@ -38,7 +38,7 @@ class PresensiController extends Controller
         }
 
         $presensis = $query->paginate(15)->withQueryString();
-        
+
         $pegawais = Pegawai::orderBy('nama_lengkap', 'asc')->get();
 
         return view('admin.presensi.index', compact('presensis', 'pegawais'));
@@ -126,31 +126,21 @@ class PresensiController extends Controller
         ]);
 
         $pegawai = Pegawai::with('shiftPegawais.shiftKerja')->findOrFail($request->pegawai_id);
-        
-        // Find active shift for the day if it exists
+
         $shiftKerjaId = null;
         $dayOfWeek = \Carbon\Carbon::parse($request->tanggal)->locale('id')->isoFormat('dddd');
-        
-        // In this app, maybe employees don't have shiftPegawais but a direct shift_id or maybe shift_kerja_id? 
-        // I need to check how shift is assigned to employee to do this properly.
-        // Let's assume null for now, I will refine this later if needed.
 
         $data = $request->only(['pegawai_id', 'tanggal', 'jam_masuk', 'jam_pulang', 'status', 'keterangan']);
-        
-        // Check if attendance already exists for this date
+
         $existingPresensi = Presensi::where('pegawai_id', $request->pegawai_id)
             ->whereDate('tanggal', $request->tanggal)
             ->first();
-            
+
         if ($existingPresensi) {
             return redirect()->back()->with('error', 'Presensi untuk pegawai ini pada tanggal tersebut sudah ada.');
         }
 
-        // We will just let the shift be null if we can't find it easily, but wait, let's see how update handles it.
-        // The update handles it if shift exists.
-
         if ($data['status'] === 'Hadir') {
-            // Since we might not have shift, we just default to 0 for tardiness if shift is missing
             $data['terlambat'] = 0;
             $data['pulang_cepat'] = 0;
             $data['keterangan'] = $data['keterangan'] ?? 'Input Manual';
