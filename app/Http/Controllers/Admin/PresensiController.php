@@ -125,7 +125,7 @@ class PresensiController extends Controller
             'keterangan' => 'nullable|string'
         ]);
 
-        $pegawai = Pegawai::with('shiftPegawais.shiftKerja')->findOrFail($request->pegawai_id);
+        $pegawai = Pegawai::findOrFail($request->pegawai_id);
 
         $shiftKerjaId = null;
         $dayOfWeek = \Carbon\Carbon::parse($request->tanggal)->locale('id')->isoFormat('dddd');

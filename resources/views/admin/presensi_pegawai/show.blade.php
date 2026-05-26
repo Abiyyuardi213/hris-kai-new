@@ -2,6 +2,25 @@
 
 @section('title', 'Kalender Presensi Pegawai')
 
+@push('styles')
+<style>
+    @keyframes slideNext {
+        0% { transform: translateX(20px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slidePrev {
+        0% { transform: translateX(-20px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+    .calendar-slide-next {
+        animation: slideNext 0.3s ease-out forwards;
+    }
+    .calendar-slide-prev {
+        animation: slidePrev 0.3s ease-out forwards;
+    }
+</style>
+@endpush
+
 @section('content')
     <div class="flex flex-col space-y-6">
         <!-- Header -->
@@ -16,8 +35,10 @@
             </a>
         </div>
 
-        <!-- Employee Info & Stats -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Dynamic Calendar Wrapper -->
+        <div id="calendar-wrapper" class="flex flex-col space-y-6">
+            <!-- Employee Info & Stats -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Employee Profile -->
             <div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6 flex items-center gap-4">
                 <div class="h-16 w-16 rounded-full bg-zinc-100 overflow-hidden border border-zinc-200 shrink-0">
@@ -58,20 +79,20 @@
         </div>
 
         <!-- Month Navigation -->
-        <div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-4 flex items-center justify-between">
-            <a href="{{ route('admin.presensi-pegawai.show', ['id' => $pegawai->id, 'month' => $date->copy()->subMonth()->format('m'), 'year' => $date->copy()->subMonth()->format('Y')]) }}" 
+        <div id="calendar-nav" class="bg-white rounded-xl border border-zinc-200 shadow-sm p-4 flex items-center justify-between">
+            <a href="{{ route('admin.presensi-pegawai.show', ['id' => $pegawai->id, 'month' => $date->copy()->subMonth()->format('m'), 'year' => $date->copy()->subMonth()->format('Y'), 'dir' => 'prev']) }}" 
                 class="p-2 bg-zinc-100 rounded-lg text-zinc-600 hover:bg-zinc-200 transition-colors">
                 <i data-lucide="chevron-left" class="h-5 w-5"></i>
             </a>
             <h3 class="text-xl font-bold text-zinc-900">{{ $date->translatedFormat('F Y') }}</h3>
-            <a href="{{ route('admin.presensi-pegawai.show', ['id' => $pegawai->id, 'month' => $date->copy()->addMonth()->format('m'), 'year' => $date->copy()->addMonth()->format('Y')]) }}" 
+            <a href="{{ route('admin.presensi-pegawai.show', ['id' => $pegawai->id, 'month' => $date->copy()->addMonth()->format('m'), 'year' => $date->copy()->addMonth()->format('Y'), 'dir' => 'next']) }}" 
                 class="p-2 bg-zinc-100 rounded-lg text-zinc-600 hover:bg-zinc-200 transition-colors">
                 <i data-lucide="chevron-right" class="h-5 w-5"></i>
             </a>
         </div>
 
         <!-- Calendar Grid -->
-        <div class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden {{ request('dir') == 'prev' ? 'calendar-slide-prev' : (request('dir') == 'next' ? 'calendar-slide-next' : '') }}">
             @php
                 $startOfMonth = $date->copy()->startOfMonth();
                 $daysInMonth = $date->daysInMonth;
@@ -139,8 +160,9 @@
                 @endfor
             </div>
         </div>
-    </div>
-    </div>
+    </div> <!-- End calendar-wrapper -->
+</div> <!-- End flex-col -->
+
 
     <!-- Edit Presence Modal for Calendar -->
     <div id="edit-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
@@ -279,6 +301,30 @@
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeEditModal();
+        }
+    });
+
+    // AJAX Calendar Navigation
+    document.addEventListener('click', function(e) {
+        const navLink = e.target.closest('#calendar-nav a');
+        if (navLink) {
+            e.preventDefault();
+            const url = navLink.href;
+            
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newWrapper = doc.getElementById('calendar-wrapper');
+                    
+                    if (newWrapper) {
+                        document.getElementById('calendar-wrapper').innerHTML = newWrapper.innerHTML;
+                        window.history.pushState({}, '', url);
+                        lucide.createIcons();
+                    }
+                })
+                .catch(err => console.error('Error loading calendar:', err));
         }
     });
 </script>
