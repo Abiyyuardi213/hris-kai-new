@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Pegawai extends Authenticatable
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory, \Illuminate\Database\Eloquent\SoftDeletes, \Illuminate\Database\Eloquent\Concerns\HasUuids, Notifiable;
+    use \Laravel\Sanctum\HasApiTokens, \Illuminate\Database\Eloquent\Factories\HasFactory, \Illuminate\Database\Eloquent\SoftDeletes, \Illuminate\Database\Eloquent\Concerns\HasUuids, Notifiable;
 
     protected $table = 'pegawais';
 
