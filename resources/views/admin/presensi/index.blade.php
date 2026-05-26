@@ -10,6 +10,12 @@
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900">Monitoring Presensi</h2>
                 <p class="text-zinc-500 text-sm">Pantau kehadiran seluruh pegawai secara real-time.</p>
             </div>
+            <div>
+                <a href="{{ route('admin.presensi.create') }}"
+                    class="bg-zinc-900 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-zinc-800 transition-all inline-flex items-center gap-2">
+                    <i data-lucide="plus" class="h-4 w-4"></i> Tambah Presensi
+                </a>
+            </div>
         </div>
 
         <!-- Filters -->
@@ -184,6 +190,7 @@
             @endif
         </div>
     </div>
+
     <!-- Edit Presence Modal -->
     <div id="edit-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
         role="dialog" aria-modal="true">

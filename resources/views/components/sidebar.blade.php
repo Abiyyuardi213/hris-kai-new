@@ -175,9 +175,15 @@
 
                     @if (Auth::user()->hasPermission('view-attendance'))
                         <a href="{{ route('admin.presensi.index') }}"
-                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/presensi*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/presensi') || Request::is('admin/presensi/*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
                             <i data-lucide="clipboard-check" class="h-4 w-4"></i>
                             <span class="sidebar-text group-[.collapsed]:hidden">Daftar Presensi</span>
+                        </a>
+
+                        <a href="{{ route('admin.presensi-pegawai.index') }}"
+                            class="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary {{ Request::is('admin/presensi-pegawai*') ? 'bg-zinc-200 text-black' : 'text-zinc-500' }}">
+                            <i data-lucide="calendar-days" class="h-4 w-4"></i>
+                            <span class="sidebar-text group-[.collapsed]:hidden">Presensi Pegawai</span>
                         </a>
                     @endif
 

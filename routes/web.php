@@ -188,8 +188,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Monitoring Presensi
     Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index')->middleware('permission:view-attendance|manage-attendance');
+    Route::get('/presensi/create', [App\Http\Controllers\Admin\PresensiController::class, 'create'])->name('admin.presensi.create')->middleware('permission:manage-attendance');
+    Route::post('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'store'])->name('admin.presensi.store')->middleware('permission:manage-attendance');
     Route::get('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'show'])->name('admin.presensi.show')->middleware('permission:view-attendance|manage-attendance');
     Route::put('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'update'])->name('admin.presensi.update')->middleware('permission:manage-attendance');
+
+    // Presensi Pegawai (Calendar View)
+    Route::get('/presensi-pegawai', [App\Http\Controllers\Admin\PresensiPegawaiController::class, 'index'])->name('admin.presensi-pegawai.index')->middleware('permission:view-attendance|manage-attendance');
+    Route::get('/presensi-pegawai/{id}', [App\Http\Controllers\Admin\PresensiPegawaiController::class, 'show'])->name('admin.presensi-pegawai.show')->middleware('permission:view-attendance|manage-attendance');
 
     // Pengajuan Izin / Sakit
     Route::middleware('permission:manage-izin')->group(function () {
