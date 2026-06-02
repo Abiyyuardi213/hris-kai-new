@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(fn($request) => $request->is('admin*') ? route('login') : route('employee.login'));
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class,
+            'mobile.api.key' => \App\Http\Middleware\VerifyMobileApiKey::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -37,7 +35,7 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Login berhasil',
             'data' => [
-                'pegawai' => $pegawai,
+                'pegawai' => $pegawai->load(['divisi', 'jabatan', 'shift', 'kantor', 'statusPegawai']),
                 'token' => $token,
             ]
         ], 200);
