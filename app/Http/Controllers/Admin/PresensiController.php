@@ -7,6 +7,7 @@ use App\Models\Presensi;
 use App\Models\Pegawai;
 use App\Models\ShiftKerja;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PresensiController extends Controller
 {
@@ -114,6 +115,113 @@ class PresensiController extends Controller
         return redirect()->back()->with('success', 'Data presensi berhasil diperbarui');
     }
 
+    public function cleanupPhotos(Request $request)
+    {
+        $request->validate([
+            'confirmation' => 'required|in:HAPUS-FOTO-PRESENSI',
+        ], [
+            'confirmation.in' => 'Konfirmasi tidak sesuai.',
+        ]);
+
+        $deletedFiles = 0;
+        $missingFiles = 0;
+        $updatedRows = 0;
+        $deletedBytes = 0;
+
+        Presensi::where(function ($query) {
+                $query->whereNotNull('foto_masuk')
+                    ->orWhereNotNull('foto_pulang');
+            })
+            ->select(['id', 'foto_masuk', 'foto_pulang'])
+            ->chunkById(100, function ($presensis) use (&$deletedFiles, &$missingFiles, &$updatedRows, &$deletedBytes) {
+                foreach ($presensis as $presensi) {
+                    $paths = collect([$presensi->foto_masuk, $presensi->foto_pulang])
+                        ->filter()
+                        ->unique();
+
+                    foreach ($paths as $path) {
+                        if (Storage::disk('public')->exists($path)) {
+                            $deletedBytes += Storage::disk('public')->size($path);
+                            Storage::disk('public')->delete($path);
+                            $deletedFiles++;
+                        } else {
+                            $missingFiles++;
+                        }
+                    }
+
+                    $presensi->forceFill([
+                        'foto_masuk' => null,
+                        'foto_pulang' => null,
+                    ])->save();
+
+                    $updatedRows++;
+                }
+            });
+
+        $message = "Cleanup foto presensi selesai. {$deletedFiles} file dihapus ({$this->formatBytes($deletedBytes)}), {$updatedRows} data presensi diperbarui, {$missingFiles} file sudah tidak ditemukan.";
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'data' => [
+                    'deleted_files' => $deletedFiles,
+                    'missing_files' => $missingFiles,
+                    'updated_rows' => $updatedRows,
+                    'deleted_bytes' => $deletedBytes,
+                    'deleted_size' => $this->formatBytes($deletedBytes),
+                ],
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.presensi.index')
+            ->with('success', $message);
+    }
+
+    public function cleanupPhotosSummary()
+    {
+        $rows = 0;
+        $files = 0;
+        $missingFiles = 0;
+        $bytes = 0;
+
+        Presensi::where(function ($query) {
+                $query->whereNotNull('foto_masuk')
+                    ->orWhereNotNull('foto_pulang');
+            })
+            ->select(['id', 'foto_masuk', 'foto_pulang'])
+            ->chunkById(200, function ($presensis) use (&$rows, &$files, &$missingFiles, &$bytes) {
+                foreach ($presensis as $presensi) {
+                    $rows++;
+
+                    $paths = collect([$presensi->foto_masuk, $presensi->foto_pulang])
+                        ->filter()
+                        ->unique();
+
+                    foreach ($paths as $path) {
+                        if (Storage::disk('public')->exists($path)) {
+                            $files++;
+                            $bytes += Storage::disk('public')->size($path);
+                        } else {
+                            $missingFiles++;
+                        }
+                    }
+                }
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'rows' => $rows,
+                'files' => $files,
+                'missing_files' => $missingFiles,
+                'bytes' => $bytes,
+                'size' => $this->formatBytes($bytes),
+            ],
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -152,5 +260,25 @@ class PresensiController extends Controller
         Presensi::create($data);
 
         return redirect()->back()->with('success', 'Data presensi berhasil ditambahkan secara manual');
+    }
+
+    private function formatBytes(int $bytes): string
+    {
+        if ($bytes < 1024) {
+            return $bytes . ' B';
+        }
+
+        $units = ['KB', 'MB', 'GB', 'TB'];
+        $size = $bytes / 1024;
+
+        foreach ($units as $unit) {
+            if ($size < 1024) {
+                return number_format($size, 2) . ' ' . $unit;
+            }
+
+            $size /= 1024;
+        }
+
+        return number_format($size, 2) . ' PB';
     }
 }

@@ -68,12 +68,14 @@ class PresensiApiController extends Controller
             ], 422);
         }
 
+        $isRemote = $this->isRemoteShift($shift);
+
         $request->validate([
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'location' => 'required_without_all:latitude,longitude|string|nullable',
-            'image' => $shift->require_qr ? 'nullable|string' : 'required|string',
-            'qr_content' => $shift->require_qr ? 'required|string' : 'nullable|string',
+            'image' => $isRemote || $shift->require_qr ? 'nullable|string' : 'required|string',
+            'qr_content' => !$isRemote && $shift->require_qr ? 'required|string' : 'nullable|string',
         ]);
 
         $today = Carbon::now('Asia/Jakarta')->format('Y-m-d');
@@ -95,7 +97,7 @@ class PresensiApiController extends Controller
         $startTime = Carbon::now('Asia/Jakarta')->startOfDay()->setTime($shiftStart->hour, $shiftStart->minute, $shiftStart->second);
 
         $terlambat = 0;
-        if (stripos($shift->name, 'remote') === false && $now->greaterThan($startTime)) {
+        if (!$isRemote && $now->greaterThan($startTime)) {
             $terlambat = abs($now->diffInMinutes($startTime));
         }
 
@@ -110,7 +112,7 @@ class PresensiApiController extends Controller
             'lokasi_masuk' => $this->locationFromRequest($request),
             'status' => 'Hadir',
             'terlambat' => $terlambat,
-            'keterangan' => $terlambat > 0 ? 'Terlambat ' . $terlambat . ' menit' : 'Tepat Waktu',
+            'keterangan' => $isRemote ? 'Remote Check-in' : ($terlambat > 0 ? 'Terlambat ' . $terlambat . ' menit' : 'Tepat Waktu'),
         ]);
 
         return response()->json([
@@ -151,12 +153,14 @@ class PresensiApiController extends Controller
             ], 422);
         }
 
+        $isRemote = $this->isRemoteShift($shift);
+
         $request->validate([
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'location' => 'required_without_all:latitude,longitude|string|nullable',
-            'image' => $shift->require_qr ? 'nullable|string' : 'required|string',
-            'qr_content' => $shift->require_qr ? 'required|string' : 'nullable|string',
+            'image' => $isRemote || $shift->require_qr ? 'nullable|string' : 'required|string',
+            'qr_content' => !$isRemote && $shift->require_qr ? 'required|string' : 'nullable|string',
         ]);
 
         $now = Carbon::now('Asia/Jakarta');
@@ -164,7 +168,7 @@ class PresensiApiController extends Controller
         $endTime = Carbon::now('Asia/Jakarta')->startOfDay()->setTime($shiftEnd->hour, $shiftEnd->minute, $shiftEnd->second);
 
         $pulangCepat = 0;
-        if (stripos($shift->name, 'remote') === false && $now->lessThan($endTime)) {
+        if (!$isRemote && $now->lessThan($endTime)) {
             $pulangCepat = abs($now->diffInMinutes($endTime));
         }
 
@@ -175,6 +179,7 @@ class PresensiApiController extends Controller
             'foto_pulang' => $imageName,
             'lokasi_pulang' => $this->locationFromRequest($request),
             'pulang_cepat' => $pulangCepat,
+            'keterangan' => $this->checkoutKeterangan($presensi->keterangan, $isRemote),
         ]);
 
         return response()->json([
@@ -217,5 +222,19 @@ class PresensiApiController extends Controller
         }
 
         return $request->latitude . ',' . $request->longitude;
+    }
+
+    private function isRemoteShift($shift): bool
+    {
+        return stripos($shift->name ?? '', 'remote') !== false;
+    }
+
+    private function checkoutKeterangan(?string $current, bool $isRemote): ?string
+    {
+        if (!$isRemote) {
+            return $current;
+        }
+
+        return $current === 'Remote Check-in' ? 'Remote Check-in & Check-out' : $current;
     }
 }

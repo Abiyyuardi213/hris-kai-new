@@ -190,6 +190,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'index'])->name('admin.presensi.index')->middleware('permission:view-attendance|manage-attendance');
     Route::get('/presensi/create', [App\Http\Controllers\Admin\PresensiController::class, 'create'])->name('admin.presensi.create')->middleware('permission:manage-attendance');
     Route::post('/presensi', [App\Http\Controllers\Admin\PresensiController::class, 'store'])->name('admin.presensi.store')->middleware('permission:manage-attendance');
+    Route::get('/presensi/photos/cleanup/summary', [App\Http\Controllers\Admin\PresensiController::class, 'cleanupPhotosSummary'])->name('admin.presensi.photos.cleanup-summary')->middleware('permission:manage-attendance');
+    Route::post('/presensi/photos/cleanup', [App\Http\Controllers\Admin\PresensiController::class, 'cleanupPhotos'])->name('admin.presensi.photos.cleanup')->middleware('permission:manage-attendance');
     Route::get('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'show'])->name('admin.presensi.show')->middleware('permission:view-attendance|manage-attendance');
     Route::put('/presensi/{id}', [App\Http\Controllers\Admin\PresensiController::class, 'update'])->name('admin.presensi.update')->middleware('permission:manage-attendance');
 

@@ -3,6 +3,12 @@
 @section('title', 'Absensi Pegawai')
 
 @section('content')
+    @php
+        $isRemoteShift = stripos($shift->name ?? '', 'remote') !== false;
+        $requiresQr = ($shift->require_qr ?? false) && !$isRemoteShift;
+        $requiresSelfie = !($shift->require_qr ?? false) && !$isRemoteShift;
+    @endphp
+
     <div class="flex flex-col space-y-6 max-w-4xl mx-auto">
         <!-- Header -->
         <div class="flex items-center justify-between">
@@ -38,7 +44,7 @@
                     <div class="p-6 md:p-8 space-y-6 text-center">
                         @if (!$todayAttendance || !$todayAttendance->jam_pulang)
                             <!-- Helper for Show QR (Identity) -->
-                            @if ($shift->require_qr ?? false)
+                            @if ($requiresQr)
                                 <div
                                     class="mb-6 flex flex-col items-center justify-center bg-white p-6 rounded-2xl border border-dashed border-zinc-300">
                                     <p class="text-sm font-bold text-zinc-900 mb-4">QR Code Identitas (NIP)</p>
@@ -59,7 +65,7 @@
                             @endif
 
                             <!-- QR Scanner Section -->
-                            @if (($shift->require_qr ?? false) && (!$todayAttendance || !$todayAttendance->jam_pulang))
+                            @if ($requiresQr && (!$todayAttendance || !$todayAttendance->jam_pulang))
                                 <div class="space-y-2 mb-6">
                                     <p class="text-sm font-bold text-zinc-900">Scan QR Code Absensi</p>
                                     <div id="reader" class="rounded-2xl overflow-hidden border-2 border-zinc-200"></div>
@@ -68,8 +74,8 @@
                                 </div>
                             @endif
 
-                            <!-- Camera Section (Selfie) - ONLY if Not Non-Remote -->
-                            @if (!($shift->require_qr ?? false))
+                            <!-- Camera Section (Selfie) -->
+                            @if ($requiresSelfie)
                                 <div class="space-y-4">
                                     <div class="relative mx-auto max-w-[400px] aspect-[4/3] rounded-2xl bg-zinc-900 overflow-hidden shadow-inner border-2 border-zinc-100"
                                         id="camera-container">
@@ -91,6 +97,15 @@
                                 </div>
                             @else
                                 <div class="text-center py-4 bg-zinc-50 rounded-xl border border-zinc-100 mb-4">
+                                    @if ($isRemoteShift)
+                                        <div
+                                            class="mx-auto mb-3 h-12 w-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                            <i data-lucide="map-pin-check" class="h-6 w-6"></i>
+                                        </div>
+                                        <p class="text-sm font-bold text-zinc-900">Presensi Remote</p>
+                                        <p class="text-xs text-zinc-500 mb-3">Foto dan QR tidak diperlukan. Lokasi tetap
+                                            wajib terdeteksi.</p>
+                                    @endif
                                     <p class="text-xs text-zinc-400 italic" id="location-status">Mendeteksi lokasi...</p>
                                 </div>
                             @endif
@@ -237,7 +252,9 @@
                 const locationStatus = document.getElementById('location-status');
 
                 // QR Vars
-                const requireQr = {{ $shift->require_qr ?? false ? 'true' : 'false' }};
+                const isRemoteShift = {{ $isRemoteShift ? 'true' : 'false' }};
+                const requireQr = {{ $requiresQr ? 'true' : 'false' }};
+                const requireSelfie = {{ $requiresSelfie ? 'true' : 'false' }};
                 const qrInput = document.getElementById('qr-input');
                 const qrStatus = document.getElementById('qr-status');
                 let html5QrcodeScanner = null;
@@ -260,11 +277,7 @@
                     }
                 }
 
-                // Only init camera if not requiring QR (meaning Remote shift)
-                // Wait, logic is: Remote -> Selfie Required, No QR check.
-                // Non-Remote -> QR Required (Location), Selfie Not Required.
-                // The elements for Selfie are hidden if requireQr is true.
-                if (!requireQr) {
+                if (requireSelfie) {
                     initCamera();
                 }
 
@@ -373,12 +386,10 @@
 
                 function checkReady() {
                     let ready = true;
-                    // Image required ONLY if NOT requireQr (Remote)
-                    if (!requireQr && !imageInput.value) ready = false;
+                    if (requireSelfie && !imageInput.value) ready = false;
 
                     if (!locationInput.value) ready = false;
 
-                    // QR required if requireQr (Non-Remote)
                     if (requireQr && (!qrInput || !qrInput.value)) ready = false;
 
                     if (ready) {

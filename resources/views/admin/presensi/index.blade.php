@@ -10,7 +10,11 @@
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900">Monitoring Presensi</h2>
                 <p class="text-zinc-500 text-sm">Pantau kehadiran seluruh pegawai secara real-time.</p>
             </div>
-            <div>
+            <div class="flex items-center gap-2">
+                <button type="button" onclick="openCleanupModal()"
+                    class="bg-red-50 text-red-700 border border-red-100 text-sm font-bold py-2 px-4 rounded-lg hover:bg-red-100 transition-all inline-flex items-center gap-2">
+                    <i data-lucide="trash-2" class="h-4 w-4"></i> Hapus Foto Presensi
+                </button>
                 <a href="{{ route('admin.presensi.create') }}"
                     class="bg-zinc-900 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-zinc-800 transition-all inline-flex items-center gap-2">
                     <i data-lucide="plus" class="h-4 w-4"></i> Tambah Presensi
@@ -191,6 +195,74 @@
         </div>
     </div>
 
+    <!-- Cleanup Photos Modal -->
+    <div id="cleanup-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="cleanup-modal-title"
+        role="dialog" aria-modal="true">
+        <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div id="cleanup-modal-overlay"
+                class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"
+                onclick="closeCleanupModal()"></div>
+
+            <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+
+            <div id="cleanup-modal-content"
+                class="relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <form id="cleanup-form" method="POST" action="{{ route('admin.presensi.photos.cleanup') }}">
+                    @csrf
+                    <div class="bg-white px-6 pt-6 pb-4">
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="text-xl font-bold text-zinc-900" id="cleanup-modal-title">Hapus Foto Presensi</h3>
+                            <button type="button" onclick="closeCleanupModal()" class="text-zinc-400 hover:text-zinc-500">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+
+                        <div class="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700 mb-4">
+                            Foto masuk dan foto pulang akan dihapus dari storage. Data presensi, jam masuk, jam pulang,
+                            status, dan keterangan tetap tersimpan.
+                        </div>
+
+                        <div id="cleanup-summary"
+                            class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 mb-4">
+                            <div class="flex items-center gap-2 text-zinc-500">
+                                <i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i>
+                                Menghitung ukuran foto presensi...
+                            </div>
+                        </div>
+
+                        <div id="cleanup-progress" class="hidden mb-4">
+                            <div class="flex items-center justify-between text-xs font-bold text-zinc-500 mb-2">
+                                <span id="cleanup-progress-label">Menunggu konfirmasi</span>
+                                <span id="cleanup-progress-size">0 B</span>
+                            </div>
+                            <div class="h-2 rounded-full bg-zinc-100 overflow-hidden">
+                                <div id="cleanup-progress-bar"
+                                    class="h-full w-0 rounded-full bg-red-600 transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <div id="cleanup-result" class="hidden rounded-xl border p-4 text-sm mb-4"></div>
+
+                        <label class="block text-sm font-bold text-zinc-700 mb-1">Ketik HAPUS-FOTO-PRESENSI</label>
+                        <input type="text" name="confirmation" id="cleanup-confirmation" required
+                            class="w-full px-3 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="HAPUS-FOTO-PRESENSI">
+                    </div>
+                    <div class="bg-zinc-50 px-6 py-4 flex flex-col sm:flex-row-reverse gap-2">
+                        <button type="submit" id="cleanup-submit-btn"
+                            class="inline-flex w-full justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-red-700 transition-all sm:w-auto">
+                            Hapus Semua Foto
+                        </button>
+                        <button type="button" id="cleanup-cancel-btn" onclick="closeCleanupModal()"
+                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all sm:w-auto">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Presence Modal -->
     <div id="edit-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="modal-title"
         role="dialog" aria-modal="true">
@@ -303,10 +375,188 @@
             }, 300);
         }
 
+        function openCleanupModal() {
+            const modal = document.getElementById('cleanup-modal');
+            const overlay = document.getElementById('cleanup-modal-overlay');
+            const content = document.getElementById('cleanup-modal-content');
+
+            resetCleanupModal();
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
+                content.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            lucide.createIcons();
+            loadCleanupSummary();
+        }
+
+        function closeCleanupModal() {
+            const modal = document.getElementById('cleanup-modal');
+            const overlay = document.getElementById('cleanup-modal-overlay');
+            const content = document.getElementById('cleanup-modal-content');
+
+            overlay.classList.add('opacity-0');
+            content.classList.add('opacity-0', 'translate-y-4', 'sm:scale-95');
+            content.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function resetCleanupModal() {
+            const form = document.getElementById('cleanup-form');
+            const summary = document.getElementById('cleanup-summary');
+            const progress = document.getElementById('cleanup-progress');
+            const result = document.getElementById('cleanup-result');
+            const progressBar = document.getElementById('cleanup-progress-bar');
+            const progressLabel = document.getElementById('cleanup-progress-label');
+            const progressSize = document.getElementById('cleanup-progress-size');
+            const submitBtn = document.getElementById('cleanup-submit-btn');
+            const cancelBtn = document.getElementById('cleanup-cancel-btn');
+
+            form.reset();
+            summary.className = 'rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 mb-4';
+            summary.innerHTML = `
+                <div class="flex items-center gap-2 text-zinc-500">
+                    <i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i>
+                    Menghitung ukuran foto presensi...
+                </div>
+            `;
+            progress.classList.add('hidden');
+            result.classList.add('hidden');
+            result.textContent = '';
+            progressBar.style.width = '0%';
+            progressBar.classList.remove('bg-orange-500');
+            progressBar.classList.add('bg-red-600');
+            progressLabel.textContent = 'Menunggu konfirmasi';
+            progressSize.textContent = '0 B';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Hapus Semua Foto';
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            cancelBtn.disabled = false;
+            lucide.createIcons();
+        }
+
+        async function loadCleanupSummary() {
+            const summary = document.getElementById('cleanup-summary');
+
+            try {
+                const response = await fetch("{{ route('admin.presensi.photos.cleanup-summary') }}", {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const json = await response.json();
+
+                if (!json.success) {
+                    throw new Error(json.message || 'Gagal menghitung ukuran foto.');
+                }
+
+                const data = json.data;
+                summary.className = 'rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 mb-4';
+                summary.innerHTML = `
+                    <div class="grid grid-cols-3 gap-3 text-center">
+                        <div>
+                            <div class="text-lg font-black text-zinc-900">${data.files}</div>
+                            <div class="text-[11px] uppercase font-bold text-zinc-400">File ditemukan</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-black text-zinc-900">${data.size}</div>
+                            <div class="text-[11px] uppercase font-bold text-zinc-400">Estimasi ukuran</div>
+                        </div>
+                        <div>
+                            <div class="text-lg font-black text-zinc-900">${data.rows}</div>
+                            <div class="text-[11px] uppercase font-bold text-zinc-400">Data presensi</div>
+                        </div>
+                    </div>
+                    ${data.missing_files > 0 ? `<p class="mt-3 text-xs text-orange-600">${data.missing_files} path foto sudah tidak ditemukan di storage.</p>` : ''}
+                `;
+            } catch (error) {
+                summary.className = 'rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700 mb-4';
+                summary.textContent = error.message || 'Gagal menghitung ukuran foto presensi.';
+            }
+        }
+
+        document.getElementById('cleanup-form')?.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = event.currentTarget;
+            const submitBtn = document.getElementById('cleanup-submit-btn');
+            const cancelBtn = document.getElementById('cleanup-cancel-btn');
+            const progress = document.getElementById('cleanup-progress');
+            const progressBar = document.getElementById('cleanup-progress-bar');
+            const progressLabel = document.getElementById('cleanup-progress-label');
+            const progressSize = document.getElementById('cleanup-progress-size');
+            const result = document.getElementById('cleanup-result');
+
+            progress.classList.remove('hidden');
+            result.classList.add('hidden');
+            progressBar.style.width = '35%';
+            progressLabel.textContent = 'Menghapus foto presensi...';
+            progressSize.textContent = 'Sedang diproses';
+            submitBtn.disabled = true;
+            cancelBtn.disabled = true;
+            submitBtn.textContent = 'Menghapus...';
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new FormData(form)
+                });
+                const json = await response.json();
+
+                if (!response.ok || !json.success) {
+                    throw new Error(json.message || 'Cleanup foto presensi gagal.');
+                }
+
+                progressBar.style.width = '100%';
+                progressLabel.textContent = 'Selesai';
+                progressSize.textContent = json.data.deleted_size;
+
+                result.className = 'rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-700 mb-4';
+                result.innerHTML = `
+                    <div class="font-bold mb-1">Cleanup selesai</div>
+                    <div>${json.data.deleted_files} file dihapus dengan total ${json.data.deleted_size}.</div>
+                    <div>${json.data.updated_rows} data presensi diperbarui.</div>
+                    ${json.data.missing_files > 0 ? `<div>${json.data.missing_files} file sudah tidak ditemukan.</div>` : ''}
+                `;
+                result.classList.remove('hidden');
+
+                submitBtn.textContent = 'Selesai';
+                cancelBtn.disabled = false;
+                cancelBtn.textContent = 'Tutup';
+            } catch (error) {
+                progressBar.style.width = '100%';
+                progressBar.classList.remove('bg-red-600');
+                progressBar.classList.add('bg-orange-500');
+                progressLabel.textContent = 'Gagal';
+                progressSize.textContent = '-';
+
+                result.className = 'rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700 mb-4';
+                result.textContent = error.message || 'Cleanup foto presensi gagal.';
+                result.classList.remove('hidden');
+
+                submitBtn.disabled = false;
+                cancelBtn.disabled = false;
+                submitBtn.textContent = 'Coba Lagi';
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
         // Close on escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeEditModal();
+                closeCleanupModal();
             }
         });
     </script>

@@ -89,21 +89,15 @@ class AttendanceController extends Controller
             return back()->with('error', 'Anda sudah melakukan absensi masuk hari ini.');
         }
 
-        if ($shift->require_qr) {
-            $request->validate([
-                'image' => 'nullable|string', // Optional if QR required
-                'location' => 'required|string',
-                'qr_content' => 'required|string',
-            ]);
-        } else {
-            $request->validate([
-                'image' => 'required|string', // Base64 image
-                'location' => 'required|string',
-                'qr_content' => 'nullable|string',
-            ]);
-        }
+        $isRemote = $this->isRemoteShift($shift);
 
-        if ($shift->require_qr && empty($request->qr_content)) {
+        $request->validate([
+            'image' => $isRemote || $shift->require_qr ? 'nullable|string' : 'required|string',
+            'location' => 'required|string',
+            'qr_content' => !$isRemote && $shift->require_qr ? 'required|string' : 'nullable|string',
+        ]);
+
+        if (!$isRemote && $shift->require_qr && empty($request->qr_content)) {
             return back()->with('error', 'Shift ini mewajibkan scan QR Code.');
         }
 
@@ -113,7 +107,7 @@ class AttendanceController extends Controller
 
         $terlambat = 0;
         // Check if shift is NOT remote before calculating lateness
-        if (stripos($shift->name, 'remote') === false && $now->greaterThan($startTime)) {
+        if (!$isRemote && $now->greaterThan($startTime)) {
             $terlambat = abs($now->diffInMinutes($startTime));
         }
 
@@ -136,7 +130,7 @@ class AttendanceController extends Controller
             'lokasi_masuk' => $request->location,
             'status' => 'Hadir',
             'terlambat' => $terlambat,
-            'keterangan' => $terlambat > 0 ? 'Terlambat ' . $terlambat . ' menit' : 'Tepat Waktu',
+            'keterangan' => $isRemote ? 'Remote Check-in' : ($terlambat > 0 ? 'Terlambat ' . $terlambat . ' menit' : 'Tepat Waktu'),
         ]);
 
         return redirect()->route('employee.attendance.index')->with('success', 'Berhasil Absen Masuk. Semangat Bekerja!');
@@ -160,21 +154,15 @@ class AttendanceController extends Controller
             return back()->with('error', 'Anda sudah melakukan absensi pulang hari ini.');
         }
 
-        if ($shift->require_qr) {
-            $request->validate([
-                'image' => 'nullable|string',
-                'location' => 'required|string',
-                'qr_content' => 'required|string',
-            ]);
-        } else {
-            $request->validate([
-                'image' => 'required|string', // Base64 image
-                'location' => 'required|string',
-                'qr_content' => 'nullable|string',
-            ]);
-        }
+        $isRemote = $this->isRemoteShift($shift);
 
-        if ($shift->require_qr && empty($request->qr_content)) {
+        $request->validate([
+            'image' => $isRemote || $shift->require_qr ? 'nullable|string' : 'required|string',
+            'location' => 'required|string',
+            'qr_content' => !$isRemote && $shift->require_qr ? 'required|string' : 'nullable|string',
+        ]);
+
+        if (!$isRemote && $shift->require_qr && empty($request->qr_content)) {
             return back()->with('error', 'Shift ini mewajibkan scan QR Code.');
         }
 
@@ -183,7 +171,7 @@ class AttendanceController extends Controller
         $endTime = Carbon::today()->setTime($shiftEnd->hour, $shiftEnd->minute, $shiftEnd->second);
 
         $pulangCepat = 0;
-        if (stripos($shift->name, 'remote') === false && $now->lessThan($endTime)) {
+        if (!$isRemote && $now->lessThan($endTime)) {
             $pulangCepat = abs($now->diffInMinutes($endTime));
         }
 
@@ -201,6 +189,7 @@ class AttendanceController extends Controller
             'foto_pulang' => $imageName,
             'lokasi_pulang' => $request->location,
             'pulang_cepat' => $pulangCepat,
+            'keterangan' => $this->checkoutKeterangan($attendance->keterangan, $isRemote),
         ]);
 
         return redirect()->route('employee.attendance.index')->with('success', 'Berhasil Absen Pulang. Hati-hati di jalan!');
@@ -223,5 +212,19 @@ class AttendanceController extends Controller
         }
 
         return $employee->shift;
+    }
+
+    private function isRemoteShift($shift): bool
+    {
+        return stripos($shift->name ?? '', 'remote') !== false;
+    }
+
+    private function checkoutKeterangan(?string $current, bool $isRemote): ?string
+    {
+        if (!$isRemote) {
+            return $current;
+        }
+
+        return $current === 'Remote Check-in' ? 'Remote Check-in & Check-out' : $current;
     }
 }
