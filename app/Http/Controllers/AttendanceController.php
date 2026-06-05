@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Presensi;
 use App\Models\ShiftKerja;
+use App\Services\AttendanceAutoCheckoutService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,8 @@ class AttendanceController extends Controller
 {
     public function index()
     {
+        app(AttendanceAutoCheckoutService::class)->run();
+
         /** @var \App\Models\Pegawai $employee */
         $employee = Auth::guard('employee')->user();
 

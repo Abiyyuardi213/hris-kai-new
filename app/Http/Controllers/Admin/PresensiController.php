@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Presensi;
 use App\Models\Pegawai;
 use App\Models\ShiftKerja;
+use App\Services\AttendanceAutoCheckoutService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +15,12 @@ class PresensiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Presensi::with(['pegawai', 'shift'])
+        app(AttendanceAutoCheckoutService::class)->run();
+
+        $query = Presensi::with([
+            'pegawai:id,nip,nama_lengkap,foto',
+            'shift:id,name,start_time,end_time',
+        ])
             ->orderBy('tanggal', 'desc')
             ->orderBy('jam_masuk', 'desc');
 
@@ -38,7 +45,7 @@ class PresensiController extends Controller
             $query->where('status', $request->status);
         }
 
-        $presensis = $query->paginate(15)->withQueryString();
+        $presensis = $query->simplePaginate(10)->withQueryString();
 
         $pegawais = Pegawai::orderBy('nama_lengkap', 'asc')->get();
 
@@ -222,6 +229,89 @@ class PresensiController extends Controller
         ]);
     }
 
+    public function pendingCheckouts()
+    {
+        $now = Carbon::now('Asia/Jakarta');
+        $canValidate = $now->format('H:i:s') >= '22:00:00';
+
+        $presensis = collect();
+
+        if ($canValidate) {
+            $presensis = $this->pendingCheckoutQuery($now)
+                ->with(['pegawai:id,nip,nama_lengkap', 'shift:id,name,start_time,end_time'])
+                ->orderBy('jam_masuk')
+                ->get();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'can_validate' => $canValidate,
+                'current_time' => $now->format('H:i:s'),
+                'checkout_time' => $now->format('H:i:s'),
+                'count' => $presensis->count(),
+                'records' => $presensis->map(fn ($presensi) => [
+                    'id' => $presensi->id,
+                    'pegawai' => [
+                        'nip' => $presensi->pegawai?->nip,
+                        'nama_lengkap' => $presensi->pegawai?->nama_lengkap,
+                    ],
+                    'shift' => $presensi->shift?->name,
+                    'tanggal' => $presensi->tanggal,
+                    'jam_masuk' => $presensi->jam_masuk,
+                ])->values(),
+            ],
+        ]);
+    }
+
+    public function validatePendingCheckouts(Request $request)
+    {
+        $now = Carbon::now('Asia/Jakarta');
+
+        if ($now->format('H:i:s') < '22:00:00') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi checkout hanya dapat dilakukan setelah pukul 22:00.',
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'attendance_ids' => 'nullable|array',
+            'attendance_ids.*' => 'string',
+        ]);
+
+        $query = $this->pendingCheckoutQuery($now);
+
+        if (!empty($validated['attendance_ids'])) {
+            $query->whereIn('id', $validated['attendance_ids']);
+        }
+
+        $processed = 0;
+        $checkoutTime = $now->format('H:i:s');
+
+        $query->chunkById(100, function ($presensis) use (&$processed, $checkoutTime) {
+            foreach ($presensis as $presensi) {
+                $presensi->forceFill([
+                    'jam_pulang' => $checkoutTime,
+                    'pulang_cepat' => 0,
+                    'lokasi_pulang' => $presensi->lokasi_pulang ?: 'Checkout divalidasi oleh admin',
+                    'keterangan' => $this->adminCheckoutNote($presensi->keterangan),
+                ])->save();
+
+                $processed++;
+            }
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$processed} presensi berhasil divalidkan checkout.",
+            'data' => [
+                'processed' => $processed,
+                'checkout_time' => $checkoutTime,
+            ],
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -280,5 +370,28 @@ class PresensiController extends Controller
         }
 
         return number_format($size, 2) . ' PB';
+    }
+
+    private function pendingCheckoutQuery(Carbon $now)
+    {
+        return Presensi::whereDate('tanggal', $now->toDateString())
+            ->where('status', 'Hadir')
+            ->whereNotNull('jam_masuk')
+            ->whereNull('jam_pulang');
+    }
+
+    private function adminCheckoutNote(?string $current): string
+    {
+        $note = 'Checkout divalidasi admin setelah pukul 22:00.';
+
+        if (!$current) {
+            return $note;
+        }
+
+        if (str_contains($current, 'Checkout divalidasi admin')) {
+            return $current;
+        }
+
+        return $current . ' | ' . $note;
     }
 }

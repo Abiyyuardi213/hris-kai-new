@@ -2,41 +2,57 @@
 
 @section('title', 'Daftar Presensi Pegawai')
 
+@push('styles')
+    <style>
+        .presensi-lite * {
+            transition-property: color, background-color, border-color, opacity;
+        }
+
+        .presensi-lite .modal-panel {
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+        }
+    </style>
+@endpush
+
 @section('content')
-    <div class="flex flex-col space-y-6">
+    <div class="presensi-lite flex flex-col space-y-6">
         <!-- Header -->
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-3xl font-bold tracking-tight text-zinc-900">Monitoring Presensi</h2>
                 <p class="text-zinc-500 text-sm">Pantau kehadiran seluruh pegawai secara real-time.</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center justify-end gap-2">
+                <button type="button" onclick="openCheckoutValidationModal()"
+                    class="bg-amber-50 text-amber-700 border border-amber-100 text-sm font-bold py-2 px-4 rounded-lg hover:bg-amber-100 inline-flex items-center gap-2">
+                    <i data-lucide="badge-check" class="h-4 w-4"></i> Validkan Checkout
+                </button>
                 <button type="button" onclick="openCleanupModal()"
-                    class="bg-red-50 text-red-700 border border-red-100 text-sm font-bold py-2 px-4 rounded-lg hover:bg-red-100 transition-all inline-flex items-center gap-2">
+                    class="bg-red-50 text-red-700 border border-red-100 text-sm font-bold py-2 px-4 rounded-lg hover:bg-red-100 inline-flex items-center gap-2">
                     <i data-lucide="trash-2" class="h-4 w-4"></i> Hapus Foto Presensi
                 </button>
                 <a href="{{ route('admin.presensi.create') }}"
-                    class="bg-zinc-900 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-zinc-800 transition-all inline-flex items-center gap-2">
+                    class="bg-zinc-900 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-zinc-800 inline-flex items-center gap-2">
                     <i data-lucide="plus" class="h-4 w-4"></i> Tambah Presensi
                 </a>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="bg-white rounded-xl border border-zinc-200 shadow-sm p-6">
+        <div class="bg-white rounded-xl border border-zinc-200 p-6">
             <form action="{{ route('admin.presensi.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="space-y-1.5">
                     <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Cari Pegawai</label>
                     <div class="relative">
                         <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400"></i>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Nama atau NIP..."
-                            class="w-full pl-10 pr-4 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                            class="w-full pl-10 pr-4 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900">
                     </div>
                 </div>
                 <div class="space-y-1.5">
                     <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Status</label>
                     <select name="status"
-                        class="w-full px-4 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
+                        class="w-full px-4 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
                         style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 24 24%22 stroke=%22%239ca3af%22 stroke-width=%222%22%3E%3Cpath stroke-linecap=%22round%22 stroke-linejoin=%22round%22 d=%22M19 9l-7 7-7-7%22 /%3E%3C/svg%3E')">
                         <option value="">Semua Status</option>
                         <option value="Hadir" {{ request('status') == 'Hadir' ? 'selected' : '' }}>Hadir</option>
@@ -48,13 +64,13 @@
                 <div class="space-y-1.5">
                     <label class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Tanggal Mulai</label>
                     <input type="date" name="start_date" value="{{ request('start_date') }}"
-                        class="w-full px-4 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all">
+                        class="w-full px-4 py-2 rounded-lg border border-zinc-200 text-sm focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900">
                 </div>
                 <div class="flex items-end gap-2">
                     <button type="submit"
-                        class="flex-1 bg-zinc-900 text-white text-sm font-bold py-2 rounded-lg hover:bg-zinc-800 transition-all">Filter</button>
+                        class="flex-1 bg-zinc-900 text-white text-sm font-bold py-2 rounded-lg hover:bg-zinc-800">Filter</button>
                     <a href="{{ route('admin.presensi.index') }}"
-                        class="px-3 py-2 bg-zinc-100 text-zinc-600 rounded-lg hover:bg-zinc-200 transition-all">
+                        class="px-3 py-2 bg-zinc-100 text-zinc-600 rounded-lg hover:bg-zinc-200">
                         <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
                     </a>
                 </div>
@@ -62,7 +78,7 @@
         </div>
 
         <!-- Table -->
-        <div class="bg-white rounded-xl border border-zinc-200 shadow-sm overflow-hidden">
+        <div class="bg-white rounded-xl border border-zinc-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead
@@ -79,7 +95,7 @@
                     </thead>
                     <tbody class="divide-y divide-zinc-100">
                         @forelse($presensis as $presensi)
-                            <tr class="hover:bg-zinc-50/50 transition-colors">
+                            <tr class="hover:bg-zinc-50/50">
                                 <td class="px-6 py-4 font-medium text-zinc-400">
                                     {{ ($presensis->currentPage() - 1) * $presensis->perPage() + $loop->iteration }}
                                 </td>
@@ -89,7 +105,8 @@
                                             class="h-10 w-10 rounded-full bg-zinc-100 overflow-hidden border border-zinc-200 shrink-0">
                                             @if ($presensi->pegawai->foto)
                                                 <img src="{{ asset('storage/' . $presensi->pegawai->foto) }}"
-                                                    class="h-full w-full object-cover">
+                                                    class="h-full w-full object-cover" loading="lazy" decoding="async"
+                                                    width="40" height="40">
                                             @else
                                                 <div class="h-full w-full flex items-center justify-center text-zinc-400">
                                                     <i data-lucide="user" class="h-5 w-5"></i>
@@ -166,11 +183,11 @@
                                     <div class="flex items-center justify-end gap-2">
                                         <button type="button"
                                             onclick="openEditModal('{{ $presensi->id }}', '{{ $presensi->status }}', '{{ $presensi->jam_masuk }}', '{{ $presensi->jam_pulang }}', '{{ $presensi->keterangan }}')"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">
                                             <i data-lucide="edit" class="h-4 w-4"></i>
                                         </button>
                                         <a href="{{ route('admin.presensi.show', $presensi->id) }}"
-                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 transition-colors">
+                                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900">
                                             <i data-lucide="eye" class="h-4 w-4"></i>
                                         </a>
                                     </div>
@@ -195,18 +212,79 @@
         </div>
     </div>
 
+    <!-- Checkout Validation Modal -->
+    <div id="checkout-validation-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto"
+        aria-labelledby="checkout-validation-title" role="dialog" aria-modal="true">
+        <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div id="checkout-validation-overlay"
+                class="fixed inset-0 bg-zinc-900/50 opacity-0" aria-hidden="true"
+                onclick="closeCheckoutValidationModal()"></div>
+
+            <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+
+            <div id="checkout-validation-content"
+                class="modal-panel relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom sm:my-8 sm:w-full sm:max-w-2xl sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                <form id="checkout-validation-form">
+                    <div class="bg-white px-6 pt-6 pb-4">
+                        <div class="flex items-center justify-between mb-5">
+                            <div>
+                                <h3 class="text-xl font-bold text-zinc-900" id="checkout-validation-title">Validkan Checkout</h3>
+                                <p class="text-xs text-zinc-500 mt-1">Untuk pegawai yang sudah check-in hari ini tetapi belum check-out.</p>
+                            </div>
+                            <button type="button" onclick="closeCheckoutValidationModal()" class="text-zinc-400 hover:text-zinc-500">
+                                <i data-lucide="x" class="h-5 w-5"></i>
+                            </button>
+                        </div>
+
+                        <div id="checkout-validation-alert"
+                            class="rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 mb-4">
+                            <div class="flex items-center gap-2 text-zinc-500">
+                                <i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i>
+                                Mengecek pegawai yang belum check-out...
+                            </div>
+                        </div>
+
+                        <div id="checkout-validation-list" class="hidden border border-zinc-200 rounded-xl overflow-hidden mb-4">
+                            <div class="bg-zinc-50 border-b border-zinc-200 px-4 py-3 flex items-center justify-between">
+                                <label class="inline-flex items-center gap-2 text-sm font-bold text-zinc-700">
+                                    <input type="checkbox" id="checkout-select-all" checked
+                                        class="rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                                    Pilih semua
+                                </label>
+                                <span id="checkout-validation-count" class="text-xs font-bold text-zinc-500">0 pegawai</span>
+                            </div>
+                            <div id="checkout-validation-items" class="max-h-[360px] overflow-y-auto divide-y divide-zinc-100"></div>
+                        </div>
+
+                        <div id="checkout-validation-result" class="hidden rounded-xl border p-4 text-sm"></div>
+                    </div>
+                    <div class="bg-zinc-50 px-6 py-4 flex flex-col sm:flex-row-reverse gap-2">
+                        <button type="submit" id="checkout-validation-submit"
+                            class="inline-flex w-full justify-center rounded-xl bg-amber-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-amber-700 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed">
+                            Validkan Checkout
+                        </button>
+                        <button type="button" id="checkout-validation-cancel" onclick="closeCheckoutValidationModal()"
+                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 sm:w-auto">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Cleanup Photos Modal -->
     <div id="cleanup-modal" class="fixed inset-0 z-[100] hidden overflow-y-auto" aria-labelledby="cleanup-modal-title"
         role="dialog" aria-modal="true">
         <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div id="cleanup-modal-overlay"
-                class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"
+                class="fixed inset-0 bg-zinc-900/50 opacity-0" aria-hidden="true"
                 onclick="closeCleanupModal()"></div>
 
             <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
 
             <div id="cleanup-modal-content"
-                class="relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                class="modal-panel relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom sm:my-8 sm:w-full sm:max-w-md sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                 <form id="cleanup-form" method="POST" action="{{ route('admin.presensi.photos.cleanup') }}">
                     @csrf
                     <div class="bg-white px-6 pt-6 pb-4">
@@ -237,7 +315,7 @@
                             </div>
                             <div class="h-2 rounded-full bg-zinc-100 overflow-hidden">
                                 <div id="cleanup-progress-bar"
-                                    class="h-full w-0 rounded-full bg-red-600 transition-all duration-500"></div>
+                                    class="h-full w-0 rounded-full bg-red-600 duration-300"></div>
                             </div>
                         </div>
 
@@ -250,11 +328,11 @@
                     </div>
                     <div class="bg-zinc-50 px-6 py-4 flex flex-col sm:flex-row-reverse gap-2">
                         <button type="submit" id="cleanup-submit-btn"
-                            class="inline-flex w-full justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-red-700 transition-all sm:w-auto">
+                            class="inline-flex w-full justify-center rounded-xl bg-red-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-red-700 sm:w-auto">
                             Hapus Semua Foto
                         </button>
                         <button type="button" id="cleanup-cancel-btn" onclick="closeCleanupModal()"
-                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all sm:w-auto">
+                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 sm:w-auto">
                             Batal
                         </button>
                     </div>
@@ -269,14 +347,14 @@
         <div class="flex min-h-screen items-end justify-center px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <!-- Overlay -->
             <div id="edit-modal-overlay"
-                class="fixed inset-0 bg-zinc-900/60 backdrop-blur-sm transition-opacity opacity-0" aria-hidden="true"
+                class="fixed inset-0 bg-zinc-900/50 opacity-0" aria-hidden="true"
                 onclick="closeEditModal()"></div>
 
             <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
 
             <!-- Modal Content -->
             <div id="edit-modal-content"
-                class="relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                class="modal-panel relative inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom sm:my-8 sm:w-full sm:max-w-md sm:align-middle opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                 <form id="edit-form" method="POST">
                     @csrf
                     @method('PUT')
@@ -323,11 +401,11 @@
                     </div>
                     <div class="bg-zinc-50 px-6 py-4 flex flex-col sm:flex-row-reverse gap-2">
                         <button type="submit"
-                            class="inline-flex w-full justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-zinc-800 transition-all sm:w-auto">
+                            class="inline-flex w-full justify-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-zinc-800 sm:w-auto">
                             Simpan Perubahan
                         </button>
                         <button type="button" onclick="closeEditModal()"
-                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 transition-all sm:w-auto">
+                            class="inline-flex w-full justify-center rounded-xl bg-white border border-zinc-200 px-4 py-2.5 text-sm font-bold text-zinc-700 hover:bg-zinc-50 sm:w-auto">
                             Batal
                         </button>
                     </div>
@@ -358,7 +436,7 @@
                 content.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
             }, 10);
 
-            lucide.createIcons();
+            refreshIcons();
         }
 
         function closeEditModal() {
@@ -388,7 +466,7 @@
                 content.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
             }, 10);
 
-            lucide.createIcons();
+            refreshIcons();
             loadCleanupSummary();
         }
 
@@ -404,6 +482,201 @@
             setTimeout(() => {
                 modal.classList.add('hidden');
             }, 300);
+        }
+
+        function openCheckoutValidationModal() {
+            const modal = document.getElementById('checkout-validation-modal');
+            const overlay = document.getElementById('checkout-validation-overlay');
+            const content = document.getElementById('checkout-validation-content');
+
+            resetCheckoutValidationModal();
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'translate-y-4', 'sm:scale-95');
+                content.classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+            }, 10);
+
+            refreshIcons();
+            loadPendingCheckouts();
+        }
+
+        function closeCheckoutValidationModal() {
+            const modal = document.getElementById('checkout-validation-modal');
+            const overlay = document.getElementById('checkout-validation-overlay');
+            const content = document.getElementById('checkout-validation-content');
+
+            overlay.classList.add('opacity-0');
+            content.classList.add('opacity-0', 'translate-y-4', 'sm:scale-95');
+            content.classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function resetCheckoutValidationModal() {
+            const alert = document.getElementById('checkout-validation-alert');
+            const list = document.getElementById('checkout-validation-list');
+            const items = document.getElementById('checkout-validation-items');
+            const result = document.getElementById('checkout-validation-result');
+            const submit = document.getElementById('checkout-validation-submit');
+            const cancel = document.getElementById('checkout-validation-cancel');
+            const selectAll = document.getElementById('checkout-select-all');
+
+            alert.className = 'rounded-xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 mb-4';
+            alert.innerHTML = `
+                <div class="flex items-center gap-2 text-zinc-500">
+                    <i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i>
+                    Mengecek pegawai yang belum check-out...
+                </div>
+            `;
+            list.classList.add('hidden');
+            items.innerHTML = '';
+            result.classList.add('hidden');
+            result.textContent = '';
+            submit.disabled = true;
+            submit.textContent = 'Validkan Checkout';
+            cancel.disabled = false;
+            cancel.textContent = 'Batal';
+            selectAll.checked = true;
+            refreshIcons();
+        }
+
+        async function loadPendingCheckouts() {
+            const alert = document.getElementById('checkout-validation-alert');
+            const list = document.getElementById('checkout-validation-list');
+            const items = document.getElementById('checkout-validation-items');
+            const count = document.getElementById('checkout-validation-count');
+            const submit = document.getElementById('checkout-validation-submit');
+
+            try {
+                const response = await fetch("{{ route('admin.presensi.pending-checkouts') }}", {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const json = await response.json();
+
+                if (!json.success) {
+                    throw new Error(json.message || 'Gagal memuat data pending checkout.');
+                }
+
+                const data = json.data;
+
+                if (!data.can_validate) {
+                    alert.className = 'rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700 mb-4';
+                    alert.innerHTML = `Validasi checkout baru dapat dilakukan setelah pukul 22:00. Waktu sekarang: <span class="font-bold">${data.current_time}</span>.`;
+                    submit.disabled = true;
+                    return;
+                }
+
+                if (data.count === 0) {
+                    alert.className = 'rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-700 mb-4';
+                    alert.textContent = 'Tidak ada pegawai yang perlu divalidkan checkout.';
+                    submit.disabled = true;
+                    return;
+                }
+
+                alert.className = 'rounded-xl border border-amber-100 bg-amber-50 p-4 text-sm text-amber-700 mb-4';
+                alert.innerHTML = `Ditemukan <span class="font-bold">${data.count}</span> pegawai belum check-out. Jam checkout akan diisi otomatis sesuai waktu validasi: <span class="font-bold">${data.checkout_time}</span>.`;
+                count.textContent = `${data.count} pegawai`;
+                items.innerHTML = data.records.map((record) => `
+                    <label class="flex items-center gap-3 px-4 py-3 hover:bg-zinc-50">
+                        <input type="checkbox" name="attendance_ids[]" value="${record.id}" checked
+                            class="checkout-item rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                        <div class="min-w-0 flex-1">
+                            <div class="font-bold text-zinc-900 truncate">${escapeHtml(record.pegawai.nama_lengkap || '-')}</div>
+                            <div class="text-xs text-zinc-500">NIP: ${escapeHtml(record.pegawai.nip || '-')} · Masuk: ${escapeHtml(record.jam_masuk || '--:--')} · Shift: ${escapeHtml(record.shift || '-')}</div>
+                        </div>
+                    </label>
+                `).join('');
+                list.classList.remove('hidden');
+                submit.disabled = false;
+            } catch (error) {
+                alert.className = 'rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700 mb-4';
+                alert.textContent = error.message || 'Gagal memuat data pending checkout.';
+                submit.disabled = true;
+            }
+        }
+
+        document.getElementById('checkout-select-all')?.addEventListener('change', function(event) {
+            document.querySelectorAll('.checkout-item').forEach((checkbox) => {
+                checkbox.checked = event.target.checked;
+            });
+        });
+
+        document.getElementById('checkout-validation-form')?.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const selected = Array.from(document.querySelectorAll('.checkout-item:checked')).map((checkbox) => checkbox.value);
+            const submit = document.getElementById('checkout-validation-submit');
+            const cancel = document.getElementById('checkout-validation-cancel');
+            const result = document.getElementById('checkout-validation-result');
+
+            if (selected.length === 0) {
+                result.className = 'rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700';
+                result.textContent = 'Pilih minimal satu pegawai untuk divalidkan checkout.';
+                result.classList.remove('hidden');
+                return;
+            }
+
+            submit.disabled = true;
+            cancel.disabled = true;
+            submit.textContent = 'Memvalidkan...';
+            result.classList.add('hidden');
+
+            try {
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                selected.forEach((id) => formData.append('attendance_ids[]', id));
+
+                const response = await fetch("{{ route('admin.presensi.pending-checkouts.validate') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                const json = await response.json();
+
+                if (!response.ok || !json.success) {
+                    throw new Error(json.message || 'Validasi checkout gagal.');
+                }
+
+                result.className = 'rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-700';
+                result.innerHTML = `${json.data.processed} presensi berhasil divalidkan checkout pada jam <span class="font-bold">${json.data.checkout_time}</span>.`;
+                result.classList.remove('hidden');
+                submit.textContent = 'Selesai';
+                cancel.disabled = false;
+                cancel.textContent = 'Tutup';
+
+                setTimeout(() => window.location.reload(), 1200);
+            } catch (error) {
+                result.className = 'rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700';
+                result.textContent = error.message || 'Validasi checkout gagal.';
+                result.classList.remove('hidden');
+                submit.disabled = false;
+                cancel.disabled = false;
+                submit.textContent = 'Coba Lagi';
+            }
+        });
+
+        function escapeHtml(value) {
+            return String(value)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function refreshIcons() {
+            if (window.lucide) {
+                window.requestAnimationFrame(() => lucide.createIcons());
+            }
         }
 
         function resetCleanupModal() {
@@ -437,7 +710,7 @@
             submitBtn.textContent = 'Hapus Semua Foto';
             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             cancelBtn.disabled = false;
-            lucide.createIcons();
+            refreshIcons();
         }
 
         async function loadCleanupSummary() {
@@ -557,6 +830,7 @@
             if (event.key === 'Escape') {
                 closeEditModal();
                 closeCleanupModal();
+                closeCheckoutValidationModal();
             }
         });
     </script>

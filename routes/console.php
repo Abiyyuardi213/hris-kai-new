@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('payroll:generate-monthly')->monthlyOn(1, '00:00');
+Schedule::command('attendance:auto-checkout')->dailyAt('23:00');
